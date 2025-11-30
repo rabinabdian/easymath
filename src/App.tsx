@@ -28,6 +28,101 @@ function HomePage() {
 
 type FeedbackState = "idle" | "correct" | "wrong" | "finished";
 
+/**
+ * תרגיל דוגמה מודרך:
+ * 3 עיגולים, הילד צריך ללחוץ על "3"
+ */
+function TutorialExercise({ onDone }: { onDone: () => void }) {
+  const { settings } = useChildSettings();
+  const [feedback, setFeedback] = useState<FeedbackState>("idle");
+
+  const iconsCount = 3;
+  const options = [2, 3, 4];
+
+  useEffect(() => {
+    if (!settings.soundsEnabled) return;
+
+    // דיבור מודרך – פעם אחת כשנכנסים לדוגמה
+    speak(`שלום ${settings.childName}. נעשה עכשיו דוגמה ביחד.`);
+    setTimeout(() => {
+      speak(
+        "תסתכל על העיגולים על המסך. יש שלושה עיגולים. נספור ביחד: אחד, שתיים, שלוש."
+      );
+    }, 2000);
+    setTimeout(() => {
+      speak("עכשיו תלחץ על הכפתור עם מספר שלוש.");
+    }, 6000);
+  }, [settings.childName, settings.soundsEnabled]);
+
+  const handleAnswer = (answer: number) => {
+    if (answer === 3) {
+      setFeedback("correct");
+      if (settings.soundsEnabled) {
+        speak("מעולה! עכשיו נתחיל את התרגול האמיתי.");
+      }
+      setTimeout(() => {
+        onDone();
+      }, 1500);
+    } else {
+      setFeedback("wrong");
+      if (settings.soundsEnabled) {
+        speak("כמעט. נסה לבחור את המספר שלוש.");
+      }
+      setTimeout(() => setFeedback("idle"), 1000);
+    }
+  };
+
+  const replayTutorial = () => {
+    if (!settings.soundsEnabled) return;
+    speak(
+      "בדוגמה הזאת יש שלושה עיגולים. נספור ביחד: אחד, שתיים, שלוש. אחר כך לוחצים על הכפתור עם מספר שלוש."
+    );
+  };
+
+  return (
+    <div className="page page-right">
+      <div className="title-row">
+        <h2 className="title">דוגמה</h2>
+        <button
+          type="button"
+          className="icon-button"
+          onClick={replayTutorial}
+        >
+          🔊
+        </button>
+      </div>
+
+      <div className="subtitle-small">קודם עושים דוגמה יחד, אחר כך תרגול.</div>
+      <div className="badge">תרגיל לדוגמה</div>
+
+      <div className="icons-row">
+        {Array.from({ length: iconsCount }).map((_, idx) => (
+          <div key={idx} className="icon-circle icon-circle-anim" />
+        ))}
+      </div>
+
+      <div className="buttons options-row">
+        {options.map((option) => (
+          <button
+            key={option}
+            onClick={() => handleAnswer(option)}
+            className={`option-button ${
+              feedback === "wrong" ? "option-button-wrong" : ""
+            }`}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+
+      <div className="feedback">
+        {feedback === "correct" && <span>כל הכבוד! 🎉</span>}
+        {feedback === "wrong" && <span>ננסה שוב לבחור שלוש 🙂</span>}
+      </div>
+    </div>
+  );
+}
+
 function SessionPage() {
   const { settings } = useChildSettings();
   const navigate = useNavigate();
@@ -35,24 +130,32 @@ function SessionPage() {
   const allExercises: CountExercise[] = countTo5Exercises;
   const sessionExercises = allExercises.slice(0, settings.sessionLength);
 
+  const [tutorialDone, setTutorialDone] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>("idle");
 
   const current = sessionExercises[currentIndex];
 
-  // קריינות הוראה כשנכנסים למסך
+  // אם עוד לא עברנו דוגמה – מציגים רק אותה
+  if (!tutorialDone) {
+    return <TutorialExercise onDone={() => setTutorialDone(true)} />;
+  }
+
+  // הוראה ברורה בכל תרגיל
   useEffect(() => {
-    if (settings.soundsEnabled) {
-      speak("ספור ולחץ על המספר הנכון");
-    }
-  }, [settings.soundsEnabled]);
+    if (!settings.soundsEnabled) return;
+    const qNumber = currentIndex + 1;
+    speak(
+      `שאלה מספר ${qNumber}. תסתכל על העיגולים על המסך. ספר אותם לאט בקול: אחד, שתיים, שלוש, וכך הלאה. אחרי שסיימת לספור, תלחץ למטה על הכפתור עם המספר הנכון.`
+    );
+  }, [currentIndex, settings.soundsEnabled]);
 
   const handleAnswer = (answer: number) => {
     if (feedback === "finished") return;
 
     if (answer === current.correctAnswer) {
       if (settings.soundsEnabled) {
-        speak("כל הכבוד");
+        speak("מצוין, בחרת את המספר הנכון.");
       }
       setFeedback("correct");
 
@@ -66,7 +169,7 @@ function SessionPage() {
       }, 800);
     } else {
       if (settings.soundsEnabled) {
-        speak("בוא ננסה שוב");
+        speak("לא נורא, נספור שוב וננסה עוד פעם.");
       }
       setFeedback("wrong");
 
@@ -100,7 +203,9 @@ function SessionPage() {
 
   const handleReplayInstruction = () => {
     if (!settings.soundsEnabled) return;
-    speak("ספור ולחץ על המספר הנכון");
+    speak(
+      "תסתכל על העיגולים על המסך. ספר אותם לאט בקול. אחרי שסיימת לספור, תלחץ על הכפתור עם המספר הנכון."
+    );
   };
 
   return (
