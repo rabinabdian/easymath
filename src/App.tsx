@@ -1,11 +1,8 @@
 // src/App.tsx
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import type { FormEvent } from "react";
-import { countTo5Exercises } from "./data/countTo5";
-import type { CountExercise } from "./data/countTo5";
-import { useChildSettings } from "./context/ChildSettingsContext";
-import type { ChildSettings } from "./context/ChildSettingsContext";
+import { useState, useEffect, FormEvent } from "react";
+import { countTo5Exercises, CountExercise } from "./data/countTo5";
+import { useChildSettings, ChildSettings } from "./context/ChildSettingsContext";
 import { speak } from "./utils/speech";
 
 function HomePage() {
@@ -141,14 +138,24 @@ function SessionPage() {
     return <TutorialExercise onDone={() => setTutorialDone(true)} />;
   }
 
-  // הוראה ברורה בכל תרגיל
+  // לפני כל תרגיל: שלום + הסבר כללי + "מתחילים בתרגיל מספר X מתוך Y"
   useEffect(() => {
-    if (!settings.soundsEnabled) return;
+    if (!settings.soundsEnabled || !tutorialDone) return;
+
     const qNumber = currentIndex + 1;
-    speak(
-      `שאלה מספר ${qNumber}. תסתכל על העיגולים על המסך. ספר אותם לאט בקול: אחד, שתיים, שלוש, וכך הלאה. אחרי שסיימת לספור, תלחץ למטה על הכפתור עם המספר הנכון.`
-    );
-  }, [currentIndex, settings.soundsEnabled]);
+    const total = sessionExercises.length;
+
+    const text = `שלום ${settings.childName}. עכשיו נעשה כמה תרגילים קצרים בחשבון. בכל תרגיל תסתכל על העיגולים, תספור אותם בקול, ואחר כך תבחר את המספר הנכון למטה.
+    מתחילים עכשיו בתרגיל מספר ${qNumber} מתוך ${total}. תסתכל על העיגולים על המסך, ספר אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון.`;
+
+    speak(text);
+  }, [
+    currentIndex,
+    tutorialDone,
+    settings.childName,
+    settings.soundsEnabled,
+    sessionExercises.length,
+  ]);
 
   const handleAnswer = (answer: number) => {
     if (feedback === "finished") return;
@@ -203,8 +210,10 @@ function SessionPage() {
 
   const handleReplayInstruction = () => {
     if (!settings.soundsEnabled) return;
+    const qNumber = currentIndex + 1;
+    const total = sessionExercises.length;
     speak(
-      "תסתכל על העיגולים על המסך. ספר אותם לאט בקול. אחרי שסיימת לספור, תלחץ על הכפתור עם המספר הנכון."
+      `שלום ${settings.childName}. אנחנו עדיין בסדרה של תרגילים קצרים בחשבון. עכשיו עובדים על תרגיל מספר ${qNumber} מתוך ${total}. תסתכל על העיגולים, ספר אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון.`
     );
   };
 
