@@ -2,9 +2,11 @@
 import type { Question } from '../types/questions';
 
 export const QUESTIONS: Question[] = [
-  // ======================
-  // N U M B E R S  (EASY)
-  // ======================
+  // ==========================
+  // N U M B E R S – הכרת מספרים
+  // ==========================
+
+  // ---- קל: ספירה, התאמה לכמות, כתיבה ----
 
   {
     id: 'numbers_count_001',
@@ -13,37 +15,28 @@ export const QUESTIONS: Question[] = [
     difficulty: 'easy',
     prompt: 'ספור את התפוחים בציור וכתוב כמה יש.',
     answer: 5,
-    assetId: 'numbers/apples_5',
+    assetId: 'numbers/apples_5', // public/assets/numbers/apples_5.png
   },
   {
-    id: 'numbers_match_002',
+    id: 'numbers_count_002',
     topic: 'numbers',
-    subtopic: 'התאם מספר לכמות',
+    subtopic: 'ספירה',
     difficulty: 'easy',
-    prompt: 'כמה פרפרים יש בתמונה?',
-    answer: 3,
-    options: [2, 3, 4],
-  },
-  {
-    id: 'numbers_write_003',
-    topic: 'numbers',
-    subtopic: 'כתיבה',
-    difficulty: 'easy',
-    prompt: 'כתוב את המספר: "שבע".',
+    prompt: 'כמה בלונים יש בתמונה?',
     answer: 7,
-    options: [5, 7, 9],
+    assetId: 'numbers/balloons_7',
   },
   {
-    id: 'numbers_neighbors_004',
+    id: 'numbers_count_003',
     topic: 'numbers',
-    subtopic: 'שכנים',
+    subtopic: 'ספירה',
     difficulty: 'easy',
-    prompt: 'מה השכן שאחרי המספר 6?',
-    answer: 7,
-    explanation: 'שכן אחר 7.',
+    prompt: 'כמה פרפרים יש בציור?',
+    answer: 9,
+    assetId: 'numbers/butterflies_9',
   },
   {
-    id: 'numbers_count_005',
+    id: 'numbers_count_004',
     topic: 'numbers',
     subtopic: 'ספירה',
     difficulty: 'easy',
@@ -52,7 +45,73 @@ export const QUESTIONS: Question[] = [
     options: [3, 4, 5],
   },
   {
-    id: 'numbers_write_006',
+    id: 'numbers_count_005',
+    topic: 'numbers',
+    subtopic: 'ספירה',
+    difficulty: 'easy',
+    prompt: 'כמה כוכבים יש?',
+    answer: 6,
+    options: [5, 6, 7],
+  },
+
+  {
+    id: 'numbers_match_006',
+    topic: 'numbers',
+    subtopic: 'התאם מספר לכמות',
+    difficulty: 'easy',
+    prompt:
+      'לכל צלחת עוגיות בחר את המספר המתאים: 3, 4 או 6 עוגיות בכל צלחת.',
+    answer: 'תלוי בצלחת',
+    assetId: 'numbers/cookies_plates',
+  },
+  {
+    id: 'numbers_match_007',
+    topic: 'numbers',
+    subtopic: 'התאם מספר לכמות',
+    difficulty: 'easy',
+    prompt:
+      'ליד כל קבוצה של עפרונות כתוב את המספר המתאים (1–10).',
+    answer: 'תלוי בקבוצה',
+    assetId: 'numbers/pencils_groups',
+  },
+  {
+    id: 'numbers_match_008',
+    topic: 'numbers',
+    subtopic: 'התאם מספר לכמות',
+    difficulty: 'easy',
+    prompt: 'כמה פרפרים יש בתמונה?',
+    answer: 3,
+    options: [2, 3, 4],
+  },
+
+  {
+    id: 'numbers_write_009',
+    topic: 'numbers',
+    subtopic: 'כתיבה',
+    difficulty: 'easy',
+    prompt: 'כתוב את המספר שמתאים למילה: "שבע".',
+    answer: 7,
+    options: [5, 7, 9],
+  },
+  {
+    id: 'numbers_write_010',
+    topic: 'numbers',
+    subtopic: 'כתיבה',
+    difficulty: 'easy',
+    prompt: 'כתוב את המספר שמתאים למילה: "ארבע".',
+    answer: 4,
+    options: [3, 4, 6],
+  },
+  {
+    id: 'numbers_write_011',
+    topic: 'numbers',
+    subtopic: 'כתיבה',
+    difficulty: 'easy',
+    prompt: 'המספר 9 כתוב בספרות. כתוב אותו במילים.',
+    answer: 'תשע',
+  },
+  {
+    id: 'numbers_write_012',
     topic: 'numbers',
     subtopic: 'כתיבה',
     difficulty: 'easy',
@@ -60,17 +119,36 @@ export const QUESTIONS: Question[] = [
     answer: 3,
     options: [2, 3, 4],
   },
+
+  // ---- קל: שכנים, מספרים על ציר ----
+
   {
-    id: 'numbers_match_007',
+    id: 'numbers_neighbors_013',
     topic: 'numbers',
-    subtopic: 'התאם מספר לכמות',
+    subtopic: 'שכנים',
     difficulty: 'easy',
-    prompt: 'כמה כוכבים יש?',
-    answer: 6,
-    options: [5, 6, 7],
+    prompt: 'מה השכן לפני ואחרי המספר 6?',
+    answer: '5 ו-7',
   },
   {
-    id: 'numbers_neighbors_008',
+    id: 'numbers_neighbors_014',
+    topic: 'numbers',
+    subtopic: 'שכנים',
+    difficulty: 'easy',
+    prompt: 'מה השכן לפני ואחרי המספר 10?',
+    answer: '9 ו-11',
+  },
+  {
+    id: 'numbers_neighbors_015',
+    topic: 'numbers',
+    subtopic: 'שכנים',
+    difficulty: 'easy',
+    prompt: 'מה השכן שאחרי המספר 6?',
+    answer: 7,
+    explanation: 'שכן אחר 7.',
+  },
+  {
+    id: 'numbers_neighbors_016',
     topic: 'numbers',
     subtopic: 'שכנים',
     difficulty: 'easy',
@@ -79,21 +157,47 @@ export const QUESTIONS: Question[] = [
     explanation: 'שכן קודם 4.',
   },
 
-  // ======================
-  // N U M B E R S  (MEDIUM)
-  // ======================
+  // ---- בינוני: לוח 10, דילוגים, סדרות ----
 
   {
-    id: 'numbers_tenframe_010',
+    id: 'numbers_tenframe_020',
     topic: 'numbers',
     subtopic: 'לוח 10',
     difficulty: 'medium',
     prompt: 'בלוח 10 צבועים 7 עיגולים. כמה עיגולים ריקים נשארו?',
     answer: 3,
+    assetId: 'numbers/tenframe_7',
     explanation: 'בלוח 10 יש 10 תאים. 10 פחות 7 שווה 3.',
   },
   {
-    id: 'numbers_sequence_011',
+    id: 'numbers_tenframe_021',
+    topic: 'numbers',
+    subtopic: 'לוח 10',
+    difficulty: 'medium',
+    prompt: 'בלוח 10 צבועים 4 עיגולים כחולים ו-3 ירוקים. כמה צבועים יש בסך הכל?',
+    answer: 7,
+    assetId: 'numbers/tenframe_4_blue_3_green',
+  },
+  {
+    id: 'numbers_tenframe_022',
+    topic: 'numbers',
+    subtopic: 'לוח 10',
+    difficulty: 'medium',
+    prompt: 'בלוח 10 צבועים 9 עיגולים. כמה צריך למחוק כדי שיישארו 5?',
+    answer: 4,
+    assetId: 'numbers/tenframe_9',
+  },
+  {
+    id: 'numbers_tenframe_023',
+    topic: 'numbers',
+    subtopic: 'לוח 10',
+    difficulty: 'medium',
+    prompt: 'בלוח 10 צבועים 4 עיגולים. כמה צריך להוסיף כדי שיהיו 10?',
+    answer: 6,
+  },
+
+  {
+    id: 'numbers_sequence_024',
     topic: 'numbers',
     subtopic: 'דילוגים',
     difficulty: 'medium',
@@ -101,23 +205,7 @@ export const QUESTIONS: Question[] = [
     answer: '8, 10',
   },
   {
-    id: 'numbers_order_012',
-    topic: 'numbers',
-    subtopic: 'התאם מספר לכמות',
-    difficulty: 'medium',
-    prompt: 'סדר מהקטן לגדול: 9, 3, 7, 1',
-    answer: '1, 3, 7, 9',
-  },
-  {
-    id: 'numbers_tenframe_013',
-    topic: 'numbers',
-    subtopic: 'לוח 10',
-    difficulty: 'medium',
-    prompt: 'בלוח 10 צבועים 4 עיגולים. כמה צריך להוסיף כדי שיהיו 10?',
-    answer: 6,
-  },
-  {
-    id: 'numbers_sequence_014',
+    id: 'numbers_sequence_025',
     topic: 'numbers',
     subtopic: 'דילוגים',
     difficulty: 'medium',
@@ -125,16 +213,41 @@ export const QUESTIONS: Question[] = [
     answer: '7, 9',
   },
   {
-    id: 'numbers_neighbors_015',
+    id: 'numbers_sequence_026',
     topic: 'numbers',
-    subtopic: 'שכנים',
+    subtopic: 'סדרות',
     difficulty: 'medium',
-    prompt: 'מהם שני השכנים של המספר 11?',
-    answer: '10 ו-12',
-    explanation: 'שכן קודם 10, שכן אחר 12.',
+    prompt: 'השלם: 4, 5, 6, __, __, 9',
+    answer: '7, 8',
   },
   {
-    id: 'numbers_order_016',
+    id: 'numbers_sequence_027',
+    topic: 'numbers',
+    subtopic: 'דילוגים',
+    difficulty: 'medium',
+    prompt: 'השלם את הסדרה: 10, 12, 14, __, __',
+    answer: '16, 18',
+  },
+
+  {
+    id: 'numbers_compare_028',
+    topic: 'numbers',
+    subtopic: 'השוואה',
+    difficulty: 'medium',
+    prompt: 'סמן מה גדול יותר: 8 או 5?',
+    answer: 8,
+    options: [5, 8],
+  },
+  {
+    id: 'numbers_compare_029',
+    topic: 'numbers',
+    subtopic: 'השוואה',
+    difficulty: 'medium',
+    prompt: 'סדר מהקטן לגדול: 9, 3, 7, 1',
+    answer: '1, 3, 7, 9',
+  },
+  {
+    id: 'numbers_compare_030',
     topic: 'numbers',
     subtopic: 'התאם מספר לכמות',
     difficulty: 'medium',
@@ -143,20 +256,46 @@ export const QUESTIONS: Question[] = [
     options: [5, 8, 12],
   },
   {
-    id: 'numbers_sequence_017',
+    id: 'numbers_neighbors_031',
     topic: 'numbers',
-    subtopic: 'דילוגים',
+    subtopic: 'שכנים',
     difficulty: 'medium',
-    prompt: 'השלם את הסדרה: 10, 12, 14, __, __',
-    answer: '16, 18',
+    prompt: 'מהם שני השכנים של המספר 11?',
+    answer: '10 ו-12',
+    explanation: 'שכן קודם 10, שכן אחר 12.',
   },
 
-  // ======================
-  // N U M B E R S  (HARD)
-  // ======================
+  // ---- קשה: עד 20, שילוב כמה רעיונות ----
 
   {
-    id: 'numbers_mix_020',
+    id: 'numbers_mix_040',
+    topic: 'numbers',
+    subtopic: 'מספרים עד 20',
+    difficulty: 'hard',
+    prompt:
+      'כתוב שלושה מספרים בין 10 ל-20 שהם גדולים מ-12 אבל קטנים מ-18.',
+    answer: 'למשל: 13, 14, 15',
+  },
+  {
+    id: 'numbers_mix_041',
+    topic: 'numbers',
+    subtopic: 'מספרים עד 20',
+    difficulty: 'hard',
+    prompt:
+      'בכיתה יש 18 תלמידים. 9 מהם הלכו לחוג. כמה נשארו בכיתה?',
+    answer: 9,
+  },
+  {
+    id: 'numbers_mix_042',
+    topic: 'numbers',
+    subtopic: 'מספרים עד 20',
+    difficulty: 'hard',
+    prompt:
+      'על ציר המספרים מסומן 0 עד 20. סמן את כל המספרים הגדולים מ-5 וקטנים מ-12.',
+    answer: '6,7,8,9,10,11',
+  },
+  {
+    id: 'numbers_mix_043',
     topic: 'numbers',
     subtopic: 'כתיבה',
     difficulty: 'hard',
@@ -164,7 +303,7 @@ export const QUESTIONS: Question[] = [
     answer: '11, 13, 15, 17, 19',
   },
   {
-    id: 'numbers_sequence_021',
+    id: 'numbers_sequence_044',
     topic: 'numbers',
     subtopic: 'דילוגים',
     difficulty: 'hard',
@@ -173,7 +312,7 @@ export const QUESTIONS: Question[] = [
     explanation: 'הסדרה יורדת בדילוגי 2.',
   },
   {
-    id: 'numbers_neighbors_022',
+    id: 'numbers_neighbors_045',
     topic: 'numbers',
     subtopic: 'שכנים',
     difficulty: 'hard',
@@ -181,7 +320,7 @@ export const QUESTIONS: Question[] = [
     answer: 10,
   },
   {
-    id: 'numbers_order_023',
+    id: 'numbers_order_046',
     topic: 'numbers',
     subtopic: 'התאם מספר לכמות',
     difficulty: 'hard',
@@ -189,11 +328,12 @@ export const QUESTIONS: Question[] = [
     answer: '19, 13, 11, 7, 2',
   },
 
-  // ============
-  // ADDITION
-  // ============
+  // ======================
+  // ADDITION – חיבור
+  // ======================
 
-  // easy
+  // ---- קל: חיבור עד 10 ----
+
   {
     id: 'add_basic_001',
     topic: 'addition',
@@ -215,11 +355,27 @@ export const QUESTIONS: Question[] = [
     topic: 'addition',
     subtopic: 'חיבור עד 10',
     difficulty: 'easy',
+    prompt: 'פתור: 4 + 5 = ?',
+    answer: 9,
+  },
+  {
+    id: 'add_basic_004',
+    topic: 'addition',
+    subtopic: 'חיבור עד 10',
+    difficulty: 'easy',
+    prompt: 'בסל יש 2 תפוחים ועוד 3 תפוזים. כמה פירות בסך הכל?',
+    answer: 5,
+  },
+  {
+    id: 'add_basic_005',
+    topic: 'addition',
+    subtopic: 'חיבור עד 10',
+    difficulty: 'easy',
     prompt: 'פתור: 4 + 3 = ?',
     answer: 7,
   },
   {
-    id: 'add_basic_004',
+    id: 'add_basic_006',
     topic: 'addition',
     subtopic: 'חיבור עד 10',
     difficulty: 'easy',
@@ -227,7 +383,7 @@ export const QUESTIONS: Question[] = [
     answer: 7,
   },
   {
-    id: 'add_basic_005',
+    id: 'add_basic_007',
     topic: 'addition',
     subtopic: 'חיבור עד 10',
     difficulty: 'easy',
@@ -235,7 +391,7 @@ export const QUESTIONS: Question[] = [
     answer: 2,
   },
   {
-    id: 'add_basic_006',
+    id: 'add_basic_008',
     topic: 'addition',
     subtopic: 'חיבור עד 10',
     difficulty: 'easy',
@@ -243,7 +399,7 @@ export const QUESTIONS: Question[] = [
     answer: 9,
   },
   {
-    id: 'add_basic_007',
+    id: 'add_basic_009',
     topic: 'addition',
     subtopic: 'חיבור עד 10',
     difficulty: 'easy',
@@ -251,7 +407,7 @@ export const QUESTIONS: Question[] = [
     answer: 6,
   },
   {
-    id: 'add_basic_008',
+    id: 'add_basic_010',
     topic: 'addition',
     subtopic: 'חיבור עד 10',
     difficulty: 'easy',
@@ -259,9 +415,35 @@ export const QUESTIONS: Question[] = [
     answer: 4,
   },
 
-  // medium
+  // ---- בינוני: השלמה ל-10, דומינו, מילולי ----
+
   {
-    id: 'add_tenframe_010',
+    id: 'add_ten_020',
+    topic: 'addition',
+    subtopic: 'השלמה ל-10',
+    difficulty: 'medium',
+    prompt: 'השלם ל-10: 4 + __ = 10',
+    answer: 6,
+  },
+  {
+    id: 'add_ten_021',
+    topic: 'addition',
+    subtopic: 'השלמה ל-10',
+    difficulty: 'medium',
+    prompt: 'השלם ל-10: 7 + __ = 10',
+    answer: 3,
+  },
+  {
+    id: 'add_ten_022',
+    topic: 'addition',
+    subtopic: 'השלמה ל-10',
+    difficulty: 'medium',
+    prompt: 'בלוח 10 צבועים 2 עיגולים. כמה צריך להוסיף כדי שיהיו 10?',
+    answer: 8,
+    assetId: 'addition/tenframe_2',
+  },
+  {
+    id: 'add_tenframe_023',
     topic: 'addition',
     subtopic: 'השלמה ל-10',
     difficulty: 'medium',
@@ -269,7 +451,69 @@ export const QUESTIONS: Question[] = [
     answer: 6,
   },
   {
-    id: 'add_word_011',
+    id: 'add_tenframe_024',
+    topic: 'addition',
+    subtopic: 'השלמה ל-10',
+    difficulty: 'medium',
+    prompt: '7 + ? = 10',
+    answer: 3,
+  },
+
+  {
+    id: 'add_domino_025',
+    topic: 'addition',
+    subtopic: 'דומינו מספרים',
+    difficulty: 'medium',
+    prompt: 'בדומינו יש 3 נקודות בצד אחד ו-5 בצד השני. מה הסכום?',
+    answer: 8,
+    assetId: 'addition/domino_3_5',
+  },
+  {
+    id: 'add_domino_026',
+    topic: 'addition',
+    subtopic: 'דומינו מספרים',
+    difficulty: 'medium',
+    prompt: 'בדומינו יש 4 נקודות בצד אחד ו-4 בצד השני. מה הסכום?',
+    answer: 8,
+    assetId: 'addition/domino_4_4',
+  },
+  {
+    id: 'add_domino_027',
+    topic: 'addition',
+    subtopic: 'דומינו מספרים',
+    difficulty: 'medium',
+    prompt: 'בדומינו כתוב 3 נקודות בצד אחד ו-5 בצד השני. מה הסכום?',
+    answer: 8,
+  },
+  {
+    id: 'add_domino_028',
+    topic: 'addition',
+    subtopic: 'דומינו מספרים',
+    difficulty: 'medium',
+    prompt: 'בדומינו כתוב 6 נקודות בצד אחד ו-4 בצד השני. מה הסכום?',
+    answer: 10,
+  },
+
+  {
+    id: 'add_word_029',
+    topic: 'addition',
+    subtopic: 'חיבור מילולי',
+    difficulty: 'medium',
+    prompt:
+      'בכיתה יש 7 ילדים. נכנסו עוד 6 ילדים. כמה ילדים יש עכשיו בכיתה?',
+    answer: 13,
+  },
+  {
+    id: 'add_word_030',
+    topic: 'addition',
+    subtopic: 'חיבור מילולי',
+    difficulty: 'medium',
+    prompt:
+      'בקופסה יש 4 עפרונות כחולים ו-3 ירוקים. כמה עפרונות יש בקופסה?',
+    answer: 7,
+  },
+  {
+    id: 'add_word_031',
     topic: 'addition',
     subtopic: 'חיבור מילולי',
     difficulty: 'medium',
@@ -278,23 +522,7 @@ export const QUESTIONS: Question[] = [
     explanation: '7 ועוד 6 שווה 13.',
   },
   {
-    id: 'add_domino_012',
-    topic: 'addition',
-    subtopic: 'דומינו מספרים',
-    difficulty: 'medium',
-    prompt: 'בדומינו כתוב 3 נקודות בצד אחד ו-5 בצד השני. מה הסכום?',
-    answer: 8,
-  },
-  {
-    id: 'add_tenframe_013',
-    topic: 'addition',
-    subtopic: 'השלמה ל-10',
-    difficulty: 'medium',
-    prompt: '7 + ? = 10',
-    answer: 3,
-  },
-  {
-    id: 'add_word_014',
+    id: 'add_word_032',
     topic: 'addition',
     subtopic: 'חיבור מילולי',
     difficulty: 'medium',
@@ -302,25 +530,43 @@ export const QUESTIONS: Question[] = [
     answer: 9,
   },
   {
-    id: 'add_basic_015',
+    id: 'add_basic_033',
     topic: 'addition',
     subtopic: 'חיבור עד 10',
     difficulty: 'medium',
     prompt: 'פתור: 6 + 4 = ?',
     answer: 10,
   },
-  {
-    id: 'add_domino_016',
-    topic: 'addition',
-    subtopic: 'דומינו מספרים',
-    difficulty: 'medium',
-    prompt: 'בדומינו כתוב 6 נקודות בצד אחד ו-4 בצד השני. מה הסכום?',
-    answer: 10,
-  },
 
-  // hard
+  // ---- קשה: חיבור עד 20, כמה שלבים ----
+
   {
-    id: 'add_multi_020',
+    id: 'add_hard_040',
+    topic: 'addition',
+    subtopic: 'חיבור עד 20',
+    difficulty: 'hard',
+    prompt: 'פתור: 9 + 8 = ?',
+    answer: 17,
+  },
+  {
+    id: 'add_hard_041',
+    topic: 'addition',
+    subtopic: 'חיבור עד 20',
+    difficulty: 'hard',
+    prompt: 'פתור: 6 + 7 + 2 = ?',
+    answer: 15,
+  },
+  {
+    id: 'add_hard_042',
+    topic: 'addition',
+    subtopic: 'חיבור מילולי',
+    difficulty: 'hard',
+    prompt:
+      'בכיתה א׳ יש 12 תלמידים ובכיתה ב׳ יש 9 תלמידים. כמה תלמידים בשתי הכיתות יחד?',
+    answer: 21,
+  },
+  {
+    id: 'add_multi_043',
     topic: 'addition',
     subtopic: 'חיבור מילולי',
     difficulty: 'hard',
@@ -328,7 +574,7 @@ export const QUESTIONS: Question[] = [
     answer: 15,
   },
   {
-    id: 'add_multi_021',
+    id: 'add_multi_044',
     topic: 'addition',
     subtopic: 'חיבור מילולי',
     difficulty: 'hard',
@@ -337,15 +583,7 @@ export const QUESTIONS: Question[] = [
     explanation: '5 + 4 + 3 = 12.',
   },
   {
-    id: 'add_multi_022',
-    topic: 'addition',
-    subtopic: 'חיבור מילולי',
-    difficulty: 'hard',
-    prompt: 'פתור: 9 + 8 = ?',
-    answer: 17,
-  },
-  {
-    id: 'add_multi_023',
+    id: 'add_multi_045',
     topic: 'addition',
     subtopic: 'חיבור מילולי',
     difficulty: 'hard',
@@ -354,7 +592,7 @@ export const QUESTIONS: Question[] = [
     explanation: '5 + 5 + 5 = 15.',
   },
   {
-    id: 'add_multi_024',
+    id: 'add_multi_046',
     topic: 'addition',
     subtopic: 'חיבור מילולי',
     difficulty: 'hard',
@@ -362,11 +600,12 @@ export const QUESTIONS: Question[] = [
     answer: 16,
   },
 
-  // ============
-  // SUBTRACTION
-  // ============
+  // ======================
+  // SUBTRACTION – חיסור
+  // ======================
 
-  // easy
+  // ---- קל: חיסור עד 10 ----
+
   {
     id: 'sub_basic_001',
     topic: 'subtraction',
@@ -388,7 +627,7 @@ export const QUESTIONS: Question[] = [
     topic: 'subtraction',
     subtopic: 'חיסור עד 10',
     difficulty: 'easy',
-    prompt: 'פתור: 7 - 3 = ?',
+    prompt: 'על העץ יש 6 ציפורים. 2 עפות. כמה נשארות על העץ?',
     answer: 4,
   },
   {
@@ -396,11 +635,19 @@ export const QUESTIONS: Question[] = [
     topic: 'subtraction',
     subtopic: 'חיסור עד 10',
     difficulty: 'easy',
+    prompt: 'פתור: 7 - 3 = ?',
+    answer: 4,
+  },
+  {
+    id: 'sub_basic_005',
+    topic: 'subtraction',
+    subtopic: 'חיסור עד 10',
+    difficulty: 'easy',
     prompt: 'פתור: 8 - 2 = ?',
     answer: 6,
   },
   {
-    id: 'sub_basic_005',
+    id: 'sub_basic_006',
     topic: 'subtraction',
     subtopic: 'חיסור עד 10',
     difficulty: 'easy',
@@ -408,7 +655,7 @@ export const QUESTIONS: Question[] = [
     answer: 5,
   },
   {
-    id: 'sub_basic_006',
+    id: 'sub_basic_007',
     topic: 'subtraction',
     subtopic: 'חיסור עד 10',
     difficulty: 'easy',
@@ -416,7 +663,7 @@ export const QUESTIONS: Question[] = [
     answer: 5,
   },
   {
-    id: 'sub_basic_007',
+    id: 'sub_basic_008',
     topic: 'subtraction',
     subtopic: 'חיסור עד 10',
     difficulty: 'easy',
@@ -424,25 +671,28 @@ export const QUESTIONS: Question[] = [
     answer: 0,
   },
 
-  // medium
+  // ---- בינוני: מילולי, לוח 10 ----
+
   {
-    id: 'sub_word_010',
+    id: 'sub_word_020',
     topic: 'subtraction',
     subtopic: 'חיסור מילולי',
     difficulty: 'medium',
-    prompt: 'לנועה היו 8 מסטיקים. היא נתנה 3 לחבר. כמה מסטיקים נשארו לה?',
+    prompt:
+      'לנועה היו 8 מסטיקים. היא נתנה 3 לחבר. כמה מסטיקים נשארו לה?',
     answer: 5,
   },
   {
-    id: 'sub_tenframe_011',
+    id: 'sub_word_021',
     topic: 'subtraction',
-    subtopic: 'חיסור עד 10',
+    subtopic: 'חיסור מילולי',
     difficulty: 'medium',
-    prompt: 'בלוח 10 צבועים 9 עיגולים. מחקו 4. כמה עיגולים צבועים נשארו?',
-    answer: 5,
+    prompt:
+      'בקופסה היו 10 עפרונות. 4 נשברו. כמה עפרונות שלמים נשארו?',
+    answer: 6,
   },
   {
-    id: 'sub_word_012',
+    id: 'sub_word_022',
     topic: 'subtraction',
     subtopic: 'חיסור מילולי',
     difficulty: 'medium',
@@ -450,15 +700,7 @@ export const QUESTIONS: Question[] = [
     answer: 4,
   },
   {
-    id: 'sub_basic_013',
-    topic: 'subtraction',
-    subtopic: 'חיסור עד 10',
-    difficulty: 'medium',
-    prompt: 'פתור: 12 - 7 = ?',
-    answer: 5,
-  },
-  {
-    id: 'sub_word_014',
+    id: 'sub_word_023',
     topic: 'subtraction',
     subtopic: 'חיסור מילולי',
     difficulty: 'medium',
@@ -466,9 +708,63 @@ export const QUESTIONS: Question[] = [
     answer: 7,
   },
 
-  // hard
   {
-    id: 'sub_chain_020',
+    id: 'sub_ten_024',
+    topic: 'subtraction',
+    subtopic: 'לוח 10',
+    difficulty: 'medium',
+    prompt: 'בלוח 10 צבועים 9 עיגולים. מחקו 4. כמה צבועים נשארו?',
+    answer: 5,
+    assetId: 'subtraction/tenframe_9_minus_4',
+  },
+  {
+    id: 'sub_ten_025',
+    topic: 'subtraction',
+    subtopic: 'לוח 10',
+    difficulty: 'medium',
+    prompt: 'בלוח 10 צבועים 6 עיגולים. מחקו 2. כמה צבועים נשארו?',
+    answer: 4,
+    assetId: 'subtraction/tenframe_6_minus_2',
+  },
+  {
+    id: 'sub_tenframe_026',
+    topic: 'subtraction',
+    subtopic: 'חיסור עד 10',
+    difficulty: 'medium',
+    prompt: 'בלוח 10 צבועים 9 עיגולים. מחקו 4. כמה עיגולים צבועים נשארו?',
+    answer: 5,
+  },
+  {
+    id: 'sub_basic_027',
+    topic: 'subtraction',
+    subtopic: 'חיסור עד 10',
+    difficulty: 'medium',
+    prompt: 'פתור: 12 - 7 = ?',
+    answer: 5,
+  },
+
+  // ---- קשה: חיסור בכמה שלבים ----
+
+  {
+    id: 'sub_hard_040',
+    topic: 'subtraction',
+    subtopic: 'כמה נשאר',
+    difficulty: 'hard',
+    prompt:
+      'היו 12 בלונים. 4 התפוצצו ואז עוד 3 עפו. כמה בלונים נשארו?',
+    answer: 5,
+  },
+  {
+    id: 'sub_hard_041',
+    topic: 'subtraction',
+    subtopic: 'כמה נשאר',
+    difficulty: 'hard',
+    prompt:
+      'בכיתה היו 15 תלמידים. 5 יצאו להפסקה מוקדמת ו-4 חזרו. כמה תלמידים בכיתה עכשיו?',
+    answer: 14,
+  },
+  {
+    id: 'sub_chain_042',
     topic: 'subtraction',
     subtopic: 'כמה נשאר',
     difficulty: 'hard',
@@ -477,7 +773,7 @@ export const QUESTIONS: Question[] = [
     explanation: '12 - 4 - 3 = 5.',
   },
   {
-    id: 'sub_chain_021',
+    id: 'sub_chain_043',
     topic: 'subtraction',
     subtopic: 'כמה נשאר',
     difficulty: 'hard',
@@ -485,7 +781,7 @@ export const QUESTIONS: Question[] = [
     answer: 9,
   },
   {
-    id: 'sub_chain_022',
+    id: 'sub_chain_044',
     topic: 'subtraction',
     subtopic: 'כמה נשאר',
     difficulty: 'hard',
@@ -494,7 +790,7 @@ export const QUESTIONS: Question[] = [
     explanation: '20 - 8 - 5 = 7.',
   },
   {
-    id: 'sub_chain_023',
+    id: 'sub_chain_045',
     topic: 'subtraction',
     subtopic: 'כמה נשאר',
     difficulty: 'hard',
@@ -502,18 +798,16 @@ export const QUESTIONS: Question[] = [
     answer: 9,
   },
 
-  // ==============
-  // EVEN / ODD
-  // ==============
+  // ======================
+  // EVEN / ODD – זוגי/אי-זוגי
+  // ======================
 
-  // easy
   {
     id: 'even_odd_001',
     topic: 'evenOdd',
     difficulty: 'easy',
     prompt: 'האם המספר 6 הוא זוגי או אי-זוגי?',
     answer: 'זוגי',
-    explanation: 'אפשר לחלק 6 לזוגות בלי שיישאר מספר בודד.',
   },
   {
     id: 'even_odd_002',
@@ -526,57 +820,86 @@ export const QUESTIONS: Question[] = [
     id: 'even_odd_003',
     topic: 'evenOdd',
     difficulty: 'easy',
+    prompt: 'יש 8 גרביים. האם אפשר לחלק אותן לזוגות בלי שיישארה גרב בודדת?',
+    answer: 'כן',
+  },
+  {
+    id: 'even_odd_004',
+    topic: 'evenOdd',
+    difficulty: 'easy',
     prompt: 'האם המספר 4 הוא זוגי או אי-זוגי?',
     answer: 'זוגי',
   },
   {
-    id: 'even_odd_004',
+    id: 'even_odd_005',
     topic: 'evenOdd',
     difficulty: 'easy',
     prompt: 'האם המספר 7 הוא זוגי או אי-זוגי?',
     answer: 'אי-זוגי',
   },
   {
-    id: 'even_odd_005',
+    id: 'even_odd_006',
     topic: 'evenOdd',
     difficulty: 'easy',
     prompt: 'האם המספר 10 הוא זוגי או אי-זוגי?',
     answer: 'זוגי',
   },
-
-  // medium
   {
-    id: 'even_odd_010',
+    id: 'even_odd_007',
+    topic: 'evenOdd',
+    difficulty: 'easy',
+    prompt: 'האם המספר 6 הוא זוגי או אי-זוגי?',
+    answer: 'זוגי',
+    explanation: 'אפשר לחלק 6 לזוגות בלי שיישאר מספר בודד.',
+  },
+
+  {
+    id: 'even_odd_020',
     topic: 'evenOdd',
     difficulty: 'medium',
     prompt: 'סמן את כל המספרים הזוגיים: 3, 4, 7, 10, 11.',
     answer: '4, 10',
   },
   {
-    id: 'even_odd_011',
+    id: 'even_odd_021',
     topic: 'evenOdd',
     difficulty: 'medium',
-    prompt: 'בקבוצה יש 13 חרוזים. האם ניתן לסדר אותם בזוגות ללא שארית?',
+    prompt:
+      'בקבוצה יש 13 חרוזים. האם ניתן לסדר אותם בזוגות ללא שארית?',
     answer: 'לא',
   },
   {
-    id: 'even_odd_012',
+    id: 'even_odd_022',
     topic: 'evenOdd',
     difficulty: 'medium',
     prompt: 'סמן את כל המספרים האי-זוגיים: 2, 5, 8, 9, 12.',
     answer: '5, 9',
   },
   {
-    id: 'even_odd_013',
+    id: 'even_odd_023',
     topic: 'evenOdd',
     difficulty: 'medium',
     prompt: 'האם 16 הוא מספר זוגי?',
     answer: 'כן',
   },
 
-  // hard
   {
-    id: 'even_odd_020',
+    id: 'even_odd_040',
+    topic: 'evenOdd',
+    difficulty: 'hard',
+    prompt: 'כתוב שלושה מספרים אי-זוגיים בין 10 ל-20.',
+    answer: 'למשל: 11, 13, 15',
+  },
+  {
+    id: 'even_odd_041',
+    topic: 'evenOdd',
+    difficulty: 'hard',
+    prompt:
+      'בחר שני מספרים זוגיים שהסכום שלהם הוא 12.',
+    answer: 'למשל: 4 ו-8 או 6 ו-6',
+  },
+  {
+    id: 'even_odd_042',
     topic: 'evenOdd',
     difficulty: 'hard',
     prompt: 'כתוב שלושה מספרים אי-זוגיים בין 10 ל-20.',
@@ -584,7 +907,7 @@ export const QUESTIONS: Question[] = [
     explanation: 'כל תשובה עם שלושה מספרים אי-זוגיים תקינה.',
   },
   {
-    id: 'even_odd_021',
+    id: 'even_odd_043',
     topic: 'evenOdd',
     difficulty: 'hard',
     prompt: 'אם מחברים שני מספרים זוגיים, האם התוצאה תמיד זוגית?',
@@ -592,7 +915,7 @@ export const QUESTIONS: Question[] = [
     explanation: 'זוגי + זוגי = זוגי תמיד.',
   },
   {
-    id: 'even_odd_022',
+    id: 'even_odd_044',
     topic: 'evenOdd',
     difficulty: 'hard',
     prompt: 'אם מחברים שני מספרים אי-זוגיים, האם התוצאה תמיד אי-זוגית?',
@@ -600,13 +923,32 @@ export const QUESTIONS: Question[] = [
     explanation: 'אי-זוגי + אי-זוגי = זוגי. לדוגמה: 3 + 5 = 8.',
   },
 
-  // ==============
-  // GEOMETRY / SYMMETRY
-  // ==============
+  // ======================
+  // GEOMETRY – צורות וסימטריה
+  // ======================
 
-  // easy
+  // ---- צורות בסיסיות ----
+
   {
     id: 'geo_shapes_001',
+    topic: 'geometry',
+    subtopic: 'צורות',
+    difficulty: 'easy',
+    prompt: 'סמן את כל הריבועים בציור.',
+    answer: 'כל הריבועים',
+    assetId: 'geometry/mix_shapes_1',
+  },
+  {
+    id: 'geo_shapes_002',
+    topic: 'geometry',
+    subtopic: 'צורות',
+    difficulty: 'easy',
+    prompt: 'כמה משולשים יש בתמונה?',
+    answer: 4,
+    assetId: 'geometry/triangles_4',
+  },
+  {
+    id: 'geo_shapes_003',
     topic: 'geometry',
     subtopic: 'צורות',
     difficulty: 'easy',
@@ -614,15 +956,7 @@ export const QUESTIONS: Question[] = [
     answer: 3,
   },
   {
-    id: 'geo_symmetry_002',
-    topic: 'geometry',
-    subtopic: 'סימטריה',
-    difficulty: 'easy',
-    prompt: 'האם לב הוא צורה סימטרית ביחס לקו באמצע?',
-    answer: 'כן',
-  },
-  {
-    id: 'geo_shapes_003',
+    id: 'geo_shapes_004',
     topic: 'geometry',
     subtopic: 'צורות',
     difficulty: 'easy',
@@ -630,7 +964,7 @@ export const QUESTIONS: Question[] = [
     answer: 4,
   },
   {
-    id: 'geo_shapes_004',
+    id: 'geo_shapes_005',
     topic: 'geometry',
     subtopic: 'צורות',
     difficulty: 'easy',
@@ -638,9 +972,59 @@ export const QUESTIONS: Question[] = [
     answer: 'לא',
   },
 
-  // medium
+  // ---- סימטריה בסיסית ----
+
   {
-    id: 'geo_symmetry_010',
+    id: 'geo_symmetry_006',
+    topic: 'geometry',
+    subtopic: 'סימטריה',
+    difficulty: 'easy',
+    prompt: 'האם לב הוא צורה סימטרית ביחס לקו באמצע?',
+    answer: 'כן',
+    assetId: 'geometry/heart_midline',
+  },
+  {
+    id: 'geo_symmetry_007',
+    topic: 'geometry',
+    subtopic: 'סימטריה',
+    difficulty: 'easy',
+    prompt: 'האם חץ שפונה רק ימינה הוא סימטרי ביחס לקו באמצע?',
+    answer: 'לא',
+    assetId: 'geometry/arrow_right',
+  },
+  {
+    id: 'geo_symmetry_008',
+    topic: 'geometry',
+    subtopic: 'סימטריה',
+    difficulty: 'easy',
+    prompt: 'האם לב הוא צורה סימטרית ביחס לקו באמצע?',
+    answer: 'כן',
+  },
+
+  // ---- סימטריה / שיקוף – בינוני ----
+
+  {
+    id: 'geo_symmetry_020',
+    topic: 'geometry',
+    subtopic: 'שיקוף',
+    difficulty: 'medium',
+    prompt:
+      'חצי כוכב מצויר בצד שמאל של קו שיקוף. השלם בצד ימין כדי שיהיה כוכב שלם.',
+    answer: 'כוכב סימטרי',
+    assetId: 'geometry/half_star',
+  },
+  {
+    id: 'geo_symmetry_021',
+    topic: 'geometry',
+    subtopic: 'סימטריה',
+    difficulty: 'medium',
+    prompt: 'איזו מהצורות אינה סימטרית?',
+    options: ['ריבוע', 'משולש שווה-שוקיים', 'חץ חד-צדדי'],
+    answer: 'חץ חד-צדדי',
+    assetId: 'geometry/symmetry_choices',
+  },
+  {
+    id: 'geo_symmetry_022',
     topic: 'geometry',
     subtopic: 'שיקוף',
     difficulty: 'medium',
@@ -649,7 +1033,7 @@ export const QUESTIONS: Question[] = [
     explanation: 'בשיקוף מופיע תמונת ראי של הצורה.',
   },
   {
-    id: 'geo_symmetry_011',
+    id: 'geo_symmetry_023',
     topic: 'geometry',
     subtopic: 'סימטריה',
     difficulty: 'medium',
@@ -658,7 +1042,7 @@ export const QUESTIONS: Question[] = [
     answer: 'חץ חד-צדדי',
   },
   {
-    id: 'geo_shapes_012',
+    id: 'geo_shapes_024',
     topic: 'geometry',
     subtopic: 'צורות',
     difficulty: 'medium',
@@ -666,7 +1050,7 @@ export const QUESTIONS: Question[] = [
     answer: 6,
   },
   {
-    id: 'geo_symmetry_013',
+    id: 'geo_symmetry_025',
     topic: 'geometry',
     subtopic: 'השלמת חצי צורה',
     difficulty: 'medium',
@@ -674,9 +1058,29 @@ export const QUESTIONS: Question[] = [
     answer: 4,
   },
 
-  // hard
+  // ---- קשה: יותר קווי סימטריה / השלמת צורות חג ----
+
   {
-    id: 'geo_symmetry_020',
+    id: 'geo_symmetry_040',
+    topic: 'geometry',
+    subtopic: 'שיקוף',
+    difficulty: 'hard',
+    prompt:
+      'בסביבון מצויר קו שיקוף אחד. צייר סביבון אחר שיש לו שני קווי שיקוף.',
+    answer: 'למשל סביבון עגול עם ציור סימטרי בשני כיוונים',
+  },
+  {
+    id: 'geo_symmetry_041',
+    topic: 'geometry',
+    subtopic: 'השלמת חצי צורה',
+    difficulty: 'hard',
+    prompt:
+      'חצי חנוכייה מצויר מצד אחד של קו שיקוף. השלם את הצד השני כך שהחנוכייה תהיה סימטרית.',
+    answer: 'חנוכייה עם מספר נרות שווה בשני הצדדים',
+    assetId: 'geometry/half_menorah',
+  },
+  {
+    id: 'geo_symmetry_042',
     topic: 'geometry',
     subtopic: 'שיקוף',
     difficulty: 'hard',
@@ -685,7 +1089,7 @@ export const QUESTIONS: Question[] = [
     explanation: 'לריבוע יש 4 צירי סימטריה: 2 אלכסונים ו-2 קווים המחברים אמצעי צלעות.',
   },
   {
-    id: 'geo_shapes_021',
+    id: 'geo_shapes_043',
     topic: 'geometry',
     subtopic: 'צורות',
     difficulty: 'hard',
@@ -693,7 +1097,7 @@ export const QUESTIONS: Question[] = [
     answer: 'מעגל',
   },
   {
-    id: 'geo_symmetry_022',
+    id: 'geo_symmetry_044',
     topic: 'geometry',
     subtopic: 'סימטריה',
     difficulty: 'hard',
