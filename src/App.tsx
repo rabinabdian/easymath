@@ -7,6 +7,7 @@ import type { CountExercise } from "./data/countTo5";
 import { useChildSettings } from "./context/ChildSettingsContext";
 import type { ChildSettings } from "./context/ChildSettingsContext";
 import { speak } from "./utils/speech";
+import TeacherDashboard from "./components/TeacherDashboard";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ function HomePage() {
       <div className="buttons">
         <button onClick={() => navigate("/session")}>התחל תרגול</button>
         <button onClick={() => navigate("/parent")}>כניסת הורה</button>
+        <button onClick={() => navigate("/teacher")}>כניסת מורה</button>
       </div>
     </div>
   );
@@ -426,6 +428,7 @@ export default function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/session" element={<SessionPage />} />
       <Route path="/parent" element={<ParentPage />} />
+      <Route path="/teacher" element={<TeacherDashboard />} />
     </Routes>
   );
 }
