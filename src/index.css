@@ -146,3 +146,68 @@ select {
   font-size: 1.6rem;
   padding: 4px;
 }
+
+.badge {
+  display: inline-block;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e0e7ff;
+  color: #1e3a8a;
+  font-size: 0.9rem;
+}
+
+.icons-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #3b82f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.options-row {
+  flex-direction: row;
+  justify-content: center;
+  gap: 16px;
+  max-width: 400px;
+}
+
+.option-button {
+  min-width: 70px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  padding: 16px 20px;
+}
+
+.option-button-wrong {
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  75% {
+    transform: translateX(8px);
+  }
+}
+
+.feedback {
+  margin-top: 16px;
+  font-size: 1.3rem;
+  min-height: 32px;
+  font-weight: 500;
+}
