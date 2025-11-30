@@ -127,26 +127,53 @@ function SessionPage() {
   const navigate = useNavigate();
 
   const allExercises: CountExercise[] = countTo5Exercises;
-  const sessionExercises = allExercises.slice(0, settings.sessionLength);
+
+  // Defensive: ensure sessionLength is valid
+  const safeSessionLength = [5, 7, 10].includes(settings.sessionLength)
+    ? settings.sessionLength
+    : 5;
+  const sessionExercises = allExercises.slice(0, safeSessionLength);
 
   const [tutorialDone, setTutorialDone] = useState(false);
   const [introSpoken, setIntroSpoken] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>("idle");
 
-  const current = sessionExercises[currentIndex];
-
   // אם עוד לא עברנו דוגמה – מציגים רק אותה
   if (!tutorialDone) {
-    return <TutorialExercise onDone={() => setTutorialDone(true)} />;
+    return <TutorialExercise onDone={() => {
+      setTutorialDone(true);
+      setCurrentIndex(0);
+      setFeedback("idle");
+      setIntroSpoken(false);
+    }} />;
   }
 
-  // אם אין תרגילים או התרגיל הנוכחי לא קיים
-  if (!current || sessionExercises.length === 0) {
+  // Defensive: ensure we have exercises and currentIndex is valid
+  if (sessionExercises.length === 0 || currentIndex >= sessionExercises.length) {
+    console.error('Session error:', {
+      sessionExercisesLength: sessionExercises.length,
+      currentIndex,
+      settings
+    });
     return (
       <div className="page page-right">
         <h2 className="title">שגיאה</h2>
-        <p className="subtitle">לא נמצאו תרגילים</p>
+        <p className="subtitle">לא נמצאו תרגילים (אורך: {sessionExercises.length}, אינדקס: {currentIndex})</p>
+        <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
+      </div>
+    );
+  }
+
+  const current = sessionExercises[currentIndex];
+
+  // Additional safety check
+  if (!current) {
+    console.error('Current exercise is undefined:', { currentIndex, sessionExercises });
+    return (
+      <div className="page page-right">
+        <h2 className="title">שגיאה</h2>
+        <p className="subtitle">תרגיל נוכחי לא נמצא</p>
         <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
       </div>
     );
