@@ -173,3 +173,103 @@ export function generateMultiplicationQuestions(t: MultiplicationTemplate): Ques
 
   return questions;
 }
+
+// -------- מחולל שאלות מילוליות --------
+
+type WordContext = 'fruits' | 'kids' | 'candies';
+
+interface WordTemplateConfig {
+  idPrefix: string;
+  topic: TopicId;           // בדרך כלל 'addition' או 'subtraction'
+  difficulty: Difficulty;
+  minA: number;
+  maxA: number;
+  minB: number;
+  maxB: number;
+  operation: 'add' | 'sub';
+  count: number;            // כמה שאלות לייצר
+  context: WordContext;
+}
+
+const NAMES = ['נועה', 'יואב', 'דני', 'מיה', 'תמר', 'איתי'];
+
+const CONTEXT_ITEMS: Record<
+  WordContext,
+  { singular: string; plural: string }
+> = {
+  fruits: { singular: 'פרי', plural: 'פירות' },
+  kids: { singular: 'ילד', plural: 'ילדים' },
+  candies: { singular: 'מסטיק', plural: 'מסטיקים' },
+};
+
+/**
+ * מייצר שאלות מילוליות באופן אוטומטי
+ * @example
+ * generateWordProblems({
+ *   idPrefix: 'auto_add_word_',
+ *   topic: 'addition',
+ *   difficulty: 'medium',
+ *   minA: 2,
+ *   maxA: 8,
+ *   minB: 1,
+ *   maxB: 5,
+ *   operation: 'add',
+ *   count: 15,
+ *   context: 'fruits'
+ * })
+ */
+export function generateWordProblems(cfg: WordTemplateConfig): Question[] {
+  const {
+    idPrefix,
+    topic,
+    difficulty,
+    minA,
+    maxA,
+    minB,
+    maxB,
+    operation,
+    count,
+    context,
+  } = cfg;
+
+  const questions: Question[] = [];
+  const ctx = CONTEXT_ITEMS[context];
+  let counter = 1;
+
+  while (questions.length < count) {
+    const a =
+      minA + Math.floor(Math.random() * (maxA - minA + 1));
+    const b =
+      minB + Math.floor(Math.random() * (maxB - minB + 1));
+
+    if (operation === 'sub' && b > a) continue; // שלא יצא שלילי
+
+    const name = NAMES[Math.floor(Math.random() * NAMES.length)];
+
+    let prompt: string;
+    let answer: number;
+
+    if (operation === 'add') {
+      answer = a + b;
+      prompt = `${name} קיבל/ה ${a} ${ctx.plural}. אחר כך קיבל/ה עוד ${b} ${ctx.plural}. כמה ${ctx.plural} יש ל${name} בסך הכל?`;
+    } else {
+      answer = a - b;
+      prompt = `${name} קיבל/ה ${a} ${ctx.plural}. ${b} ${ctx.plural} ניתנו לחבר. כמה ${ctx.plural} נשארו ל${name}?`;
+    }
+
+    const id = `${idPrefix}${String(counter).padStart(3, '0')}`;
+
+    questions.push({
+      id,
+      topic,
+      difficulty,
+      subtopic: operation === 'add' ? 'חיבור מילולי' : 'חיסור מילולי',
+      prompt,
+      answer,
+    });
+
+    counter++;
+  }
+
+  return questions;
+}

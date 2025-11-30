@@ -4,6 +4,7 @@ import {
   generateAdditionQuestions,
   generateSubtractionQuestions,
   generateMultiplicationQuestions,
+  generateWordProblems,
 } from '../utils/questionGenerator';
 
 // ========================================
@@ -92,6 +93,34 @@ const autoMulHard: Question[] = generateMultiplicationQuestions({
   subtopic: 'לוח הכפל עד 12',
   difficulty: 'hard',
   maxFactor: 12,
+});
+
+// שאלות מילוליות אוטומטיות - חיבור
+const autoAddWords: Question[] = generateWordProblems({
+  idPrefix: 'auto_add_word_',
+  topic: 'addition',
+  difficulty: 'medium',
+  minA: 2,
+  maxA: 8,
+  minB: 1,
+  maxB: 5,
+  operation: 'add',
+  count: 15,
+  context: 'fruits',
+});
+
+// שאלות מילוליות אוטומטיות - חיסור
+const autoSubWords: Question[] = generateWordProblems({
+  idPrefix: 'auto_sub_word_',
+  topic: 'subtraction',
+  difficulty: 'medium',
+  minA: 5,
+  maxA: 12,
+  minB: 1,
+  maxB: 5,
+  operation: 'sub',
+  count: 15,
+  context: 'candies',
 });
 
 // ========================================
@@ -1219,4 +1248,6 @@ export const QUESTIONS: Question[] = [
   ...autoMulEasy,
   ...autoMulMedium,
   ...autoMulHard,
+  ...autoAddWords,
+  ...autoSubWords,
 ];
