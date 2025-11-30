@@ -1,16 +1,32 @@
 // src/components/StudentGame.tsx
 import { useEffect, useState } from 'react';
 import type { Question } from '../types/questions';
+import { useI18n } from '../i18n';
+
+interface GameContext {
+  month?: string;      // "ספטמבר"
+  weekIndex?: number;  // Week index in year plan
+}
+
+export interface GameResult {
+  score: number;
+  total: number;
+  month?: string;
+  weekIndex?: number;
+}
 
 interface Props {
   questions: Question[];
   onExit: () => void;
+  context?: GameContext;
+  onFinished?: (result: GameResult) => void;
 }
 
 const MAX_LIVES = 3;
 const TIME_PER_QUESTION = 30; // seconds
 
-export default function StudentGame({ questions, onExit }: Props) {
+export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
+  const { t } = useI18n();
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -33,7 +49,7 @@ export default function StudentGame({ questions, onExit }: Props) {
     if (!current || finished || gameOver) return;
     if (timeLeft <= 0) {
       // Time's up - count as wrong
-      handleWrong('נגמר הזמן ⏱️');
+      handleWrong(t('student.timeUp'));
       return;
     }
 
@@ -44,6 +60,18 @@ export default function StudentGame({ questions, onExit }: Props) {
     return () => clearTimeout(id);
   }, [timeLeft, current, finished, gameOver]);
 
+  // Call onFinished when game is completed successfully
+  useEffect(() => {
+    if (!finished || !onFinished) return;
+
+    onFinished({
+      score,
+      total: totalQuestions,
+      month: context?.month,
+      weekIndex: context?.weekIndex,
+    });
+  }, [finished, onFinished, score, context]);
+
   const totalQuestions = questions.length;
   const progress = totalQuestions > 0 ? (index / totalQuestions) * 100 : 0;
   const hearts = Array.from({ length: MAX_LIVES }, (_, i) => i < lives);
@@ -51,7 +79,7 @@ export default function StudentGame({ questions, onExit }: Props) {
   function handleWrong(customMessage?: string) {
     setFeedback(
       customMessage ??
-        `לא מדויק... התשובה הנכונה היא: ${String(current?.answer ?? '')}`
+        t('student.wrongAnswer', { answer: String(current?.answer ?? '') })
     );
 
     setLives((prev) => {
@@ -73,7 +101,7 @@ export default function StudentGame({ questions, onExit }: Props) {
   }
 
   function handleCorrect() {
-    setFeedback('כל הכבוד! תשובה נכונה ✅');
+    setFeedback(t('student.correct'));
     setScore((s) => s + 1);
 
     setTimeout(() => {
@@ -119,10 +147,11 @@ export default function StudentGame({ questions, onExit }: Props) {
         <div className="mx-auto flex max-w-xl flex-col gap-4 px-4 py-10">
           <div className="rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="mb-2 text-xl font-bold text-slate-900">
-              כל הכבוד! סיימת את כל התרגילים 🎉
+              {t('student.finished.title')}
             </h2>
             <p className="mb-3 text-slate-700">
-              ניקוד: <span className="font-semibold">{score}</span> מתוך{' '}
+              {t('student.finished.score')}{' '}
+              <span className="font-semibold">{score}</span> {t('student.of')}{' '}
               <span className="font-semibold">{totalQuestions}</span> (
               {percent}%)
             </p>
@@ -134,10 +163,10 @@ export default function StudentGame({ questions, onExit }: Props) {
             </div>
             <p className="text-sm text-slate-600">
               {stars === 3
-                ? 'תלמיד על חלל!'
+                ? t('student.finished.excellent')
                 : stars === 2
-                ? 'יפה מאוד, יש עוד קצת מה לשפר 🙂'
-                : 'כל התחלה היא מצוינת, תנסה שוב ותראה שיפור.'}
+                ? t('student.finished.good')
+                : t('student.finished.tryAgain')}
             </p>
           </div>
 
@@ -146,7 +175,7 @@ export default function StudentGame({ questions, onExit }: Props) {
             onClick={onExit}
             className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
           >
-            חזרה למצב מורה
+            {t('student.finished.backButton')}
           </button>
         </div>
       </div>
@@ -160,13 +189,13 @@ export default function StudentGame({ questions, onExit }: Props) {
         <div className="mx-auto flex max-w-xl flex-col gap-4 px-4 py-10">
           <div className="rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="mb-2 text-xl font-bold text-slate-900">
-              נגמרו כל הלבבות 💔
+              {t('student.gameOver.title')}
             </h2>
             <p className="mb-3 text-slate-700">
-              ניסו/ה: {index + 1} תרגילים · ניקוד: {score}
+              {t('student.gameOver.tried')} {index + 1} · {t('student.gameOver.score')} {score}
             </p>
             <p className="text-sm text-slate-600">
-              אפשר לנסות שוב, לבחור פחות תרגילים או רמת קושי אחרת.
+              {t('student.gameOver.hint')}
             </p>
           </div>
 
@@ -175,7 +204,7 @@ export default function StudentGame({ questions, onExit }: Props) {
             onClick={onExit}
             className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
           >
-            חזרה למצב מורה
+            {t('student.gameOver.backButton')}
           </button>
         </div>
       </div>
@@ -196,12 +225,12 @@ export default function StudentGame({ questions, onExit }: Props) {
             onClick={onExit}
             className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
           >
-            ← חזרה למורה
+            {t('student.backToTeacher')}
           </button>
 
           <div className="flex flex-col items-end gap-1 text-xs text-slate-700">
             <div className="flex items-center gap-2">
-              <span>לבבות:</span>
+              <span>{t('student.hearts')}</span>
               <div className="flex gap-0.5 text-lg">
                 {hearts.map((full, i) => (
                   <span key={i}>{full ? '❤️' : '🤍'}</span>
@@ -209,7 +238,7 @@ export default function StudentGame({ questions, onExit }: Props) {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span>טיימר:</span>
+              <span>{t('student.timer')}</span>
               <span
                 className={
                   timeLeft <= 5 ? 'font-bold text-rose-600' : 'font-medium'
@@ -219,7 +248,7 @@ export default function StudentGame({ questions, onExit }: Props) {
               </span>
             </div>
             <div>
-              ניקוד:{' '}
+              {t('student.score')}{' '}
               <span className="font-semibold text-emerald-600">{score}</span>
             </div>
           </div>
@@ -229,7 +258,7 @@ export default function StudentGame({ questions, onExit }: Props) {
         <div className="mb-4">
           <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
             <span>
-              שאלה {index + 1} מתוך {totalQuestions}
+              {t('student.question')} {index + 1} {t('student.of')} {totalQuestions}
             </span>
           </div>
           <div className="h-2 w-full rounded-full bg-slate-200">
@@ -283,7 +312,7 @@ export default function StudentGame({ questions, onExit }: Props) {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') checkAnswer();
                 }}
-                placeholder="כתוב כאן את התשובה"
+                placeholder={t('student.placeholder')}
                 className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
               />
               <button
@@ -291,7 +320,7 @@ export default function StudentGame({ questions, onExit }: Props) {
                 onClick={() => checkAnswer()}
                 className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
               >
-                בדיקה
+                {t('student.check')}
               </button>
             </div>
           )}

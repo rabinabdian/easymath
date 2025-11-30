@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { TOPICS } from '../data/topics';
 import { QUESTIONS } from '../data/questions';
 import type { Difficulty, TopicId, Question } from '../types/questions';
-import StudentGame from './StudentGame';
+import StudentGame, { type GameResult } from './StudentGame';
 import { buildPrintableExam } from '../utils/printableMapper';
 import { createExamPdf } from '../utils/createExamPdf';
 import { loadExams, saveExams } from '../utils/examsStorage';
@@ -12,6 +12,9 @@ import type { SavedExam } from '../utils/examsStorage';
 import { generateYearPlan } from '../utils/yearPlanGenerator';
 import { createYearBookletPdf } from '../utils/createYearBookletPdf';
 import type { YearPlan, WeekPlan } from '../types/yearPlan';
+import { useI18n } from '../i18n';
+import { loadProgress, saveProgress, upsertMonthBadge } from '../utils/progressStorage';
+import type { StudentProgress } from '../types/gamification';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
   if (count >= items.length) return [...items];
@@ -66,6 +69,7 @@ function buildQuestionsForWeek(
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
+  const { t, locale, setLocale } = useI18n();
   const [mode, setMode] = useState<'teacher' | 'student'>('teacher');
   const [selectedTopic, setSelectedTopic] = useState<TopicId>('numbers');
   const [selectedSubtopic, setSelectedSubtopic] = useState('');
@@ -81,6 +85,9 @@ export default function TeacherDashboard() {
   const [yearPlan, setYearPlan] = useState<YearPlan | null>(null);
   const [selectedWeekId, setSelectedWeekId] = useState<string>('');
 
+  // Progress & Gamification
+  const [progress, setProgress] = useState<StudentProgress | null>(null);
+
   useEffect(() => {
     setSavedExams(loadExams());
 
@@ -90,11 +97,24 @@ export default function TeacherDashboard() {
       yearLabel: 'תשפ״ו',
     });
     setYearPlan(plan);
+
+    // Load or initialize progress
+    const p = loadProgress() ?? {
+      id: 'default_student',
+      grade: 'א׳',
+      yearLabel: plan.yearLabel,
+      monthBadges: [],
+    };
+    setProgress(p);
   }, []);
 
   useEffect(() => {
     saveExams(savedExams);
   }, [savedExams]);
+
+  useEffect(() => {
+    if (progress) saveProgress(progress);
+  }, [progress]);
 
   const topic = useMemo(
     () => TOPICS.find((t) => t.id === selectedTopic),
@@ -232,10 +252,32 @@ export default function TeacherDashboard() {
   };
 
   if (mode === 'student') {
+    const week =
+      yearPlan && selectedWeekId
+        ? yearPlan.weeks[Number(selectedWeekId)]
+        : undefined;
+
+    const handleFinished = (result: GameResult) => {
+      if (!progress || !result.month) return;
+      const percent = Math.round((result.score / result.total) * 100);
+
+      // Award badge if score is 60% or higher
+      if (percent >= 60) {
+        const updated = upsertMonthBadge(progress, result.month, percent);
+        setProgress(updated);
+      }
+    };
+
     return (
       <StudentGame
         questions={generated.length ? generated : QUESTIONS.slice(0, 10)}
         onExit={() => setMode('teacher')}
+        context={
+          week
+            ? { month: week.month, weekIndex: Number(selectedWeekId) }
+            : undefined
+        }
+        onFinished={handleFinished}
       />
     );
   }
@@ -246,12 +288,37 @@ export default function TeacherDashboard() {
         <header className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">
-              Easymath – ממשק מורה
+              {t('teacher.title')}
             </h1>
             <p className="text-sm text-slate-600">
-              בחר נושא, רמת קושי וכמות תרגילים – ואחר כך תוכל לשמור מבחן,
-              להוריד כ־PDF או לשחק במצב תלמיד.
+              {t('teacher.subtitle')}
             </p>
+          </div>
+
+          {/* Language Switcher */}
+          <div className="flex items-center gap-2 text-sm">
+            <button
+              type="button"
+              onClick={() => setLocale('he')}
+              className={`rounded-full px-3 py-1 transition-colors ${
+                locale === 'he'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+              }`}
+            >
+              עברית
+            </button>
+            <button
+              type="button"
+              onClick={() => setLocale('en')}
+              className={`rounded-full px-3 py-1 transition-colors ${
+                locale === 'en'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+              }`}
+            >
+              English
+            </button>
           </div>
         </header>
 
@@ -262,10 +329,10 @@ export default function TeacherDashboard() {
             {/* נושא ותת־נושא */}
             <section className="rounded-2xl bg-white p-4 shadow-sm">
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
-                נושא
+                {t('teacher.topic.title')}
               </h2>
               <label className="mb-3 block text-sm text-slate-700">
-                בחר נושא:
+                {t('teacher.topic.select')}
                 <select
                   className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
                   value={selectedTopic}
@@ -285,13 +352,13 @@ export default function TeacherDashboard() {
 
               {subtopics.length > 0 && (
                 <label className="block text-sm text-slate-700">
-                  תת־נושא:
+                  {t('teacher.topic.subtopic')}
                   <select
                     className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
                     value={selectedSubtopic}
                     onChange={(e) => setSelectedSubtopic(e.target.value)}
                   >
-                    <option value="">כל התת־נושאים</option>
+                    <option value="">{t('teacher.topic.allSubtopics')}</option>
                     {subtopics.map((s) => (
                       <option key={s} value={s}>
                         {s}
@@ -305,15 +372,15 @@ export default function TeacherDashboard() {
             {/* רמת קושי וכמות */}
             <section className="rounded-2xl bg-white p-4 shadow-sm">
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
-                רמת קושי וכמות
+                {t('teacher.difficulty.title')}
               </h2>
 
               <div className="mb-4 flex flex-wrap gap-2 text-sm">
                 {[
-                  { val: 'all', label: 'הכול' },
-                  { val: 'easy', label: 'קל' },
-                  { val: 'medium', label: 'בינוני' },
-                  { val: 'hard', label: 'קשה' },
+                  { val: 'all', label: t('teacher.difficulty.all') },
+                  { val: 'easy', label: t('teacher.difficulty.easy') },
+                  { val: 'medium', label: t('teacher.difficulty.medium') },
+                  { val: 'hard', label: t('teacher.difficulty.hard') },
                 ].map((opt) => (
                   <button
                     key={opt.val}
@@ -332,7 +399,7 @@ export default function TeacherDashboard() {
               </div>
 
               <label className="flex items-center justify-between text-sm text-slate-700">
-                כמות תרגילים:
+                {t('teacher.difficulty.count')}
                 <input
                   type="number"
                   min={1}
@@ -349,12 +416,12 @@ export default function TeacherDashboard() {
             {/* שמירת מבחן */}
             <section className="rounded-2xl bg-white p-4 shadow-sm">
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
-                שמירת מבחן
+                {t('teacher.save.title')}
               </h2>
               <div className="flex flex-col gap-2 md:flex-row">
                 <input
                   type="text"
-                  placeholder="שם המבחן (למשל: חיבור עד 10)"
+                  placeholder={t('teacher.save.placeholder')}
                   className="flex-1 rounded-lg border border-slate-300 p-2 text-sm"
                   value={examName}
                   onChange={(e) => setExamName(e.target.value)}
@@ -369,7 +436,7 @@ export default function TeacherDashboard() {
                       : 'cursor-not-allowed bg-slate-200 text-slate-500'
                   }`}
                 >
-                  שמור מבחן
+                  {t('teacher.save.button')}
                 </button>
               </div>
             </section>
@@ -377,15 +444,15 @@ export default function TeacherDashboard() {
             {/* תכנית שנה – בחירת שבוע */}
             <section className="rounded-2xl bg-white p-4 shadow-sm">
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
-                תכנית שנה – בחירת שבוע
+                {t('teacher.year.title')}
               </h2>
 
               {!yearPlan ? (
-                <p className="text-sm text-slate-500">טוען תכנית שנה...</p>
+                <p className="text-sm text-slate-500">{t('general.loading')}</p>
               ) : (
                 <>
                   <label className="block text-sm text-slate-700">
-                    בחר שבוע:
+                    {t('teacher.year.selectWeek')}
                     <select
                       className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
                       value={selectedWeekId}
@@ -405,7 +472,7 @@ export default function TeacherDashboard() {
                         setGenerated(qs);
                       }}
                     >
-                      <option value="">--- בחר שבוע ---</option>
+                      <option value="">{t('teacher.year.weekOption')}</option>
                       {yearPlan.weeks.map((w, idx) => (
                         <option key={idx} value={idx}>
                           {w.month} – שבוע {w.weekOfMonth} – {w.topic}
@@ -416,10 +483,38 @@ export default function TeacherDashboard() {
                   </label>
 
                   <p className="mt-2 text-xs text-slate-500">
-                    בחירת שבוע תייצר אוטומטית תרגול מתאים לנושא ולפעילות
-                    (שיעור, תרגול, חידון).
+                    {t('teacher.year.help')}
                   </p>
                 </>
+              )}
+            </section>
+
+            {/* Progress Badges */}
+            <section className="rounded-2xl bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-lg font-semibold text-slate-900">
+                {t('teacher.badges.title')}
+              </h2>
+              {!progress || progress.monthBadges.length === 0 ? (
+                <p className="text-sm text-slate-500">
+                  {t('teacher.badges.empty')}
+                </p>
+              ) : (
+                <ul className="flex flex-wrap gap-2 text-sm">
+                  {progress.monthBadges.map((b) => (
+                    <li
+                      key={b.month}
+                      className="flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1"
+                    >
+                      <span>🏅</span>
+                      <div>
+                        <div className="font-medium">{b.month}</div>
+                        <div className="text-xs text-slate-600">
+                          {t('teacher.badges.best', { score: b.bestScore })}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               )}
             </section>
           </div>
@@ -434,7 +529,7 @@ export default function TeacherDashboard() {
                   onClick={handleGenerate}
                   className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
                 >
-                  צור רשימת תרגילים
+                  {t('teacher.buttons.generate')}
                 </button>
                 <button
                   type="button"
@@ -446,7 +541,7 @@ export default function TeacherDashboard() {
                       : 'cursor-not-allowed border border-slate-300 text-slate-400'
                   }`}
                 >
-                  הורד כ-PDF
+                  {t('teacher.buttons.pdf')}
                 </button>
                 <button
                   type="button"
@@ -458,10 +553,10 @@ export default function TeacherDashboard() {
                       : 'cursor-not-allowed border border-slate-300 text-slate-400'
                   }`}
                 >
-                  הורד כ-JSON
+                  {t('teacher.buttons.json')}
                 </button>
                 <label className="inline-flex cursor-pointer items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                  ייבוא מבחן (JSON)
+                  {t('teacher.buttons.import')}
                   <input
                     type="file"
                     accept="application/json"
@@ -479,14 +574,14 @@ export default function TeacherDashboard() {
                       : 'cursor-not-allowed bg-slate-200 text-slate-500'
                   }`}
                 >
-                  מצב תלמיד
+                  {t('teacher.buttons.studentMode')}
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/year-plan')}
                   className="rounded-lg border border-purple-600 px-4 py-2 text-sm font-medium text-purple-600 hover:bg-purple-50 transition-colors"
                 >
-                  תכנית שנתית
+                  {t('teacher.buttons.yearPlan')}
                 </button>
                 <button
                   type="button"
@@ -498,7 +593,7 @@ export default function TeacherDashboard() {
                       : 'cursor-not-allowed bg-slate-200 text-slate-500'
                   }`}
                 >
-                  הורד חוברת שנה
+                  {t('teacher.buttons.yearBooklet')}
                 </button>
               </div>
               {jsonImportError && (
@@ -507,18 +602,18 @@ export default function TeacherDashboard() {
                 </p>
               )}
               <p className="mt-2 text-xs text-slate-500">
-                כרגע נוצרו {generated.length} תרגילים.
+                {t('teacher.questions.generated', { count: generated.length })}
               </p>
             </section>
 
             {/* רשימת תרגילים */}
             <section className="max-h-[420px] overflow-y-auto rounded-2xl bg-white p-4 shadow-sm">
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
-                תצוגת תרגילים
+                {t('teacher.questions.title')}
               </h2>
               {generated.length === 0 ? (
                 <p className="text-sm text-slate-500">
-                  עדיין אין תרגילים. בחר הגדרות ולחץ על ״צור רשימת תרגילים״.
+                  {t('teacher.questions.empty')}
                 </p>
               ) : (
                 <ol className="space-y-3 text-sm">
@@ -571,11 +666,11 @@ export default function TeacherDashboard() {
             {/* מבחנים שמורים */}
             <section className="rounded-2xl bg-white p-4 shadow-sm">
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
-                מבחנים שמורים
+                {t('teacher.saved.title')}
               </h2>
               {savedExams.length === 0 ? (
                 <p className="text-sm text-slate-500">
-                  עוד לא שמרת מבחנים. אחרי שתיצור תרגילים ותיתן שם – תוכל לשמור.
+                  {t('teacher.saved.empty')}
                 </p>
               ) : (
                 <ul className="space-y-2 text-sm">
@@ -597,14 +692,14 @@ export default function TeacherDashboard() {
                           onClick={() => handleLoadExam(exam.id)}
                           className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 transition-colors"
                         >
-                          טען
+                          {t('teacher.saved.load')}
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDeleteExam(exam.id)}
                           className="rounded-lg border border-rose-500 px-3 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors"
                         >
-                          מחק
+                          {t('teacher.saved.delete')}
                         </button>
                       </div>
                     </li>
