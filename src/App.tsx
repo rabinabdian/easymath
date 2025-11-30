@@ -139,6 +139,35 @@ function SessionPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>("idle");
 
+  // פתיח פעם אחת בלבד בתחילת הסשן
+  useEffect(() => {
+    if (!settings.soundsEnabled || !tutorialDone || introSpoken) return;
+
+    const total = sessionExercises.length;
+    const text = `שלום ${settings.childName}. עכשיו נעשה יחד סדרה קצרה של תרגילים בחשבון. בכל תרגיל תסתכל על העיגולים, תספור אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון. נתחיל עכשיו בסדרה של ${total} תרגילים.`;
+
+    speak(text);
+    setIntroSpoken(true);
+  }, [tutorialDone, introSpoken, sessionExercises.length, settings.soundsEnabled, settings.childName]);
+
+  // לכל תרגיל: "עכשיו תרגיל X מתוך Y..."
+  useEffect(() => {
+    if (!settings.soundsEnabled || !tutorialDone || !introSpoken) return;
+
+    const qNumber = currentIndex + 1;
+    const total = sessionExercises.length;
+
+    const text = `עכשיו תרגיל מספר ${qNumber} מתוך ${total}. תסתכל על העיגולים על המסך, ספר אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון.`;
+
+    speak(text);
+  }, [
+    currentIndex,
+    tutorialDone,
+    introSpoken,
+    sessionExercises.length,
+    settings.soundsEnabled,
+  ]);
+
   // אם עוד לא עברנו דוגמה – מציגים רק אותה
   if (!tutorialDone) {
     return <TutorialExercise onDone={() => {
@@ -178,35 +207,6 @@ function SessionPage() {
       </div>
     );
   }
-
-  // פתיח פעם אחת בלבד בתחילת הסשן
-  useEffect(() => {
-    if (!settings.soundsEnabled || !tutorialDone || introSpoken) return;
-
-    const total = sessionExercises.length;
-    const text = `שלום ${settings.childName}. עכשיו נעשה יחד סדרה קצרה של תרגילים בחשבון. בכל תרגיל תסתכל על העיגולים, תספור אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון. נתחיל עכשיו בסדרה של ${total} תרגילים.`;
-
-    speak(text);
-    setIntroSpoken(true);
-  }, [tutorialDone, introSpoken, sessionExercises.length, settings.soundsEnabled, settings.childName]);
-
-  // לכל תרגיל: "עכשיו תרגיל X מתוך Y..."
-  useEffect(() => {
-    if (!settings.soundsEnabled || !tutorialDone || !introSpoken) return;
-
-    const qNumber = currentIndex + 1;
-    const total = sessionExercises.length;
-
-    const text = `עכשיו תרגיל מספר ${qNumber} מתוך ${total}. תסתכל על העיגולים על המסך, ספר אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון.`;
-
-    speak(text);
-  }, [
-    currentIndex,
-    tutorialDone,
-    introSpoken,
-    sessionExercises.length,
-    settings.soundsEnabled,
-  ]);
 
   const handleAnswer = (answer: number) => {
     if (feedback === "finished") return;
