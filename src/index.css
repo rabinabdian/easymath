@@ -132,3 +132,17 @@ select {
     transform: scale(1);
   }
 }
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.6rem;
+  padding: 4px;
+}

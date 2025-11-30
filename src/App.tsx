@@ -1,8 +1,9 @@
 // src/App.tsx
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useState, type FormEvent } from "react";
-import { countTo5Exercises, type CountExercise } from "./data/countTo5";
-import { useChildSettings, type ChildSettings } from "./context/ChildSettingsContext";
+import { useState, useEffect, FormEvent } from "react";
+import { countTo5Exercises, CountExercise } from "./data/countTo5";
+import { useChildSettings, ChildSettings } from "./context/ChildSettingsContext";
+import { speak } from "./utils/speech";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -28,22 +29,27 @@ function SessionPage() {
   const { settings } = useChildSettings();
   const navigate = useNavigate();
 
-  // כרגע יש לנו רק תרגילי ספירה עד 5
-  // בהמשך נוסיף מערכים נוספים ונבחר לפי maxNumber
   const allExercises: CountExercise[] = countTo5Exercises;
-
   const sessionExercises = allExercises.slice(0, settings.sessionLength);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>("idle");
 
   const current = sessionExercises[currentIndex];
+
+  // קריינות הוראה כשנכנסים למסך
+  useEffect(() => {
+    if (settings.soundsEnabled) {
+      speak("ספור ולחץ על המספר הנכון");
+    }
+  }, [settings.soundsEnabled]);
 
   const handleAnswer = (answer: number) => {
     if (feedback === "finished") return;
 
     if (answer === current.correctAnswer) {
       if (settings.soundsEnabled) {
-        // אפשר להוסיף צליל בעתיד
+        speak("כל הכבוד");
       }
       setFeedback("correct");
 
@@ -56,6 +62,9 @@ function SessionPage() {
         }
       }, 800);
     } else {
+      if (settings.soundsEnabled) {
+        speak("בוא ננסה שוב");
+      }
       setFeedback("wrong");
 
       setTimeout(() => {
@@ -86,15 +95,28 @@ function SessionPage() {
     );
   }
 
+  const handleReplayInstruction = () => {
+    if (!settings.soundsEnabled) return;
+    speak("ספור ולחץ על המספר הנכון");
+  };
+
   return (
     <div className="page page-right">
-      <h2 className="title">ספור ולחץ על המספר הנכון</h2>
+      <div className="title-row">
+        <h2 className="title">ספור ולחץ על המספר הנכון</h2>
+        <button
+          type="button"
+          className="icon-button"
+          onClick={handleReplayInstruction}
+        >
+          🔊
+        </button>
+      </div>
 
       <div className="subtitle-small">
         תרגיל {currentIndex + 1} מתוך {sessionExercises.length}
       </div>
 
-      {/* אזור האייקונים */}
       <div className="icons-row">
         {Array.from({ length: current.iconsCount }).map((_, idx) => (
           <div
@@ -106,9 +128,8 @@ function SessionPage() {
         ))}
       </div>
 
-      {/* אופציות תשובה */}
       <div className="buttons options-row">
-        {current.options.map((option: number) => (
+        {current.options.map((option) => (
           <button
             key={option}
             onClick={() => handleAnswer(option)}
@@ -147,10 +168,7 @@ function ParentPage() {
     const newSettings: ChildSettings = {
       childName: (formData.get("childName") as string) || "ילד",
       maxNumber: Number(formData.get("maxNumber")) === 10 ? 10 : 5,
-      sessionLength: Number(formData.get("sessionLength")) as
-        | 5
-        | 7
-        | 10,
+      sessionLength: Number(formData.get("sessionLength")) as 5 | 7 | 10,
       showHints: formData.get("showHints") === "on",
       animationsEnabled: formData.get("animationsEnabled") === "on",
       soundsEnabled: formData.get("soundsEnabled") === "on",
@@ -187,10 +205,7 @@ function ParentPage() {
 
         <label className="form-group">
           <span>אורך סשן (מספר תרגילים):</span>
-          <select
-            name="sessionLength"
-            defaultValue={settings.sessionLength}
-          >
+          <select name="sessionLength" defaultValue={settings.sessionLength}>
             <option value={5}>5 תרגילים</option>
             <option value={7}>7 תרגילים</option>
             <option value={10}>10 תרגילים</option>
@@ -221,7 +236,7 @@ function ParentPage() {
             name="soundsEnabled"
             defaultChecked={settings.soundsEnabled}
           />
-          <span>צליל פידבק על תשובה</span>
+          <span>צליל / קריינות</span>
         </label>
 
         <div className="buttons parent-buttons">
