@@ -39,7 +39,6 @@ function TutorialExercise({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     if (!settings.soundsEnabled) return;
 
-    // דיבור מודרך – פעם אחת כשנכנסים לדוגמה
     speak(`שלום ${settings.childName}. נעשה עכשיו דוגמה ביחד.`);
     setTimeout(() => {
       speak(
@@ -128,6 +127,7 @@ function SessionPage() {
   const sessionExercises = allExercises.slice(0, settings.sessionLength);
 
   const [tutorialDone, setTutorialDone] = useState(false);
+  const [introSpoken, setIntroSpoken] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>("idle");
 
@@ -138,23 +138,33 @@ function SessionPage() {
     return <TutorialExercise onDone={() => setTutorialDone(true)} />;
   }
 
-  // לפני כל תרגיל: שלום + הסבר כללי + "מתחילים בתרגיל מספר X מתוך Y"
+  // פתיח פעם אחת בלבד בתחילת הסשן
   useEffect(() => {
-    if (!settings.soundsEnabled || !tutorialDone) return;
+    if (!settings.soundsEnabled || !tutorialDone || introSpoken) return;
+
+    const total = sessionExercises.length;
+    const text = `שלום ${settings.childName}. עכשיו נעשה יחד סדרה קצרה של תרגילים בחשבון. בכל תרגיל תסתכל על העיגולים, תספור אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון. נתחיל עכשיו בסדרה של ${total} תרגילים.`;
+
+    speak(text);
+    setIntroSpoken(true);
+  }, [tutorialDone, introSpoken, sessionExercises.length, settings]);
+
+  // לכל תרגיל: "עכשיו תרגיל X מתוך Y..."
+  useEffect(() => {
+    if (!settings.soundsEnabled || !tutorialDone || !introSpoken) return;
 
     const qNumber = currentIndex + 1;
     const total = sessionExercises.length;
 
-    const text = `שלום ${settings.childName}. עכשיו נעשה כמה תרגילים קצרים בחשבון. בכל תרגיל תסתכל על העיגולים, תספור אותם בקול, ואחר כך תבחר את המספר הנכון למטה.
-    מתחילים עכשיו בתרגיל מספר ${qNumber} מתוך ${total}. תסתכל על העיגולים על המסך, ספר אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון.`;
+    const text = `עכשיו תרגיל מספר ${qNumber} מתוך ${total}. תסתכל על העיגולים על המסך, ספר אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון.`;
 
     speak(text);
   }, [
     currentIndex,
     tutorialDone,
-    settings.childName,
-    settings.soundsEnabled,
+    introSpoken,
     sessionExercises.length,
+    settings.soundsEnabled,
   ]);
 
   const handleAnswer = (answer: number) => {
@@ -199,6 +209,7 @@ function SessionPage() {
             onClick={() => {
               setCurrentIndex(0);
               setFeedback("idle");
+              setIntroSpoken(false);
             }}
           >
             עוד סשן
@@ -209,11 +220,12 @@ function SessionPage() {
   }
 
   const handleReplayInstruction = () => {
-    if (!settings.soundsEnabled) return;
+    if (!settings.soundsEnabled || !introSpoken) return;
     const qNumber = currentIndex + 1;
     const total = sessionExercises.length;
+
     speak(
-      `שלום ${settings.childName}. אנחנו עדיין בסדרה של תרגילים קצרים בחשבון. עכשיו עובדים על תרגיל מספר ${qNumber} מתוך ${total}. תסתכל על העיגולים, ספר אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון.`
+      `עכשיו תרגיל מספר ${qNumber} מתוך ${total}. תסתכל על העיגולים, ספר אותם לאט בקול, ואז תלחץ על הכפתור עם המספר הנכון.`
     );
   };
 
