@@ -1,0 +1,72 @@
+// src/context/ChildSettingsContext.tsx
+import { createContext, useContext, useState, type ReactNode } from "react";
+
+export type ChildSettings = {
+  childName: string;
+  maxNumber: 5 | 10; // כרגע 5 או 10
+  sessionLength: 5 | 7 | 10; // כמה תרגילים בסשן
+  showHints: boolean;
+  animationsEnabled: boolean;
+  soundsEnabled: boolean;
+};
+
+const defaultSettings: ChildSettings = {
+  childName: "ילד",
+  maxNumber: 5,
+  sessionLength: 5,
+  showHints: true,
+  animationsEnabled: false,
+  soundsEnabled: true,
+};
+
+type ChildSettingsContextType = {
+  settings: ChildSettings;
+  setSettings: (s: ChildSettings) => void;
+};
+
+const ChildSettingsContext = createContext<ChildSettingsContextType | null>(
+  null
+);
+
+export function ChildSettingsProvider({ children }: { children: ReactNode }) {
+  const [settings, setSettings] = useState<ChildSettings>(() => {
+    // נטען מה-localStorage אם קיים
+    try {
+      const stored = localStorage.getItem("easymath-child-settings");
+      if (stored) {
+        return JSON.parse(stored) as ChildSettings;
+      }
+    } catch {
+      // נתעלם משגיאות
+    }
+    return defaultSettings;
+  });
+
+  const handleSetSettings = (newSettings: ChildSettings) => {
+    setSettings(newSettings);
+    try {
+      localStorage.setItem(
+        "easymath-child-settings",
+        JSON.stringify(newSettings)
+      );
+    } catch {
+      // אם הדפדפן חוסם – לא נורא
+    }
+  };
+
+  return (
+    <ChildSettingsContext.Provider
+      value={{ settings, setSettings: handleSetSettings }}
+    >
+      {children}
+    </ChildSettingsContext.Provider>
+  );
+}
+
+export function useChildSettings() {
+  const ctx = useContext(ChildSettingsContext);
+  if (!ctx) {
+    throw new Error("useChildSettings must be used within ChildSettingsProvider");
+  }
+  return ctx;
+}

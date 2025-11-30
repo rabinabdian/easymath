@@ -60,3 +60,75 @@ button:hover {
 button:active {
   transform: scale(0.98);
 }
+
+.page-right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.subtitle-small {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.parent-form {
+  width: 100%;
+  max-width: 360px;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.form-group span {
+  font-weight: 500;
+}
+
+input,
+select {
+  font-size: 1rem;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d0d4e0;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.parent-buttons {
+  margin-top: 8px;
+}
+
+.hint-area {
+  margin-top: 16px;
+  font-size: 1rem;
+  color: #444;
+}
+
+.icon-circle-anim {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
