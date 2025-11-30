@@ -30,6 +30,7 @@ export default function TeacherDashboard() {
 
   const [examName, setExamName] = useState('');
   const [savedExams, setSavedExams] = useState<SavedExam[]>([]);
+  const [jsonImportError, setJsonImportError] = useState<string | null>(null);
 
   useEffect(() => {
     setSavedExams(loadExams());
@@ -126,6 +127,53 @@ export default function TeacherDashboard() {
 
   const handleDeleteExam = (id: string) => {
     setSavedExams((prev) => prev.filter((e) => e.id !== id));
+  };
+
+  const handleImportJson: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (ev) => {
+      try {
+        const text = String(ev.target?.result || '');
+        const parsed = JSON.parse(text);
+
+        // Support both [...] and { questions: [...] }
+        const arr = Array.isArray(parsed) ? parsed : parsed.questions;
+        if (!Array.isArray(arr)) {
+          throw new Error('Invalid JSON format: no questions array');
+        }
+
+        // Basic validation
+        const cleaned = arr.filter(
+          (q) => q && typeof q.id === 'string' && q.prompt
+        );
+
+        if (!cleaned.length) {
+          throw new Error('No valid questions found');
+        }
+
+        setGenerated(cleaned);
+        setJsonImportError(null);
+
+        // Optionally auto-save as a saved exam
+        const importedExamName = file.name.replace(/\.json$/i, '');
+        const newExam: SavedExam = {
+          id: `${Date.now()}_import`,
+          name: `ייבוא: ${importedExamName}`,
+          createdAt: new Date().toISOString(),
+          questions: cleaned,
+        };
+        setSavedExams((prev) => [newExam, ...prev]);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'שגיאה בקריאת הקובץ';
+        setJsonImportError(errorMessage);
+      }
+    };
+
+    reader.readAsText(file, 'utf-8');
   };
 
   if (mode === 'student') {
@@ -308,6 +356,15 @@ export default function TeacherDashboard() {
                 >
                   הורד כ-JSON
                 </button>
+                <label className="inline-flex cursor-pointer items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                  ייבוא מבחן (JSON)
+                  <input
+                    type="file"
+                    accept="application/json"
+                    className="hidden"
+                    onChange={handleImportJson}
+                  />
+                </label>
                 <button
                   type="button"
                   onClick={() => setMode('student')}
@@ -321,6 +378,11 @@ export default function TeacherDashboard() {
                   מצב תלמיד
                 </button>
               </div>
+              {jsonImportError && (
+                <p className="mt-2 text-xs text-rose-600">
+                  {jsonImportError}
+                </p>
+              )}
               <p className="mt-2 text-xs text-slate-500">
                 כרגע נוצרו {generated.length} תרגילים.
               </p>
