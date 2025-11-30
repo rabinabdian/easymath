@@ -9,6 +9,9 @@ import { buildPrintableExam } from '../utils/printableMapper';
 import { createExamPdf } from '../utils/createExamPdf';
 import { loadExams, saveExams } from '../utils/examsStorage';
 import type { SavedExam } from '../utils/examsStorage';
+import { generateYearPlan } from '../utils/yearPlanGenerator';
+import { createYearBookletPdf } from '../utils/createYearBookletPdf';
+import type { YearPlan, WeekPlan } from '../types/yearPlan';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
   if (count >= items.length) return [...items];
@@ -20,6 +23,45 @@ function getRandomSubset<T>(items: T[], count: number): T[] {
     copy.splice(idx, 1);
   }
   return result;
+}
+
+function buildQuestionsForWeek(
+  week: WeekPlan,
+  allQuestions: Question[],
+  defaultCount = 10
+): Question[] {
+  // מסנן לפי נושא, ואם יש – גם תת־נושא
+  let filtered = allQuestions.filter((q) => q.topic === week.topic);
+
+  if (week.subtopic) {
+    filtered = filtered.filter((q) => q.subtopic === week.subtopic);
+  }
+
+  // קובע קושי לפי סוג הפעילויות
+  // lesson/practice → קל/בינוני, quiz/exam → בינוני/קשה
+  const focusSet = new Set(week.focus);
+  let difficulties: Difficulty[] = ['easy'];
+
+  if (focusSet.has('quiz') || focusSet.has('exam')) {
+    difficulties = ['medium', 'hard'];
+  } else if (focusSet.has('practice')) {
+    difficulties = ['easy', 'medium'];
+  }
+
+  filtered = filtered.filter((q) =>
+    difficulties.includes(q.difficulty as Difficulty)
+  );
+
+  if (!filtered.length) {
+    // fallback – כל השאלות של הנושא
+    filtered = allQuestions.filter((q) => q.topic === week.topic);
+  }
+
+  // אם עדיין אין – מחזיר ריק
+  if (!filtered.length) return [];
+
+  // משתמש בפונקציית הבחירה הרנדומלית
+  return getRandomSubset(filtered, defaultCount);
 }
 
 export default function TeacherDashboard() {
@@ -35,8 +77,19 @@ export default function TeacherDashboard() {
   const [savedExams, setSavedExams] = useState<SavedExam[]>([]);
   const [jsonImportError, setJsonImportError] = useState<string | null>(null);
 
+  // תכנית שנה
+  const [yearPlan, setYearPlan] = useState<YearPlan | null>(null);
+  const [selectedWeekId, setSelectedWeekId] = useState<string>('');
+
   useEffect(() => {
     setSavedExams(loadExams());
+
+    // תכנית שנה ברירת מחדל – כיתה א׳
+    const plan = generateYearPlan({
+      grade: 'א׳',
+      yearLabel: 'תשפ״ו',
+    });
+    setYearPlan(plan);
   }, []);
 
   useEffect(() => {
@@ -161,6 +214,21 @@ export default function TeacherDashboard() {
     };
 
     reader.readAsText(file, 'utf-8');
+  };
+
+  const handleDownloadYearBooklet = () => {
+    if (!yearPlan) return;
+
+    const doc = createYearBookletPdf(yearPlan, QUESTIONS, {
+      grade: 'א׳',
+      subject: 'חשבון',
+      schoolName: 'בית ספר לדוגמה',
+      teacherName: 'המורה',
+      title: 'חוברת תרגול חשבון – כיתה א׳',
+      questionsPerMonth: 10,
+    });
+
+    doc.save('year_booklet.pdf');
   };
 
   if (mode === 'student') {
@@ -305,6 +373,55 @@ export default function TeacherDashboard() {
                 </button>
               </div>
             </section>
+
+            {/* תכנית שנה – בחירת שבוע */}
+            <section className="rounded-2xl bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-lg font-semibold text-slate-900">
+                תכנית שנה – בחירת שבוע
+              </h2>
+
+              {!yearPlan ? (
+                <p className="text-sm text-slate-500">טוען תכנית שנה...</p>
+              ) : (
+                <>
+                  <label className="block text-sm text-slate-700">
+                    בחר שבוע:
+                    <select
+                      className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
+                      value={selectedWeekId}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedWeekId(val);
+                        if (!val) return;
+                        const week = yearPlan.weeks[Number(val)];
+                        if (!week) return;
+
+                        // מעדכן גם את הפילטרים על המסך (שלא ירגיש מנותק)
+                        setSelectedTopic(week.topic);
+                        setSelectedSubtopic(week.subtopic || '');
+                        setDifficulty('all');
+
+                        const qs = buildQuestionsForWeek(week, QUESTIONS, 12);
+                        setGenerated(qs);
+                      }}
+                    >
+                      <option value="">--- בחר שבוע ---</option>
+                      {yearPlan.weeks.map((w, idx) => (
+                        <option key={idx} value={idx}>
+                          {w.month} – שבוע {w.weekOfMonth} – {w.topic}
+                          {w.subtopic ? ` (${w.subtopic})` : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <p className="mt-2 text-xs text-slate-500">
+                    בחירת שבוע תייצר אוטומטית תרגול מתאים לנושא ולפעילות
+                    (שיעור, תרגול, חידון).
+                  </p>
+                </>
+              )}
+            </section>
           </div>
 
           {/* צד ימין – תרגילים + מבחנים שמורים */}
@@ -370,6 +487,18 @@ export default function TeacherDashboard() {
                   className="rounded-lg border border-purple-600 px-4 py-2 text-sm font-medium text-purple-600 hover:bg-purple-50 transition-colors"
                 >
                   תכנית שנתית
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadYearBooklet}
+                  disabled={!yearPlan}
+                  className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    yearPlan
+                      ? 'bg-purple-600 text-white hover:bg-purple-700'
+                      : 'cursor-not-allowed bg-slate-200 text-slate-500'
+                  }`}
+                >
+                  הורד חוברת שנה
                 </button>
               </div>
               {jsonImportError && (
