@@ -1,10 +1,12 @@
 // src/components/TeacherDashboard.tsx
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TOPICS } from '../data/topics';
 import { QUESTIONS } from '../data/questions';
 import type { Difficulty, TopicId, Question } from '../types/questions';
 import StudentGame from './StudentGame';
-import jsPDF from 'jspdf';
+import { buildPrintableExam } from '../utils/printableMapper';
+import { createExamPdf } from '../utils/createExamPdf';
 import { loadExams, saveExams } from '../utils/examsStorage';
 import type { SavedExam } from '../utils/examsStorage';
 
@@ -21,6 +23,7 @@ function getRandomSubset<T>(items: T[], count: number): T[] {
 }
 
 export default function TeacherDashboard() {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<'teacher' | 'student'>('teacher');
   const [selectedTopic, setSelectedTopic] = useState<TopicId>('numbers');
   const [selectedSubtopic, setSelectedSubtopic] = useState('');
@@ -63,31 +66,15 @@ export default function TeacherDashboard() {
   const handleDownloadPdf = () => {
     if (!generated.length) return;
 
-    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-    const marginLeft = 40;
-    const marginTop = 40;
-    const lineHeight = 20;
-    const maxWidth = 500;
-    let y = marginTop;
-
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(14);
-    doc.text('מבחן חשבון – Easymath', marginLeft, y);
-    y += lineHeight * 2;
-
-    generated.forEach((q, index) => {
-      const text = `${index + 1}. ${q.prompt}`;
-      const lines = doc.splitTextToSize(text, maxWidth);
-
-      if (y + lines.length * lineHeight > 800) {
-        doc.addPage();
-        y = marginTop;
-      }
-
-      doc.text(lines, marginLeft, y);
-      y += lines.length * lineHeight + lineHeight;
+    const exam = buildPrintableExam(generated, {
+      title: examName || 'מבחן חשבון',
+      grade: 'א׳',
+      subject: 'חשבון',
+      schoolName: 'בית ספר לדוגמה',
+      teacherName: 'המורה',
     });
 
+    const doc = createExamPdf(exam);
     doc.save('exam.pdf');
   };
 
@@ -376,6 +363,13 @@ export default function TeacherDashboard() {
                   }`}
                 >
                   מצב תלמיד
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/year-plan')}
+                  className="rounded-lg border border-purple-600 px-4 py-2 text-sm font-medium text-purple-600 hover:bg-purple-50 transition-colors"
+                >
+                  תכנית שנתית
                 </button>
               </div>
               {jsonImportError && (
