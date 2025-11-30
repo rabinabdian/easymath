@@ -1,5 +1,5 @@
 // src/context/ChildSettingsContext.tsx
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, useMemo, useCallback, type ReactNode } from "react";
 
 export type ChildSettings = {
   childName: string;
@@ -42,7 +42,7 @@ export function ChildSettingsProvider({ children }: { children: ReactNode }) {
     return defaultSettings;
   });
 
-  const handleSetSettings = (newSettings: ChildSettings) => {
+  const handleSetSettings = useCallback((newSettings: ChildSettings) => {
     setSettings(newSettings);
     try {
       localStorage.setItem(
@@ -52,12 +52,15 @@ export function ChildSettingsProvider({ children }: { children: ReactNode }) {
     } catch {
       // אם הדפדפן חוסם – לא נורא
     }
-  };
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({ settings, setSettings: handleSetSettings }),
+    [settings, handleSetSettings]
+  );
 
   return (
-    <ChildSettingsContext.Provider
-      value={{ settings, setSettings: handleSetSettings }}
-    >
+    <ChildSettingsContext.Provider value={contextValue}>
       {children}
     </ChildSettingsContext.Provider>
   );
