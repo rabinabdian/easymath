@@ -8,6 +8,8 @@ import { useChildSettings } from "./context/ChildSettingsContext";
 import type { ChildSettings } from "./context/ChildSettingsContext";
 import { speak } from "./utils/speech";
 import TeacherDashboard from "./components/TeacherDashboard";
+import YearPlanView from "./components/YearPlanView";
+import { generateYearPlan } from "./utils/yearPlanGenerator";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -328,6 +330,15 @@ function SessionPage() {
   );
 }
 
+function YearPlanPage() {
+  const plan = generateYearPlan({
+    grade: 'א׳',
+    yearLabel: 'תשפ״ו (2025-2026)',
+  });
+
+  return <YearPlanView plan={plan} />;
+}
+
 function ParentPage() {
   const { settings, setSettings } = useChildSettings();
   const navigate = useNavigate();
@@ -429,6 +440,7 @@ export default function App() {
       <Route path="/session" element={<SessionPage />} />
       <Route path="/parent" element={<ParentPage />} />
       <Route path="/teacher" element={<TeacherDashboard />} />
+      <Route path="/year-plan" element={<YearPlanPage />} />
     </Routes>
   );
 }
