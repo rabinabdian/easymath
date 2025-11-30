@@ -1,7 +1,104 @@
 // src/data/questions.ts
 import type { Question } from '../types/questions';
+import {
+  generateAdditionQuestions,
+  generateSubtractionQuestions,
+  generateMultiplicationQuestions,
+} from '../utils/questionGenerator';
 
-export const QUESTIONS: Question[] = [
+// ========================================
+// תרגילים אוטומטיים (מחוללים)
+// ========================================
+
+// חיבור עד 10 - קל
+const autoAddEasy: Question[] = generateAdditionQuestions({
+  idPrefix: 'auto_add_easy_',
+  topic: 'addition',
+  subtopic: 'חיבור עד 10',
+  difficulty: 'easy',
+  maxSum: 10,
+});
+
+// חיבור עד 20 - בינוני
+const autoAddMedium: Question[] = generateAdditionQuestions({
+  idPrefix: 'auto_add_medium_',
+  topic: 'addition',
+  subtopic: 'חיבור עד 20',
+  difficulty: 'medium',
+  maxSum: 20,
+});
+
+// חיבור עד 100 - קשה
+const autoAddHard: Question[] = generateAdditionQuestions({
+  idPrefix: 'auto_add_hard_',
+  topic: 'addition',
+  subtopic: 'חיבור עד 100',
+  difficulty: 'hard',
+  maxSum: 100,
+  minA: 10,
+  minB: 10,
+});
+
+// חיסור עד 10 - קל
+const autoSubEasy: Question[] = generateSubtractionQuestions({
+  idPrefix: 'auto_sub_easy_',
+  topic: 'subtraction',
+  subtopic: 'חיסור עד 10',
+  difficulty: 'easy',
+  maxStart: 10,
+});
+
+// חיסור עד 20 - בינוני
+const autoSubMedium: Question[] = generateSubtractionQuestions({
+  idPrefix: 'auto_sub_medium_',
+  topic: 'subtraction',
+  subtopic: 'חיסור עד 20',
+  difficulty: 'medium',
+  maxStart: 20,
+});
+
+// חיסור עד 100 - קשה
+const autoSubHard: Question[] = generateSubtractionQuestions({
+  idPrefix: 'auto_sub_hard_',
+  topic: 'subtraction',
+  subtopic: 'חיסור עד 100',
+  difficulty: 'hard',
+  maxStart: 100,
+  minStart: 20,
+});
+
+// כפל - לוח הכפל עד 5 - קל
+const autoMulEasy: Question[] = generateMultiplicationQuestions({
+  idPrefix: 'auto_mul_easy_',
+  topic: 'multiplication',
+  subtopic: 'לוח הכפל עד 5',
+  difficulty: 'easy',
+  maxFactor: 5,
+});
+
+// כפל - לוח הכפל עד 10 - בינוני
+const autoMulMedium: Question[] = generateMultiplicationQuestions({
+  idPrefix: 'auto_mul_medium_',
+  topic: 'multiplication',
+  subtopic: 'לוח הכפל עד 10',
+  difficulty: 'medium',
+  maxFactor: 10,
+});
+
+// כפל - לוח הכפל עד 12 - קשה
+const autoMulHard: Question[] = generateMultiplicationQuestions({
+  idPrefix: 'auto_mul_hard_',
+  topic: 'multiplication',
+  subtopic: 'לוח הכפל עד 12',
+  difficulty: 'hard',
+  maxFactor: 12,
+});
+
+// ========================================
+// תרגילים ידניים (מיוחדים)
+// ========================================
+
+const MANUAL_QUESTIONS: Question[] = [
   // ==========================
   // N U M B E R S – הכרת מספרים
   // ==========================
@@ -1105,4 +1202,21 @@ export const QUESTIONS: Question[] = [
     answer: 'לא',
     explanation: 'רק משולשים שווי-שוקיים ושווי-צלעות הם סימטריים.',
   },
+];
+
+// ========================================
+// שילוב כל התרגילים
+// ========================================
+
+export const QUESTIONS: Question[] = [
+  ...MANUAL_QUESTIONS,
+  ...autoAddEasy,
+  ...autoAddMedium,
+  ...autoAddHard,
+  ...autoSubEasy,
+  ...autoSubMedium,
+  ...autoSubHard,
+  ...autoMulEasy,
+  ...autoMulMedium,
+  ...autoMulHard,
 ];

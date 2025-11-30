@@ -1,10 +1,12 @@
 // src/components/TeacherDashboard.tsx
-import { useMemo, useState } from 'react';
-import jsPDF from 'jspdf';
+import { useEffect, useMemo, useState } from 'react';
 import { TOPICS } from '../data/topics';
 import { QUESTIONS } from '../data/questions';
 import type { Difficulty, TopicId, Question } from '../types/questions';
 import StudentGame from './StudentGame';
+import jsPDF from 'jspdf';
+import { loadExams, saveExams } from '../utils/examsStorage';
+import type { SavedExam } from '../utils/examsStorage';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
   if (count >= items.length) return [...items];
@@ -21,16 +23,26 @@ function getRandomSubset<T>(items: T[], count: number): T[] {
 export default function TeacherDashboard() {
   const [mode, setMode] = useState<'teacher' | 'student'>('teacher');
   const [selectedTopic, setSelectedTopic] = useState<TopicId>('numbers');
-  const [selectedSubtopic, setSelectedSubtopic] = useState<string>('');
+  const [selectedSubtopic, setSelectedSubtopic] = useState('');
   const [difficulty, setDifficulty] = useState<Difficulty | 'all'>('easy');
-  const [count, setCount] = useState<number>(5);
+  const [count, setCount] = useState(10);
   const [generated, setGenerated] = useState<Question[]>([]);
+
+  const [examName, setExamName] = useState('');
+  const [savedExams, setSavedExams] = useState<SavedExam[]>([]);
+
+  useEffect(() => {
+    setSavedExams(loadExams());
+  }, []);
+
+  useEffect(() => {
+    saveExams(savedExams);
+  }, [savedExams]);
 
   const topic = useMemo(
     () => TOPICS.find((t) => t.id === selectedTopic),
     [selectedTopic]
   );
-
   const subtopics = topic?.subtopics ?? [];
 
   const handleGenerate = () => {
@@ -39,7 +51,6 @@ export default function TeacherDashboard() {
     if (selectedSubtopic) {
       filtered = filtered.filter((q) => q.subtopic === selectedSubtopic);
     }
-
     if (difficulty !== 'all') {
       filtered = filtered.filter((q) => q.difficulty === difficulty);
     }
@@ -49,23 +60,18 @@ export default function TeacherDashboard() {
   };
 
   const handleDownloadPdf = () => {
-    if (generated.length === 0) return;
+    if (!generated.length) return;
 
-    const doc = new jsPDF({
-      unit: 'pt',
-      format: 'a4',
-    });
-
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
     const marginLeft = 40;
     const marginTop = 40;
     const lineHeight = 20;
     const maxWidth = 500;
-
     let y = marginTop;
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(14);
-    doc.text('מבחן חשבון – נוצר במערכת Easymath', marginLeft, y);
+    doc.text('מבחן חשבון – Easymath', marginLeft, y);
     y += lineHeight * 2;
 
     generated.forEach((q, index) => {
@@ -84,13 +90,28 @@ export default function TeacherDashboard() {
     doc.save('exam.pdf');
   };
 
-  const difficultyLabels: Record<Difficulty, string> = {
-    easy: 'קל',
-    medium: 'בינוני',
-    hard: 'קשה',
+  const handleSaveExam = () => {
+    if (!generated.length || !examName.trim()) return;
+    const newExam: SavedExam = {
+      id: `${Date.now()}`,
+      name: examName.trim(),
+      createdAt: new Date().toISOString(),
+      questions: generated,
+    };
+    setSavedExams((prev) => [newExam, ...prev]);
+    setExamName('');
   };
 
-  // אם במצב תלמיד, הצג את משחק התלמיד
+  const handleLoadExam = (id: string) => {
+    const exam = savedExams.find((e) => e.id === id);
+    if (!exam) return;
+    setGenerated(exam.questions);
+  };
+
+  const handleDeleteExam = (id: string) => {
+    setSavedExams((prev) => prev.filter((e) => e.id !== id));
+  };
+
   if (mode === 'student') {
     return (
       <StudentGame
@@ -101,357 +122,286 @@ export default function TeacherDashboard() {
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: 1000, margin: '0 auto', fontFamily: 'system-ui' }}>
-      <h1 style={{ marginBottom: '2rem', color: '#1a1a1a', fontSize: '2rem' }}>
-        🎓 ממשק מורה – בניית תרגול
-      </h1>
-
-      {/* בחירת נושא */}
-      <section
-        style={{
-          border: '2px solid #e5e7eb',
-          borderRadius: 12,
-          padding: '1.5rem',
-          marginBottom: '1.5rem',
-          background: '#f9fafb',
-        }}
-      >
-        <h2 style={{ marginBottom: '1rem', color: '#374151', fontSize: '1.25rem' }}>
-          📚 בחירת נושא
-        </h2>
-        <select
-          value={selectedTopic}
-          onChange={(e) => {
-            const value = e.target.value as TopicId;
-            setSelectedTopic(value);
-            setSelectedSubtopic('');
-          }}
-          style={{
-            padding: '0.5rem 1rem',
-            fontSize: '1rem',
-            borderRadius: 8,
-            border: '1px solid #d1d5db',
-            minWidth: 250,
-          }}
-        >
-          {TOPICS.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.label}
-            </option>
-          ))}
-        </select>
-
-        {subtopics.length > 0 && (
-          <div style={{ marginTop: '1rem' }}>
-            <label style={{ marginLeft: 8, fontWeight: 500 }}>תת־נושא:</label>
-            <select
-              value={selectedSubtopic}
-              onChange={(e) => setSelectedSubtopic(e.target.value)}
-              style={{
-                padding: '0.5rem 1rem',
-                fontSize: '1rem',
-                borderRadius: 8,
-                border: '1px solid #d1d5db',
-                marginRight: 8,
-                minWidth: 200,
-              }}
-            >
-              <option value="">כל התת־נושאים</option>
-              {subtopics.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-      </section>
-
-      {/* רמת קושי + כמות */}
-      <section
-        style={{
-          border: '2px solid #e5e7eb',
-          borderRadius: 12,
-          padding: '1.5rem',
-          marginBottom: '1.5rem',
-          background: '#f9fafb',
-        }}
-      >
-        <h2 style={{ marginBottom: '1rem', color: '#374151', fontSize: '1.25rem' }}>
-          ⚙️ הגדרות תרגול
-        </h2>
-
-        <div style={{ marginBottom: '1rem' }}>
-          <span style={{ marginLeft: 12, fontWeight: 500 }}>רמת קושי:</span>
-          <label style={{ marginLeft: 16, cursor: 'pointer' }}>
-            <input
-              type="radio"
-              value="all"
-              checked={difficulty === 'all'}
-              onChange={() => setDifficulty('all')}
-              style={{ marginLeft: 6 }}
-            />
-            הכל
-          </label>
-          <label style={{ marginLeft: 16, cursor: 'pointer' }}>
-            <input
-              type="radio"
-              value="easy"
-              checked={difficulty === 'easy'}
-              onChange={() => setDifficulty('easy')}
-              style={{ marginLeft: 6 }}
-            />
-            קל
-          </label>
-          <label style={{ marginLeft: 16, cursor: 'pointer' }}>
-            <input
-              type="radio"
-              value="medium"
-              checked={difficulty === 'medium'}
-              onChange={() => setDifficulty('medium')}
-              style={{ marginLeft: 6 }}
-            />
-            בינוני
-          </label>
-          <label style={{ marginLeft: 16, cursor: 'pointer' }}>
-            <input
-              type="radio"
-              value="hard"
-              checked={difficulty === 'hard'}
-              onChange={() => setDifficulty('hard')}
-              style={{ marginLeft: 6 }}
-            />
-            קשה
-          </label>
-        </div>
-
-        <div>
-          <label style={{ fontWeight: 500 }}>
-            כמות תרגילים:{' '}
-            <input
-              type="number"
-              min={1}
-              max={50}
-              value={count}
-              onChange={(e) => setCount(Number(e.target.value) || 1)}
-              style={{
-                width: 80,
-                padding: '0.5rem',
-                fontSize: '1rem',
-                borderRadius: 8,
-                border: '1px solid #d1d5db',
-                marginRight: 8,
-              }}
-            />
-          </label>
-        </div>
-      </section>
-
-      {/* כפתורי פעולה */}
-      <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-        <button
-          type="button"
-          onClick={handleGenerate}
-          style={{
-            padding: '0.75rem 2rem',
-            borderRadius: 10,
-            border: 'none',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: '#fff',
-            cursor: 'pointer',
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-            transition: 'transform 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          ✨ צור רשימת תרגילים
-        </button>
-
-        <button
-          type="button"
-          onClick={handleDownloadPdf}
-          disabled={generated.length === 0}
-          style={{
-            padding: '0.75rem 2rem',
-            borderRadius: 10,
-            border: '1px solid #2563eb',
-            background: '#fff',
-            color: '#2563eb',
-            cursor: generated.length === 0 ? 'not-allowed' : 'pointer',
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            opacity: generated.length === 0 ? 0.5 : 1,
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            if (generated.length > 0) {
-              e.currentTarget.style.background = '#2563eb';
-              e.currentTarget.style.color = '#fff';
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#fff';
-            e.currentTarget.style.color = '#2563eb';
-          }}
-        >
-          📄 הורד כ-PDF
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setMode('student')}
-          disabled={generated.length === 0}
-          style={{
-            padding: '0.75rem 2rem',
-            borderRadius: 10,
-            border: 'none',
-            background: generated.length === 0 ? '#9ca3af' : '#10b981',
-            color: '#fff',
-            cursor: generated.length === 0 ? 'not-allowed' : 'pointer',
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            if (generated.length > 0) {
-              e.currentTarget.style.background = '#059669';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (generated.length > 0) {
-              e.currentTarget.style.background = '#10b981';
-            }
-          }}
-        >
-          🎮 מצב תלמיד
-        </button>
-      </div>
-
-      {/* תצוגת התרגילים שנוצרו */}
-      <section>
-        {generated.length === 0 ? (
-          <div
-            style={{
-              padding: '3rem',
-              textAlign: 'center',
-              background: '#f3f4f6',
-              borderRadius: 12,
-              color: '#6b7280',
-            }}
-          >
-            <p style={{ fontSize: '1.1rem' }}>
-              👆 בחר נושא, רמת קושי וכמות תרגילים, ולחץ על הכפתור לייצור רשימה.
+    <div className="min-h-screen bg-slate-50">
+      <div className="mx-auto max-w-6xl px-4 py-6 md:py-8">
+        <header className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Easymath – ממשק מורה
+            </h1>
+            <p className="text-sm text-slate-600">
+              בחר נושא, רמת קושי וכמות תרגילים – ואחר כך תוכל לשמור מבחן,
+              להוריד כ־PDF או לשחק במצב תלמיד.
             </p>
           </div>
-        ) : (
-          <>
-            <h3 style={{ marginBottom: '1rem', color: '#374151', fontSize: '1.5rem' }}>
-              📋 רשימת התרגילים שנוצרה ({generated.length} תרגילים)
-            </h3>
-            <ol style={{ paddingRight: '1.5rem' }}>
-              {generated.map((q) => (
-                <li
-                  key={q.id}
-                  style={{
-                    marginBottom: '1.5rem',
-                    padding: '1rem 1.5rem',
-                    borderRight: '4px solid #667eea',
-                    background: '#ffffff',
-                    borderRadius: 8,
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        </header>
+
+        {/* layout: טאבלט – שני טורים */}
+        <div className="grid gap-4 md:grid-cols-5">
+          {/* צד שמאל – הגדרות */}
+          <div className="md:col-span-2 space-y-4">
+            {/* נושא ותת־נושא */}
+            <section className="rounded-2xl bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-lg font-semibold text-slate-900">
+                נושא
+              </h2>
+              <label className="mb-3 block text-sm text-slate-700">
+                בחר נושא:
+                <select
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
+                  value={selectedTopic}
+                  onChange={(e) => {
+                    const value = e.target.value as TopicId;
+                    setSelectedTopic(value);
+                    setSelectedSubtopic('');
                   }}
                 >
-                  <div style={{ fontWeight: 600, fontSize: '1.1rem', marginBottom: '0.5rem' }}>
-                    {q.prompt}
-                  </div>
+                  {TOPICS.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-                  {q.assetId && (
-                    <div style={{ marginTop: '0.5rem', marginBottom: '0.75rem' }}>
-                      <img
-                        src={`/assets/${q.assetId}.png`}
-                        alt=""
-                        style={{
-                          maxWidth: '250px',
-                          height: 'auto',
-                          borderRadius: 8,
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        }}
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                  )}
-
-                  {q.options && (
-                    <ul
-                      style={{
-                        marginTop: 8,
-                        paddingRight: '1.5rem',
-                        listStyleType: 'disc',
-                      }}
-                    >
-                      {q.options.map((opt) => (
-                        <li key={String(opt)} style={{ color: '#4b5563' }}>
-                          {String(opt)}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  <div
-                    style={{
-                      fontSize: '0.9rem',
-                      color: '#6b7280',
-                      marginTop: '0.75rem',
-                      display: 'flex',
-                      gap: '1rem',
-                      flexWrap: 'wrap',
-                    }}
+              {subtopics.length > 0 && (
+                <label className="block text-sm text-slate-700">
+                  תת־נושא:
+                  <select
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
+                    value={selectedSubtopic}
+                    onChange={(e) => setSelectedSubtopic(e.target.value)}
                   >
-                    <span>
-                      <strong>נושא:</strong> {topic?.label}
-                    </span>
-                    {q.subtopic && (
-                      <span>
-                        <strong>תת-נושא:</strong> {q.subtopic}
-                      </span>
-                    )}
-                    <span>
-                      <strong>רמה:</strong> {difficultyLabels[q.difficulty]}
-                    </span>
-                    <span style={{ marginRight: 'auto', color: '#059669', fontWeight: 600 }}>
-                      <strong>תשובה:</strong> {String(q.answer)}
-                    </span>
-                  </div>
+                    <option value="">כל התת־נושאים</option>
+                    {subtopics.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+            </section>
 
-                  {q.explanation && (
-                    <div
-                      style={{
-                        marginTop: '0.75rem',
-                        padding: '0.75rem',
-                        background: '#fef3c7',
-                        borderRadius: 6,
-                        fontSize: '0.9rem',
-                        color: '#92400e',
-                      }}
+            {/* רמת קושי וכמות */}
+            <section className="rounded-2xl bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-lg font-semibold text-slate-900">
+                רמת קושי וכמות
+              </h2>
+
+              <div className="mb-4 flex flex-wrap gap-2 text-sm">
+                {[
+                  { val: 'all', label: 'הכול' },
+                  { val: 'easy', label: 'קל' },
+                  { val: 'medium', label: 'בינוני' },
+                  { val: 'hard', label: 'קשה' },
+                ].map((opt) => (
+                  <button
+                    key={opt.val}
+                    type="button"
+                    onClick={() => setDifficulty(opt.val as Difficulty | 'all')}
+                    className={[
+                      'rounded-full border px-3 py-1 transition-colors',
+                      difficulty === opt.val
+                        ? 'border-blue-600 bg-blue-600 text-white'
+                        : 'border-slate-300 bg-white text-slate-700 hover:border-blue-400',
+                    ].join(' ')}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+
+              <label className="flex items-center justify-between text-sm text-slate-700">
+                כמות תרגילים:
+                <input
+                  type="number"
+                  min={1}
+                  max={50}
+                  value={count}
+                  onChange={(e) =>
+                    setCount(Math.max(1, Number(e.target.value) || 1))
+                  }
+                  className="w-20 rounded-lg border border-slate-300 p-1 text-center"
+                />
+              </label>
+            </section>
+
+            {/* שמירת מבחן */}
+            <section className="rounded-2xl bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-lg font-semibold text-slate-900">
+                שמירת מבחן
+              </h2>
+              <div className="flex flex-col gap-2 md:flex-row">
+                <input
+                  type="text"
+                  placeholder="שם המבחן (למשל: חיבור עד 10)"
+                  className="flex-1 rounded-lg border border-slate-300 p-2 text-sm"
+                  value={examName}
+                  onChange={(e) => setExamName(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={handleSaveExam}
+                  disabled={!generated.length || !examName.trim()}
+                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    generated.length && examName.trim()
+                      ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                      : 'cursor-not-allowed bg-slate-200 text-slate-500'
+                  }`}
+                >
+                  שמור מבחן
+                </button>
+              </div>
+            </section>
+          </div>
+
+          {/* צד ימין – תרגילים + מבחנים שמורים */}
+          <div className="md:col-span-3 space-y-4">
+            {/* כפתורים ראשיים */}
+            <section className="rounded-2xl bg-white p-4 shadow-sm">
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handleGenerate}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                >
+                  צור רשימת תרגילים
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadPdf}
+                  disabled={!generated.length}
+                  className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    generated.length
+                      ? 'border border-blue-600 text-blue-600 hover:bg-blue-50'
+                      : 'cursor-not-allowed border border-slate-300 text-slate-400'
+                  }`}
+                >
+                  הורד כ-PDF
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode('student')}
+                  disabled={!generated.length}
+                  className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    generated.length
+                      ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                      : 'cursor-not-allowed bg-slate-200 text-slate-500'
+                  }`}
+                >
+                  מצב תלמיד
+                </button>
+              </div>
+              <p className="mt-2 text-xs text-slate-500">
+                כרגע נוצרו {generated.length} תרגילים.
+              </p>
+            </section>
+
+            {/* רשימת תרגילים */}
+            <section className="max-h-[420px] overflow-y-auto rounded-2xl bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-lg font-semibold text-slate-900">
+                תצוגת תרגילים
+              </h2>
+              {generated.length === 0 ? (
+                <p className="text-sm text-slate-500">
+                  עדיין אין תרגילים. בחר הגדרות ולחץ על ״צור רשימת תרגילים״.
+                </p>
+              ) : (
+                <ol className="space-y-3 text-sm">
+                  {generated.map((q, idx) => (
+                    <li
+                      key={q.id}
+                      className="rounded-xl border border-slate-200 bg-slate-50 p-3"
                     >
-                      <strong>הסבר:</strong> {q.explanation}
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </>
-        )}
-      </section>
+                      <div className="flex justify-between">
+                        <span className="font-medium">
+                          {idx + 1}. {q.prompt}
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          {q.difficulty === 'easy'
+                            ? 'קל'
+                            : q.difficulty === 'medium'
+                            ? 'בינוני'
+                            : 'קשה'}
+                        </span>
+                      </div>
+
+                      {q.assetId && (
+                        <div className="mt-2">
+                          <img
+                            src={`/assets/${q.assetId}.png`}
+                            alt=""
+                            className="max-h-40 rounded-lg border border-slate-200 object-contain"
+                          />
+                        </div>
+                      )}
+
+                      {q.options && (
+                        <ul className="mt-2 flex flex-wrap gap-2 text-xs">
+                          {q.options.map((opt) => (
+                            <li
+                              key={String(opt)}
+                              className="rounded-full bg-white px-2 py-1"
+                            >
+                              {String(opt)}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </section>
+
+            {/* מבחנים שמורים */}
+            <section className="rounded-2xl bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-lg font-semibold text-slate-900">
+                מבחנים שמורים
+              </h2>
+              {savedExams.length === 0 ? (
+                <p className="text-sm text-slate-500">
+                  עוד לא שמרת מבחנים. אחרי שתיצור תרגילים ותיתן שם – תוכל לשמור.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm">
+                  {savedExams.map((exam) => (
+                    <li
+                      key={exam.id}
+                      className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
+                    >
+                      <div>
+                        <div className="font-medium">{exam.name}</div>
+                        <div className="text-xs text-slate-500">
+                          {exam.questions.length} תרגילים ·{' '}
+                          {new Date(exam.createdAt).toLocaleString('he-IL')}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleLoadExam(exam.id)}
+                          className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 transition-colors"
+                        >
+                          טען
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteExam(exam.id)}
+                          className="rounded-lg border border-rose-500 px-3 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors"
+                        >
+                          מחק
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

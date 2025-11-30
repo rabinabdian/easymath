@@ -4,6 +4,7 @@ export type TopicId =
   | 'numbers'
   | 'addition'
   | 'subtraction'
+  | 'multiplication'
   | 'evenOdd'
   | 'geometry';
 
