@@ -8,6 +8,7 @@ on:
       - "claude/claude-md-mikmkxhyfoo8jvt2-019kAgwuj8eSvkGtj7crVokC"
       - "claude/cleanup-unnecessary-files-0148dvaXmtzJfRbYbhUYKpq5"
       - "claude/trigger-redeploy-01U44hvRTQrHH74M9kT9Nf62"
+      - "claude/fix-github-pages-routing-01EEV3wZtpxT2wD3jf27AHh7"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
