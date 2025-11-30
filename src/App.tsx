@@ -141,6 +141,17 @@ function SessionPage() {
     return <TutorialExercise onDone={() => setTutorialDone(true)} />;
   }
 
+  // אם אין תרגילים או התרגיל הנוכחי לא קיים
+  if (!current || sessionExercises.length === 0) {
+    return (
+      <div className="page page-right">
+        <h2 className="title">שגיאה</h2>
+        <p className="subtitle">לא נמצאו תרגילים</p>
+        <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
+      </div>
+    );
+  }
+
   // פתיח פעם אחת בלבד בתחילת הסשן
   useEffect(() => {
     if (!settings.soundsEnabled || !tutorialDone || introSpoken) return;
@@ -150,7 +161,7 @@ function SessionPage() {
 
     speak(text);
     setIntroSpoken(true);
-  }, [tutorialDone, introSpoken, sessionExercises.length, settings]);
+  }, [tutorialDone, introSpoken, sessionExercises.length, settings.soundsEnabled, settings.childName]);
 
   // לכל תרגיל: "עכשיו תרגיל X מתוך Y..."
   useEffect(() => {
