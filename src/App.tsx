@@ -1,8 +1,11 @@
 // src/App.tsx
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useState, useEffect, FormEvent } from "react";
-import { countTo5Exercises, CountExercise } from "./data/countTo5";
-import { useChildSettings, ChildSettings } from "./context/ChildSettingsContext";
+import { useState, useEffect } from "react";
+import type { FormEvent } from "react";
+import { countTo5Exercises } from "./data/countTo5";
+import type { CountExercise } from "./data/countTo5";
+import { useChildSettings } from "./context/ChildSettingsContext";
+import type { ChildSettings } from "./context/ChildSettingsContext";
 import { speak } from "./utils/speech";
 
 function HomePage() {
