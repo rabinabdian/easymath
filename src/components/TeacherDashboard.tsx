@@ -1,8 +1,10 @@
 // src/components/TeacherDashboard.tsx
 import { useMemo, useState } from 'react';
+import jsPDF from 'jspdf';
 import { TOPICS } from '../data/topics';
 import { QUESTIONS } from '../data/questions';
 import type { Difficulty, TopicId, Question } from '../types/questions';
+import StudentGame from './StudentGame';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
   if (count >= items.length) return [...items];
@@ -17,6 +19,7 @@ function getRandomSubset<T>(items: T[], count: number): T[] {
 }
 
 export default function TeacherDashboard() {
+  const [mode, setMode] = useState<'teacher' | 'student'>('teacher');
   const [selectedTopic, setSelectedTopic] = useState<TopicId>('numbers');
   const [selectedSubtopic, setSelectedSubtopic] = useState<string>('');
   const [difficulty, setDifficulty] = useState<Difficulty | 'all'>('easy');
@@ -45,11 +48,57 @@ export default function TeacherDashboard() {
     setGenerated(chosen);
   };
 
+  const handleDownloadPdf = () => {
+    if (generated.length === 0) return;
+
+    const doc = new jsPDF({
+      unit: 'pt',
+      format: 'a4',
+    });
+
+    const marginLeft = 40;
+    const marginTop = 40;
+    const lineHeight = 20;
+    const maxWidth = 500;
+
+    let y = marginTop;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(14);
+    doc.text('מבחן חשבון – נוצר במערכת Easymath', marginLeft, y);
+    y += lineHeight * 2;
+
+    generated.forEach((q, index) => {
+      const text = `${index + 1}. ${q.prompt}`;
+      const lines = doc.splitTextToSize(text, maxWidth);
+
+      if (y + lines.length * lineHeight > 800) {
+        doc.addPage();
+        y = marginTop;
+      }
+
+      doc.text(lines, marginLeft, y);
+      y += lines.length * lineHeight + lineHeight;
+    });
+
+    doc.save('exam.pdf');
+  };
+
   const difficultyLabels: Record<Difficulty, string> = {
     easy: 'קל',
     medium: 'בינוני',
     hard: 'קשה',
   };
+
+  // אם במצב תלמיד, הצג את משחק התלמיד
+  if (mode === 'student') {
+    return (
+      <StudentGame
+        questions={generated.length ? generated : QUESTIONS.slice(0, 10)}
+        onExit={() => setMode('teacher')}
+      />
+    );
+  }
 
   return (
     <div style={{ padding: '2rem', maxWidth: 1000, margin: '0 auto', fontFamily: 'system-ui' }}>
@@ -198,32 +247,92 @@ export default function TeacherDashboard() {
         </div>
       </section>
 
-      {/* כפתור יצירה */}
-      <button
-        type="button"
-        onClick={handleGenerate}
-        style={{
-          padding: '0.75rem 2rem',
-          borderRadius: 10,
-          border: 'none',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: '#fff',
-          cursor: 'pointer',
-          fontSize: '1.1rem',
-          fontWeight: 600,
-          marginBottom: '2rem',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-          transition: 'transform 0.2s',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-2px)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-        }}
-      >
-        ✨ צור רשימת תרגילים
-      </button>
+      {/* כפתורי פעולה */}
+      <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          onClick={handleGenerate}
+          style={{
+            padding: '0.75rem 2rem',
+            borderRadius: 10,
+            border: 'none',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: '#fff',
+            cursor: 'pointer',
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+            transition: 'transform 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          ✨ צור רשימת תרגילים
+        </button>
+
+        <button
+          type="button"
+          onClick={handleDownloadPdf}
+          disabled={generated.length === 0}
+          style={{
+            padding: '0.75rem 2rem',
+            borderRadius: 10,
+            border: '1px solid #2563eb',
+            background: '#fff',
+            color: '#2563eb',
+            cursor: generated.length === 0 ? 'not-allowed' : 'pointer',
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            opacity: generated.length === 0 ? 0.5 : 1,
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            if (generated.length > 0) {
+              e.currentTarget.style.background = '#2563eb';
+              e.currentTarget.style.color = '#fff';
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#fff';
+            e.currentTarget.style.color = '#2563eb';
+          }}
+        >
+          📄 הורד כ-PDF
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMode('student')}
+          disabled={generated.length === 0}
+          style={{
+            padding: '0.75rem 2rem',
+            borderRadius: 10,
+            border: 'none',
+            background: generated.length === 0 ? '#9ca3af' : '#10b981',
+            color: '#fff',
+            cursor: generated.length === 0 ? 'not-allowed' : 'pointer',
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            if (generated.length > 0) {
+              e.currentTarget.style.background = '#059669';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (generated.length > 0) {
+              e.currentTarget.style.background = '#10b981';
+            }
+          }}
+        >
+          🎮 מצב תלמיד
+        </button>
+      </div>
 
       {/* תצוגת התרגילים שנוצרו */}
       <section>
@@ -262,6 +371,24 @@ export default function TeacherDashboard() {
                   <div style={{ fontWeight: 600, fontSize: '1.1rem', marginBottom: '0.5rem' }}>
                     {q.prompt}
                   </div>
+
+                  {q.assetId && (
+                    <div style={{ marginTop: '0.5rem', marginBottom: '0.75rem' }}>
+                      <img
+                        src={`/assets/${q.assetId}.png`}
+                        alt=""
+                        style={{
+                          maxWidth: '250px',
+                          height: 'auto',
+                          borderRadius: 8,
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        }}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
 
                   {q.options && (
                     <ul
