@@ -90,6 +90,22 @@ export default function TeacherDashboard() {
     doc.save('exam.pdf');
   };
 
+  const handleDownloadJson = () => {
+    if (!generated.length) return;
+
+    const blob = new Blob(
+      [JSON.stringify(generated, null, 2)],
+      { type: 'application/json' },
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'exam.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleSaveExam = () => {
     if (!generated.length || !examName.trim()) return;
     const newExam: SavedExam = {
@@ -279,6 +295,18 @@ export default function TeacherDashboard() {
                   }`}
                 >
                   הורד כ-PDF
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadJson}
+                  disabled={!generated.length}
+                  className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    generated.length
+                      ? 'border border-slate-400 text-slate-700 hover:bg-slate-50'
+                      : 'cursor-not-allowed border border-slate-300 text-slate-400'
+                  }`}
+                >
+                  הורד כ-JSON
                 </button>
                 <button
                   type="button"
