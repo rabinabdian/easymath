@@ -8,6 +8,7 @@ export type ChildSettings = {
   showHints: boolean;
   animationsEnabled: boolean;
   soundsEnabled: boolean;
+  selectedExamId?: string; // מזהה מבחן שנבחר ע"י הורה
 };
 
 const defaultSettings: ChildSettings = {

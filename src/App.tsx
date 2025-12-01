@@ -10,6 +10,9 @@ import { speak } from "./utils/speech";
 import TeacherDashboard from "./components/TeacherDashboard";
 import YearPlanView from "./components/YearPlanView";
 import { generateYearPlan } from "./utils/yearPlanGenerator";
+import { loadExams, getExamById } from "./utils/examsStorage";
+import type { SavedExam } from "./utils/examsStorage";
+import StudentGame from "./components/StudentGame";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -130,6 +133,21 @@ function SessionPage() {
   const { settings } = useChildSettings();
   const navigate = useNavigate();
 
+  // אם נבחר מבחן מהמורה, נשתמש ב-StudentGame
+  if (settings.selectedExamId) {
+    const exam = getExamById(settings.selectedExamId);
+    if (exam && exam.questions.length > 0) {
+      // השתמש במשחק של תלמיד עם השאלות מהמבחן הנבחר
+      return (
+        <StudentGame
+          questions={exam.questions.slice(0, settings.sessionLength)}
+          onExit={() => navigate("/")}
+        />
+      );
+    }
+  }
+
+  // ברירת מחדל: תרגילי ספירה
   const allExercises: CountExercise[] = countTo5Exercises;
 
   // Defensive: ensure sessionLength is valid
@@ -342,11 +360,20 @@ function YearPlanPage() {
 function ParentPage() {
   const { settings, setSettings } = useChildSettings();
   const navigate = useNavigate();
+  const [savedExams, setSavedExams] = useState<SavedExam[]>([]);
+
+  useEffect(() => {
+    // טעינת מבחנים שמורים
+    const exams = loadExams();
+    setSavedExams(exams);
+  }, []);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
+
+    const selectedExamId = formData.get("selectedExamId") as string;
 
     const newSettings: ChildSettings = {
       childName: (formData.get("childName") as string) || "ילד",
@@ -355,6 +382,7 @@ function ParentPage() {
       showHints: formData.get("showHints") === "on",
       animationsEnabled: formData.get("animationsEnabled") === "on",
       soundsEnabled: formData.get("soundsEnabled") === "on",
+      selectedExamId: selectedExamId || undefined,
     };
 
     setSettings(newSettings);
@@ -392,6 +420,18 @@ function ParentPage() {
             <option value={5}>5 תרגילים</option>
             <option value={7}>7 תרגילים</option>
             <option value={10}>10 תרגילים</option>
+          </select>
+        </label>
+
+        <label className="form-group">
+          <span>בחר תרגילים מהמורה:</span>
+          <select name="selectedExamId" defaultValue={settings.selectedExamId || ""}>
+            <option value="">ברירת מחדל (ספירה עד 5)</option>
+            {savedExams.map((exam) => (
+              <option key={exam.id} value={exam.id}>
+                {exam.name} ({exam.questions.length} תרגילים)
+              </option>
+            ))}
           </select>
         </label>
 
