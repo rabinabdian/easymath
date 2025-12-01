@@ -25,14 +25,16 @@ import { getQuestionPrompt } from '../utils/questionText';
 import { avatarEmoji } from '../utils/avatar';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
-  if (count >= items.length) return [...items];
   const copy = [...items];
   const result: T[] = [];
-  while (result.length < count && copy.length > 0) {
+  const maxCount = Math.min(count, items.length);
+
+  while (result.length < maxCount) {
     const idx = Math.floor(Math.random() * copy.length);
     result.push(copy[idx]);
     copy.splice(idx, 1);
   }
+
   return result;
 }
 
