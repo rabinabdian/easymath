@@ -108,7 +108,7 @@ export function createYearBookletPdf(
     doc.setFontSize(12);
 
     chosen.forEach((q, idx) => {
-      const text = `${idx + 1}. ${q.prompt}`;
+      const text = `${idx + 1}. ${q.promptHe}`;
       const wrapped = doc.splitTextToSize(text, usableWidth);
       const linesForAnswer = q.options ? 1 : 2;
       const neededHeight =

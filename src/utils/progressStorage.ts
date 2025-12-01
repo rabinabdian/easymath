@@ -1,5 +1,5 @@
 // src/utils/progressStorage.ts
-import type { StudentProgress, MonthBadge } from '../types/gamification';
+import type { StudentProgress } from '../types/gamification';
 
 const KEY = 'easymath_progress_v1';
 
