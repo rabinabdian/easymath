@@ -13,8 +13,16 @@ import { generateYearPlan } from '../utils/yearPlanGenerator';
 import { createYearBookletPdf } from '../utils/createYearBookletPdf';
 import type { YearPlan, WeekPlan } from '../types/yearPlan';
 import { useI18n } from '../i18n';
-import { loadProgress, saveProgress, upsertMonthBadge } from '../utils/progressStorage';
+import { upsertMonthBadge } from '../utils/progressStorage';
 import type { StudentProgress } from '../types/gamification';
+import {
+  loadStudentRecords,
+  saveStudentRecords,
+  createStudent,
+  updateStudentProgress,
+} from '../utils/studentStorage';
+import type { StudentRecord } from '../types/students';
+import { getQuestionPrompt } from '../utils/questionText';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
   if (count >= items.length) return [...items];
@@ -85,8 +93,10 @@ export default function TeacherDashboard() {
   const [yearPlan, setYearPlan] = useState<YearPlan | null>(null);
   const [selectedWeekId, setSelectedWeekId] = useState<string>('');
 
-  // Progress & Gamification
-  const [progress, setProgress] = useState<StudentProgress | null>(null);
+  // Students & Progress
+  const [students, setStudents] = useState<StudentRecord[]>([]);
+  const [selectedStudentId, setSelectedStudentId] = useState<string>('');
+  const [newStudentName, setNewStudentName] = useState('');
 
   useEffect(() => {
     setSavedExams(loadExams());
@@ -98,23 +108,30 @@ export default function TeacherDashboard() {
     });
     setYearPlan(plan);
 
-    // Load or initialize progress
-    const p = loadProgress() ?? {
-      id: 'default_student',
-      grade: 'א׳',
-      yearLabel: plan.yearLabel,
-      monthBadges: [],
-    };
-    setProgress(p);
+    // Load or initialize students
+    const loadedStudents = loadStudentRecords();
+    if (loadedStudents.length === 0) {
+      // Create default student
+      const defaultStudent = createStudent('תלמיד/ה 1', 'א׳', plan.yearLabel);
+      setStudents([defaultStudent]);
+      setSelectedStudentId(defaultStudent.profile.id);
+      saveStudentRecords([defaultStudent]);
+    } else {
+      setStudents(loadedStudents);
+      setSelectedStudentId(loadedStudents[0].profile.id);
+    }
   }, []);
 
   useEffect(() => {
     saveExams(savedExams);
   }, [savedExams]);
 
+  // Save students whenever they change
   useEffect(() => {
-    if (progress) saveProgress(progress);
-  }, [progress]);
+    if (students.length) {
+      saveStudentRecords(students);
+    }
+  }, [students]);
 
   const topic = useMemo(
     () => TOPICS.find((t) => t.id === selectedTopic),
@@ -208,7 +225,7 @@ export default function TeacherDashboard() {
 
         // Basic validation
         const cleaned = arr.filter(
-          (q) => q && typeof q.id === 'string' && q.prompt
+          (q) => q && typeof q.id === 'string' && (q.promptHe || q.promptEn)
         );
 
         if (!cleaned.length) {
@@ -257,14 +274,19 @@ export default function TeacherDashboard() {
         ? yearPlan.weeks[Number(selectedWeekId)]
         : undefined;
 
+    const activeStudent = students.find((s) => s.profile.id === selectedStudentId);
+
     const handleFinished = (result: GameResult) => {
-      if (!progress || !result.month) return;
+      if (!activeStudent || !result.month) return;
       const percent = Math.round((result.score / result.total) * 100);
 
       // Award badge if score is 60% or higher
       if (percent >= 60) {
-        const updated = upsertMonthBadge(progress, result.month, percent);
-        setProgress(updated);
+        setStudents((prev) =>
+          updateStudentProgress(prev, activeStudent.profile.id, (prevProg) =>
+            upsertMonthBadge(prevProg, result.month!, percent)
+          )
+        );
       }
     };
 
@@ -281,6 +303,8 @@ export default function TeacherDashboard() {
       />
     );
   }
+
+  const activeStudent = students.find((s) => s.profile.id === selectedStudentId);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -321,6 +345,63 @@ export default function TeacherDashboard() {
             </button>
           </div>
         </header>
+
+        {/* Student Profile Selection */}
+        <section className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900">
+                {locale === 'he' ? 'פרופיל תלמיד' : 'Student Profile'}
+              </h2>
+              <p className="text-xs text-slate-600">
+                {locale === 'he'
+                  ? 'בחר תלמיד כדי שההתקדמות והתגים יישמרו רק עבורו.'
+                  : 'Select a student to track their progress and badges.'}
+              </p>
+            </div>
+
+            <div className="flex flex-col items-stretch gap-2 md:flex-row md:items-center">
+              <select
+                className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm"
+                value={selectedStudentId}
+                onChange={(e) => setSelectedStudentId(e.target.value)}
+              >
+                {students.map((s) => (
+                  <option key={s.profile.id} value={s.profile.id}>
+                    {s.profile.name} ({s.profile.grade})
+                  </option>
+                ))}
+              </select>
+
+              <div className="flex gap-1">
+                <input
+                  type="text"
+                  placeholder={locale === 'he' ? 'שם תלמיד חדש' : 'New student name'}
+                  className="w-32 rounded-lg border border-slate-300 px-2 py-1 text-xs"
+                  value={newStudentName}
+                  onChange={(e) => setNewStudentName(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!yearPlan || !newStudentName.trim()) return;
+                    const rec = createStudent(
+                      newStudentName.trim(),
+                      'א׳',
+                      yearPlan.yearLabel
+                    );
+                    setStudents((prev) => [...prev, rec]);
+                    setSelectedStudentId(rec.profile.id);
+                    setNewStudentName('');
+                  }}
+                  className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+                >
+                  {locale === 'he' ? 'הוסף' : 'Add'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* layout: טאבלט – שני טורים */}
         <div className="grid gap-4 md:grid-cols-5">
@@ -494,13 +575,13 @@ export default function TeacherDashboard() {
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
                 {t('teacher.badges.title')}
               </h2>
-              {!progress || progress.monthBadges.length === 0 ? (
+              {!activeStudent || activeStudent.progress.monthBadges.length === 0 ? (
                 <p className="text-sm text-slate-500">
                   {t('teacher.badges.empty')}
                 </p>
               ) : (
                 <ul className="flex flex-wrap gap-2 text-sm">
-                  {progress.monthBadges.map((b) => (
+                  {activeStudent.progress.monthBadges.map((b) => (
                     <li
                       key={b.month}
                       className="flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1"
@@ -624,7 +705,7 @@ export default function TeacherDashboard() {
                     >
                       <div className="flex justify-between">
                         <span className="font-medium">
-                          {idx + 1}. {q.prompt}
+                          {idx + 1}. {getQuestionPrompt(q, locale)}
                         </span>
                         <span className="text-xs text-slate-500">
                           {q.difficulty === 'easy'

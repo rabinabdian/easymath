@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
+import { getQuestionPrompt } from '../utils/questionText';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -26,7 +27,7 @@ const MAX_LIVES = 3;
 const TIME_PER_QUESTION = 30; // seconds
 
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -272,7 +273,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         {/* Question card */}
         <div className="rounded-2xl bg-white p-5 shadow-sm">
           <h2 className="mb-3 text-lg font-semibold text-slate-900">
-            {current.prompt}
+            {getQuestionPrompt(current, locale)}
           </h2>
 
           {current.assetId && (
