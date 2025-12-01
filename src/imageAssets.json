@@ -1,0 +1,290 @@
+[
+  {
+    "assetId": "numbers/apples_5",
+    "topic": "numbers",
+    "description": "5-8 תפוחים לספירה בסיסית",
+    "pageHint": "פרק מספרים עד 10, תרגילי תפוחים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/cartoon%20apples/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2014/12/21/23/30/apple-575317_1280.png"
+  },
+  {
+    "assetId": "numbers/apples_10",
+    "topic": "numbers",
+    "description": "קבוצת תפוחים גדולה (10-12)",
+    "pageHint": "מספרים עד 20, קבוצות פירות",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/cartoon%20apples/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/56/apples-1294287_1280.png"
+  },
+  {
+    "assetId": "numbers/pears_group",
+    "topic": "numbers",
+    "description": "אגסים לקבוצות השוואה (פחות/יותר)",
+    "pageHint": "תירגול השוואה בין קבוצות",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/pear%20fruit/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2014/04/02/17/07/pear-307428_1280.png"
+  },
+  {
+    "assetId": "numbers/balls_colorful",
+    "topic": "numbers",
+    "description": "כדורים צבעוניים – ספירה ודילוגים",
+    "pageHint": "תרגילי דילוגים על מספרים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/colorful%20balls/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/12/18/20/balls-153270_1280.png"
+  },
+  {
+    "assetId": "numbers/toys_block_set",
+    "topic": "numbers",
+    "description": "קוביות/צעצועים לספירה",
+    "pageHint": "מספרים עד 20 עם צעצועים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/toy%20blocks/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/12/18/20/blocks-153273_1280.png"
+  },
+  {
+    "assetId": "match/stars_7",
+    "topic": "numbers",
+    "description": "7 כוכבים – התאמת מספר לכמות",
+    "pageHint": "קשר בין מספר לכמות",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/star%20icons/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2012/04/14/16/31/star-34521_1280.png"
+  },
+  {
+    "assetId": "match/hearts_4",
+    "topic": "numbers",
+    "description": "4 לבבות לספירה",
+    "pageHint": "תרגילי 'כמה לבבות יש?'",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/heart%20icons/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/24/heart-1294360_1280.png"
+  },
+  {
+    "assetId": "match/clouds_9",
+    "topic": "numbers",
+    "description": "עננים/טיפות – ספירה עד 10",
+    "pageHint": "תירגול ספירה וכתיבת מספר",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/cloud%20cartoon/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2014/04/02/10/55/cloud-308708_1280.png"
+  },
+  {
+    "assetId": "school/pencils_cup",
+    "topic": "numbers",
+    "description": "כוס עם עפרונות צבעוניים",
+    "pageHint": "ספירה באמצעות עפרונות, תרגילי חנות ציוד",
+    "sourcePageUrl": "https://pixabay.com/images/search/school%20tools/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2014/04/03/10/32/pencils-309374_1280.png"
+  },
+  {
+    "assetId": "school/crayons_box",
+    "topic": "numbers",
+    "description": "קופסת פנקס/קריונים צבעוניים",
+    "pageHint": "תירגול כמה צבעים יש בקופסה",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/school%20supplies/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/13/10/07/crayons-156824_1280.png"
+  },
+  {
+    "assetId": "school/scissors",
+    "topic": "money",
+    "description": "מספריים – פריט בחנות ציוד",
+    "pageHint": "תרגילי כסף: כמה עולה כל פריט",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/scissors%20cartoon/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2014/04/03/10/32/scissors-309376_1280.png"
+  },
+  {
+    "assetId": "school/glue_bottle",
+    "topic": "money",
+    "description": "בקבוק דבק צבעוני",
+    "pageHint": "חנות ציוד לכיתה",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/glue%20tube/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2014/04/02/10/55/glue-308870_1280.png"
+  },
+  {
+    "assetId": "school/notebook",
+    "topic": "money",
+    "description": "מחברת / בלוק כתיבה",
+    "pageHint": "קניית מחברות ועפרונות",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/notebook%20school/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2014/04/02/10/56/notebook-308800_1280.png"
+  },
+  {
+    "assetId": "school/bag",
+    "topic": "money",
+    "description": "תיק גב לבית ספר",
+    "pageHint": "תרגילי קנייה של תיק + ציוד",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/school%20bag/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/12/17/58/school-152684_1280.png"
+  },
+  {
+    "assetId": "kids/kids_playground",
+    "topic": "word_problems",
+    "description": "ילדים בחצר משחקים",
+    "pageHint": "בעיות מילוליות: ילדים במגלשה, בנדנדה וכו׳",
+    "sourcePageUrl": "https://pixabay.com/illustrations/children-play-kinder-playground-1295470/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2016/04/01/09/51/children-1299162_1280.png"
+  },
+  {
+    "assetId": "kids/kids_classroom",
+    "topic": "word_problems",
+    "description": "ילדים בכיתה/לומדים",
+    "pageHint": "בעיות מילוליות בכיתה",
+    "sourcePageUrl": "https://pixabay.com/illustrations/school-children-classroom-teacher-3518726/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2017/02/20/15/28/children-2085740_1280.png"
+  },
+  {
+    "assetId": "kids/kids_with_balloons",
+    "topic": "addition",
+    "description": "ילדים עם בלונים צבעוניים",
+    "pageHint": "חיבור וחיסור בלונים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/balloons-kids-balloon-party-5160931/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2012/04/24/16/33/balloons-40204_1280.png"
+  },
+  {
+    "assetId": "addition/balloons_group_7",
+    "topic": "addition",
+    "description": "קבוצת בלונים צבעוניים (חיבור)",
+    "pageHint": "תרגילי חיבור עם בלונים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/balloon-party-cartoon-children-4584043/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/13/09/51/balloons-155064_1280.png"
+  },
+  {
+    "assetId": "addition/balloons_group_10",
+    "topic": "addition",
+    "description": "קבוצת בלונים גדולה",
+    "pageHint": "חיבור מספרים גדולים עד 20",
+    "sourcePageUrl": "https://pixabay.com/images/search/balloon%20cartoon/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2012/04/24/16/33/balloons-40206_1280.png"
+  },
+  {
+    "assetId": "subtraction/balloons_minus",
+    "topic": "subtraction",
+    "description": "בלונים שחלקם עפים/נעלמים",
+    "pageHint": "תרגילי 'כמה נשארו?'",
+    "sourcePageUrl": "https://pixabay.com/images/search/balloon%20cartoon/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2012/04/24/16/33/balloons-40207_1280.png"
+  },
+  {
+    "assetId": "money/coins_stack",
+    "topic": "money",
+    "description": "מטבעות בערימה",
+    "pageHint": "תרגילי חיבור/חיסור עם כסף",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/coins%20stack/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/12/18/20/money-153478_1280.png"
+  },
+  {
+    "assetId": "money/coins_children",
+    "topic": "money",
+    "description": "ילדים/ידיים מחזיקות מטבעות",
+    "pageHint": "בעיות מילוליות: יש לי X שקלים, קניתי Y",
+    "sourcePageUrl": "https://pixabay.com/illustrations/money-plant-coins-children-6896221/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2016/11/29/03/53/money-1867539_1280.png"
+  },
+  {
+    "assetId": "money/shop_shelf",
+    "topic": "money",
+    "description": "מדף חנות עם מוצרים",
+    "pageHint": "בחירת מוצרים לפי מחיר",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/supermarket%20shelf%20cartoon/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2014/04/03/10/44/shelf-309461_1280.png"
+  },
+  {
+    "assetId": "even_odd/socks_pairs",
+    "topic": "evenOdd",
+    "description": "זוגות גרביים – בדיקת זוגיות",
+    "pageHint": "פרק מספרים זוגיים/אי־זוגיים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/socks%20cartoon/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/12/12/34/socks-147663_1280.png"
+  },
+  {
+    "assetId": "even_odd/kids_pairs",
+    "topic": "evenOdd",
+    "description": "ילדים מסודרים בזוגות",
+    "pageHint": "האם יש ילד בלי זוג?",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/children%20pairs/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2016/09/15/10/47/socks-1679040_1280.png"
+  },
+  {
+    "assetId": "even_odd/dots_grid",
+    "topic": "evenOdd",
+    "description": "רשת נקודות/עיגולים",
+    "pageHint": "חישוב זוגי/אי-זוגי על פי עיגולים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/dots%20pattern/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/12/17/47/pattern-152509_1280.png"
+  },
+  {
+    "assetId": "geometry/basic_shapes",
+    "topic": "geometry",
+    "description": "אוסף צורות: ריבוע, עיגול, משולש, מלבן",
+    "pageHint": "פרקי צורות בסיסיות",
+    "sourcePageUrl": "https://pixabay.com/illustrations/shapes-geometric-figures-basic-148647/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2012/04/16/12/38/shapes-35586_1280.png"
+  },
+  {
+    "assetId": "geometry/shape_patterns",
+    "topic": "geometry",
+    "description": "רצף צורות – להשלמת דפוס",
+    "pageHint": "דפוסים גאומטריים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/shape%20pattern/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2017/01/31/16/25/shapes-2026612_1280.png"
+  },
+  {
+    "assetId": "symmetry/heart_half",
+    "topic": "geometry",
+    "description": "לב חצי-ציור (להשלמה סימטרית)",
+    "pageHint": "תרגילי שיקוף וסימטריה",
+    "sourcePageUrl": "https://pixabay.com/illustrations/heart-half-valentine-s-day-151854/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/12/17/00/heart-151854_1280.png"
+  },
+  {
+    "assetId": "symmetry/star_half",
+    "topic": "geometry",
+    "description": "כוכב/פרח לשימוש בשיקוף",
+    "pageHint": "תרגילי השלמת ציור סימטרי",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/star%20symmetry/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2012/04/14/16/31/star-34521_1280.png"
+  },
+  {
+    "assetId": "holiday/dreidel",
+    "topic": "holiday",
+    "description": "סביבון מצויר",
+    "pageHint": "יחידת חנוכה בספר – תרגילי ספירה/חיבור עם סביבונים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/dreidel-hanukkah-game-jewish-7570950/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2014/04/03/00/39/dreidel-309049_1280.png"
+  },
+  {
+    "assetId": "holiday/dreidel_candles",
+    "topic": "holiday",
+    "description": "סביבון + נרות",
+    "pageHint": "תרגילים מילוליים על נרות/סביבונים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/dreidel-candles-spinning-top-6307769/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2012/04/18/00/07/dreidel-36282_1280.png"
+  },
+  {
+    "assetId": "holiday/menorah_candles",
+    "topic": "holiday",
+    "description": "מנורה/חנוכייה עם נרות",
+    "pageHint": "כמה נרות דולקים? כמה נשארו?",
+    "sourcePageUrl": "https://pixabay.com/images/search/hanukah/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/12/18/20/menorah-153226_1280.png"
+  },
+  {
+    "assetId": "background/grid_math",
+    "topic": "generic",
+    "description": "רקע של דף חשבון עם ריבועים/גריד",
+    "pageHint": "אפשר כבסיס לדפי עבודה",
+    "sourcePageUrl": "https://pixabay.com/illustrations/search/math%20paper/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2014/04/03/10/03/grid-309087_1280.png"
+  },
+  {
+    "assetId": "background/classroom_board",
+    "topic": "generic",
+    "description": "לוח כיתה ירוק",
+    "pageHint": "רקע לכותרת, הוראות, טיפים",
+    "sourcePageUrl": "https://pixabay.com/illustrations/board-green-school-classroom-48813/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2012/04/12/13/09/board-30560_1280.png"
+  },
+  {
+    "assetId": "background/school_frame",
+    "topic": "generic",
+    "description": "מסגרת דף עם אייקוני בית ספר",
+    "pageHint": "לכריכה/עמוד פתיחה של חוברת",
+    "sourcePageUrl": "https://pixabay.com/illustrations/back-to-school-doodles-frame-4515126/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/12/14/46/border-148899_1280.png"
+  }
+]
