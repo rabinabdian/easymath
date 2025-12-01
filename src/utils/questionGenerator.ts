@@ -1,5 +1,6 @@
 // src/utils/questionGenerator.ts
 import type { Difficulty, TopicId, Question } from '../types/questions';
+import { wrapLTR } from './questionText';
 
 type AddTemplate = {
   idPrefix: string;
@@ -47,14 +48,15 @@ export function generateAdditionQuestions(t: AddTemplate): Question[] {
       if (b === 0 && a === 0) continue; // תרגיל לא מעניין
 
       const id = `${idPrefix}${String(counter).padStart(3, '0')}`;
+      const mathExpr = `${a} + ${b} = ?`;
 
       questions.push({
         id,
         topic,
         subtopic,
         difficulty,
-        promptHe: `פתור: ${a} + ${b} = ?`,
-        promptEn: `Solve: ${a} + ${b} = ?`,
+        promptHe: `פתור: ${wrapLTR(mathExpr)}`,
+        promptEn: `Solve: ${mathExpr}`,
         answer: sum,
       });
 
@@ -104,14 +106,15 @@ export function generateSubtractionQuestions(t: SubTemplate): Question[] {
 
       const result = start - take;
       const id = `${idPrefix}${String(counter).padStart(3, '0')}`;
+      const mathExpr = `${start} - ${take} = ?`;
 
       questions.push({
         id,
         topic,
         subtopic,
         difficulty,
-        promptHe: `פתור: ${start} - ${take} = ?`,
-        promptEn: `Solve: ${start} - ${take} = ?`,
+        promptHe: `פתור: ${wrapLTR(mathExpr)}`,
+        promptEn: `Solve: ${mathExpr}`,
         answer: result,
       });
 
@@ -159,14 +162,15 @@ export function generateMultiplicationQuestions(t: MultiplicationTemplate): Ques
     for (let b = minFactor; b <= maxFactor; b++) {
       const product = a * b;
       const id = `${idPrefix}${String(counter).padStart(3, '0')}`;
+      const mathExpr = `${a} × ${b} = ?`;
 
       questions.push({
         id,
         topic,
         subtopic,
         difficulty,
-        promptHe: `פתור: ${a} × ${b} = ?`,
-        promptEn: `Solve: ${a} × ${b} = ?`,
+        promptHe: `פתור: ${wrapLTR(mathExpr)}`,
+        promptEn: `Solve: ${mathExpr}`,
         answer: product,
       });
 
