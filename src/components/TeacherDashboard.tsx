@@ -21,7 +21,7 @@ import {
   updateStudentProgress,
 } from '../utils/studentStorage';
 import type { StudentRecord, AvatarType } from '../types/students';
-import { getQuestionPrompt } from '../utils/questionText';
+import { QuestionCard } from './QuestionCard';
 import { avatarEmoji } from '../utils/avatar';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
@@ -759,41 +759,19 @@ export default function TeacherDashboard() {
                       key={q.id}
                       className="rounded-xl border border-slate-200 bg-slate-50 p-3"
                     >
-                      <div className="flex justify-between">
-                        <span className="font-medium">
-                          {idx + 1}. {getQuestionPrompt(q, locale)}
+                      <div className="mb-2 flex justify-between">
+                        <span className="font-medium text-slate-700">
+                          #{idx + 1}
                         </span>
                         <span className="text-xs text-slate-500">
                           {q.difficulty === 'easy'
-                            ? 'קל'
+                            ? t('teacher.difficulty.easy')
                             : q.difficulty === 'medium'
-                            ? 'בינוני'
-                            : 'קשה'}
+                            ? t('teacher.difficulty.medium')
+                            : t('teacher.difficulty.hard')}
                         </span>
                       </div>
-
-                      {q.assetId && (
-                        <div className="mt-2">
-                          <img
-                            src={`/assets/${q.assetId}.png`}
-                            alt=""
-                            className="max-h-40 rounded-lg border border-slate-200 object-contain"
-                          />
-                        </div>
-                      )}
-
-                      {q.options && (
-                        <ul className="mt-2 flex flex-wrap gap-2 text-xs">
-                          {q.options.map((opt) => (
-                            <li
-                              key={String(opt)}
-                              className="rounded-full bg-white px-2 py-1"
-                            >
-                              {String(opt)}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                      <QuestionCard question={q} showOptions={!!q.options} />
                     </li>
                   ))}
                 </ol>
