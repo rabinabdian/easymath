@@ -2,6 +2,11 @@
 import type { StudentProgress } from './gamification';
 
 /**
+ * Avatar type for student profiles
+ */
+export type AvatarType = 'boy' | 'girl' | 'robot' | 'star';
+
+/**
  * Student profile information
  */
 export interface StudentProfile {
@@ -9,7 +14,8 @@ export interface StudentProfile {
   name: string; // student name
   grade: string; // e.g., "א׳", "ב׳"
   yearLabel: string; // e.g., "תשפ״ו"
-  color?: string; // optional color for UI/avatar
+  avatar: AvatarType; // avatar icon type
+  color: string; // hex color for UI (e.g., "#f97316")
 }
 
 /**
