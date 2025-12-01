@@ -1,0 +1,762 @@
+openapi: 3.0.3
+info:
+  title: EasyMath School API
+  version: 1.0.0
+  description: >
+    API למערכת Easymath – ניהול מורים, תלמידים, מבחנים והתקדמות.
+    מערכת אימות מלאה עם JWT (Access + Refresh Tokens) והרשאות.
+
+servers:
+  - url: https://api.easymath.school
+    description: Production
+  - url: http://localhost:4000
+    description: Local development
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Access token מוחזר מ-/auth/login או /auth/refresh
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          type: string
+          enum: [TEACHER, ADMIN]
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: teacher@example.com
+        password:
+          type: string
+          format: password
+          example: password123
+
+    RegisterRequest:
+      type: object
+      required: [email, password, name]
+      properties:
+        email:
+          type: string
+          format: email
+          example: teacher@example.com
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: SecurePass123
+        name:
+          type: string
+          example: שם המורה
+
+    LoginResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token (תוקף 15 דקות)
+        user:
+          $ref: '#/components/schemas/User'
+
+    RefreshResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token חדש
+
+    StudentProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        grade:
+          type: string
+          example: א׳
+        yearLabel:
+          type: string
+          example: תשפ״ו
+        avatar:
+          type: string
+          enum: [boy, girl, robot, star]
+        color:
+          type: string
+          description: Hex color
+          example: "#f97316"
+
+    StudentProgress:
+      type: object
+      properties:
+        monthBadges:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthBadge'
+
+    MonthBadge:
+      type: object
+      properties:
+        month:
+          type: string
+          example: ספטמבר
+        bestScore:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 100
+        earnedAt:
+          type: string
+          format: date-time
+
+    StudentRecord:
+      type: object
+      properties:
+        profile:
+          $ref: '#/components/schemas/StudentProfile'
+        progress:
+          $ref: '#/components/schemas/StudentProgress'
+
+    CreateStudentRequest:
+      type: object
+      required: [name, grade, yearLabel, avatar, color]
+      properties:
+        name:
+          type: string
+          example: נועם
+        grade:
+          type: string
+          example: א׳
+        yearLabel:
+          type: string
+          example: תשפ״ו
+        avatar:
+          type: string
+          enum: [boy, girl, robot, star]
+          example: girl
+        color:
+          type: string
+          example: "#f97316"
+
+    UpdateStudentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        grade:
+          type: string
+        avatar:
+          type: string
+          enum: [boy, girl, robot, star]
+        color:
+          type: string
+
+    Exam:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        grade:
+          type: string
+        subject:
+          type: string
+        questions:
+          type: array
+          items:
+            type: string
+            description: Question IDs from question bank
+        meta:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateExamRequest:
+      type: object
+      required: [title, grade, subject, questions]
+      properties:
+        title:
+          type: string
+          example: חיבור עד 10 – מבחן
+        grade:
+          type: string
+          example: א׳
+        subject:
+          type: string
+          example: חשבון
+        questions:
+          type: array
+          items:
+            type: string
+          example: [add_basic_001, add_basic_002]
+        meta:
+          type: object
+          additionalProperties: true
+
+    AttemptRequest:
+      type: object
+      required: [score, total, sourceType]
+      properties:
+        score:
+          type: integer
+          minimum: 0
+          example: 9
+        total:
+          type: integer
+          minimum: 1
+          example: 10
+        sourceType:
+          type: string
+          enum: [exam, game, ad-hoc]
+          example: game
+        examId:
+          type: string
+          format: uuid
+          nullable: true
+        context:
+          type: object
+          additionalProperties: true
+          example:
+            month: נובמבר
+            weekIndex: 7
+            topic: addition
+
+    AttemptResponse:
+      type: object
+      properties:
+        attempt:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            score:
+              type: integer
+            total:
+              type: integer
+            sourceType:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+        badgeAwarded:
+          $ref: '#/components/schemas/MonthBadge'
+
+    ProgressResponse:
+      type: object
+      properties:
+        monthBadges:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthBadge'
+        recentAttempts:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              score:
+                type: integer
+              total:
+                type: integer
+              sourceType:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+        stats:
+          type: object
+          properties:
+            totalAttempts:
+              type: integer
+            averageScore:
+              type: integer
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+
+paths:
+  # ============================================
+  # AUTHENTICATION
+  # ============================================
+
+  /api/auth/register:
+    post:
+      summary: רישום משתמש חדש (מורה)
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: refreshToken=<token>; HttpOnly; Secure; SameSite=Strict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/login:
+    post:
+      summary: התחברות מורה/אדמין
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Logged in successfully
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: refreshToken=<token>; HttpOnly; Secure; SameSite=Strict
+              description: Refresh token ב-HTTP-only cookie (תוקף 7 ימים)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/refresh:
+    post:
+      summary: קבלת access token חדש באמצעות refresh token
+      tags: [Auth]
+      description: >
+        מקבל refresh token מה-cookie, מאמת אותו, ומחזיר access token חדש.
+        מבצע token rotation - מבטל את הישן ויוצר refresh token חדש.
+      parameters:
+        - in: cookie
+          name: refreshToken
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: New access token issued
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Refresh token חדש (rotation)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshResponse'
+        '401':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/logout:
+    post:
+      summary: התנתקות – ביטול refresh token וניקוי cookie
+      tags: [Auth]
+      parameters:
+        - in: cookie
+          name: refreshToken
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Logged out successfully
+        '500':
+          description: Logout failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/logout-all:
+    post:
+      summary: התנתקות מכל המכשירים – ביטול כל ה-refresh tokens
+      tags: [Auth]
+      parameters:
+        - in: cookie
+          name: refreshToken
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Logged out from all devices
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================
+  # STUDENTS
+  # ============================================
+
+  /api/students:
+    get:
+      summary: רשימת תלמידים של המורה המחובר
+      tags: [Students]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of student records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentRecord'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: יצירת תלמיד חדש
+      tags: [Students]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStudentRequest'
+      responses:
+        '201':
+          description: Student created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentRecord'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/students/{id}:
+    get:
+      summary: קבלת תלמיד יחיד
+      tags: [Students]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: Student record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentRecord'
+        '404':
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      summary: עדכון תלמיד
+      tags: [Students]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStudentRequest'
+      responses:
+        '200':
+          description: Student updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentRecord'
+        '404':
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: מחיקת תלמיד
+      tags: [Students]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '204':
+          description: Student deleted
+        '404':
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================
+  # PROGRESS & ATTEMPTS
+  # ============================================
+
+  /api/students/{id}/attempts:
+    post:
+      summary: רישום ניסיון (מבחן/משחק) עבור תלמיד
+      tags: [Progress]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Student ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttemptRequest'
+      responses:
+        '201':
+          description: Attempt recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/students/{id}/progress:
+    get:
+      summary: קבלת התקדמות/Badges של תלמיד
+      tags: [Progress]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Student progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgressResponse'
+        '404':
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================
+  # EXAMS
+  # ============================================
+
+  /api/exams:
+    get:
+      summary: רשימת מבחנים של המורה
+      tags: [Exams]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of exams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Exam'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: שמירת מבחן חדש
+      tags: [Exams]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExamRequest'
+      responses:
+        '201':
+          description: Exam created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exam'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/exams/{id}:
+    get:
+      summary: קבלת מבחן ספציפי
+      tags: [Exams]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Exam details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exam'
+        '404':
+          description: Exam not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: מחיקת מבחן
+      tags: [Exams]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Exam deleted
+        '404':
+          description: Exam not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+tags:
+  - name: Auth
+    description: Authentication and authorization endpoints
+  - name: Students
+    description: Student management
+  - name: Progress
+    description: Student progress tracking and attempts
+  - name: Exams
+    description: Exam management
