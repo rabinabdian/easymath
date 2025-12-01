@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
-import { getQuestionPrompt } from '../utils/questionText';
+import { QuestionCard } from './QuestionCard';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -27,7 +27,7 @@ const MAX_LIVES = 3;
 const TIME_PER_QUESTION = 30; // seconds
 
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -272,37 +272,11 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
         {/* Question card */}
         <div className="rounded-2xl bg-white p-5 shadow-sm">
-          <h2 className="mb-3 text-lg font-semibold text-slate-900">
-            {getQuestionPrompt(current, locale)}
-          </h2>
-
-          {current.assetId && (
-            <div className="mb-3 flex justify-center">
-              <img
-                src={`/assets/${current.assetId}.png`}
-                alt=""
-                className="max-h-48 rounded-xl border border-slate-200 object-contain"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
-            </div>
-          )}
-
-          {current.options && (
-            <div className="mb-4 flex flex-wrap gap-2">
-              {current.options.map((opt) => (
-                <button
-                  key={String(opt)}
-                  type="button"
-                  onClick={() => handleOptionClick(String(opt))}
-                  className="rounded-xl border border-blue-600 bg-white px-3 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-50"
-                >
-                  {String(opt)}
-                </button>
-              ))}
-            </div>
-          )}
+          <QuestionCard
+            question={current}
+            showOptions={!!current.options}
+            onOptionClick={handleOptionClick}
+          />
 
           {!current.options && (
             <div className="mb-4 flex gap-2">
