@@ -20,8 +20,9 @@ import {
   createStudent,
   updateStudentProgress,
 } from '../utils/studentStorage';
-import type { StudentRecord } from '../types/students';
+import type { StudentRecord, AvatarType } from '../types/students';
 import { getQuestionPrompt } from '../utils/questionText';
+import { avatarEmoji } from '../utils/avatar';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
   if (count >= items.length) return [...items];
@@ -96,6 +97,8 @@ export default function TeacherDashboard() {
   const [students, setStudents] = useState<StudentRecord[]>([]);
   const [selectedStudentId, setSelectedStudentId] = useState<string>('');
   const [newStudentName, setNewStudentName] = useState('');
+  const [newStudentAvatar, setNewStudentAvatar] = useState<AvatarType>('boy');
+  const [newStudentColor, setNewStudentColor] = useState('#f97316');
 
   useEffect(() => {
     setSavedExams(loadExams());
@@ -367,19 +370,55 @@ export default function TeacherDashboard() {
               >
                 {students.map((s) => (
                   <option key={s.profile.id} value={s.profile.id}>
-                    {s.profile.name} ({s.profile.grade})
+                    {avatarEmoji(s.profile.avatar)} {s.profile.name} ({s.profile.grade})
                   </option>
                 ))}
               </select>
 
-              <div className="flex gap-1">
+              <div className="flex flex-col gap-2 md:flex-row md:items-center">
                 <input
                   type="text"
                   placeholder={locale === 'he' ? 'שם תלמיד חדש' : 'New student name'}
-                  className="w-32 rounded-lg border border-slate-300 px-2 py-1 text-xs"
+                  className="w-40 rounded-lg border border-slate-300 px-2 py-1 text-xs"
                   value={newStudentName}
                   onChange={(e) => setNewStudentName(e.target.value)}
                 />
+
+                {/* Avatar selection */}
+                <div className="flex items-center gap-1 text-xs">
+                  <span className="text-slate-600">
+                    {locale === 'he' ? 'אייקון:' : 'Icon:'}
+                  </span>
+                  {(['boy', 'girl', 'robot', 'star'] as AvatarType[]).map((a) => (
+                    <button
+                      key={a}
+                      type="button"
+                      onClick={() => setNewStudentAvatar(a)}
+                      className={[
+                        'flex h-7 w-7 items-center justify-center rounded-full border text-base',
+                        newStudentAvatar === a
+                          ? 'border-blue-600 bg-blue-50'
+                          : 'border-slate-300 bg-white',
+                      ].join(' ')}
+                    >
+                      {avatarEmoji(a)}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Color selection */}
+                <div className="flex items-center gap-1 text-xs">
+                  <span className="text-slate-600">
+                    {locale === 'he' ? 'צבע:' : 'Color:'}
+                  </span>
+                  <input
+                    type="color"
+                    value={newStudentColor}
+                    onChange={(e) => setNewStudentColor(e.target.value)}
+                    className="h-7 w-10 cursor-pointer rounded border border-slate-300 p-0"
+                  />
+                </div>
+
                 <button
                   type="button"
                   onClick={() => {
@@ -387,7 +426,9 @@ export default function TeacherDashboard() {
                     const rec = createStudent(
                       newStudentName.trim(),
                       'א׳',
-                      yearPlan.yearLabel
+                      yearPlan.yearLabel,
+                      newStudentAvatar,
+                      newStudentColor
                     );
                     setStudents((prev) => [...prev, rec]);
                     setSelectedStudentId(rec.profile.id);
@@ -574,6 +615,19 @@ export default function TeacherDashboard() {
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
                 {t('teacher.badges.title')}
               </h2>
+
+              {activeStudent && (
+                <div className="mb-3 flex items-center gap-2 text-sm">
+                  <span
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-lg"
+                    style={{ backgroundColor: activeStudent.profile.color }}
+                  >
+                    {avatarEmoji(activeStudent.profile.avatar)}
+                  </span>
+                  <span className="font-medium">{activeStudent.profile.name}</span>
+                </div>
+              )}
+
               {!activeStudent || activeStudent.progress.monthBadges.length === 0 ? (
                 <p className="text-sm text-slate-500">
                   {t('teacher.badges.empty')}
@@ -583,12 +637,13 @@ export default function TeacherDashboard() {
                   {activeStudent.progress.monthBadges.map((b) => (
                     <li
                       key={b.month}
-                      className="flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1"
+                      className="flex items-center gap-2 rounded-full px-3 py-1 text-xs"
+                      style={{ backgroundColor: activeStudent.profile.color + '20' }}
                     >
                       <span>🏅</span>
                       <div>
                         <div className="font-medium">{b.month}</div>
-                        <div className="text-xs text-slate-600">
+                        <div className="text-[0.7rem] text-slate-600">
                           {t('teacher.badges.best', { score: b.bestScore })}
                         </div>
                       </div>

@@ -1,8 +1,11 @@
 // src/utils/studentStorage.ts
-import type { StudentRecord, StudentProfile } from '../types/students';
+import type { StudentRecord, StudentProfile, AvatarType } from '../types/students';
 import type { StudentProgress } from '../types/gamification';
 
 const KEY = 'easymath_students_v1';
+
+const COLORS = ['#f97316', '#3b82f6', '#22c55e', '#e11d48', '#a855f7'];
+const AVATARS: AvatarType[] = ['boy', 'girl', 'robot', 'star'];
 
 /**
  * Load all student records from localStorage
@@ -32,7 +35,9 @@ export function saveStudentRecords(records: StudentRecord[]): void {
 export function createStudent(
   name: string,
   grade: string,
-  yearLabel: string
+  yearLabel: string,
+  avatar?: AvatarType,
+  color?: string
 ): StudentRecord {
   const id = `s_${Date.now()}_${Math.floor(Math.random() * 9999)}`;
   const profile: StudentProfile = {
@@ -40,6 +45,8 @@ export function createStudent(
     name,
     grade,
     yearLabel,
+    avatar: avatar || AVATARS[Math.floor(Math.random() * AVATARS.length)],
+    color: color || COLORS[Math.floor(Math.random() * COLORS.length)],
   };
   const progress: StudentProgress = {
     monthBadges: [],
