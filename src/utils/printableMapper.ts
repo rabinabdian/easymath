@@ -26,7 +26,7 @@ export function buildPrintableExam(
     questions: questions.map((q, idx) => ({
       id: q.id,
       number: idx + 1,
-      text: q.prompt,
+      text: q.promptHe,
       topic: q.topic,
       difficulty: q.difficulty,
       linesForAnswer: q.options ? 1 : 3,

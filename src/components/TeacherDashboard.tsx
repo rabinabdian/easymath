@@ -14,7 +14,6 @@ import { createYearBookletPdf } from '../utils/createYearBookletPdf';
 import type { YearPlan, WeekPlan } from '../types/yearPlan';
 import { useI18n } from '../i18n';
 import { upsertMonthBadge } from '../utils/progressStorage';
-import type { StudentProgress } from '../types/gamification';
 import {
   loadStudentRecords,
   saveStudentRecords,
