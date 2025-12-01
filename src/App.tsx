@@ -13,6 +13,8 @@ import { generateYearPlan } from "./utils/yearPlanGenerator";
 import { loadExams, getExamById } from "./utils/examsStorage";
 import type { SavedExam } from "./utils/examsStorage";
 import StudentGame from "./components/StudentGame";
+import { loadStudentRecords } from "./utils/studentStorage";
+import type { StudentRecord } from "./types/students";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -361,11 +363,34 @@ function ParentPage() {
   const { settings, setSettings } = useChildSettings();
   const navigate = useNavigate();
   const [savedExams, setSavedExams] = useState<SavedExam[]>([]);
+  const [students, setStudents] = useState<StudentRecord[]>([]);
+  const [selectedChildId, setSelectedChildId] = useState<string>("custom");
+  const [customChildName, setCustomChildName] = useState<string>("");
 
   useEffect(() => {
     // טעינת מבחנים שמורים
     const exams = loadExams();
     setSavedExams(exams);
+
+    // טעינת תלמידים מהמורה
+    const loadedStudents = loadStudentRecords();
+    setStudents(loadedStudents);
+
+    // אם יש שם ילד נוכחי בהגדרות, נסה למצוא אותו ברשימת התלמידים
+    if (settings.childName && settings.childName !== "ילד") {
+      const existingStudent = loadedStudents.find(
+        (s) => s.profile.name === settings.childName
+      );
+      if (existingStudent) {
+        setSelectedChildId(existingStudent.profile.id);
+      } else {
+        setSelectedChildId("custom");
+        setCustomChildName(settings.childName);
+      }
+    } else {
+      setCustomChildName(settings.childName);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = (e: FormEvent) => {
@@ -374,9 +399,21 @@ function ParentPage() {
     const formData = new FormData(form);
 
     const selectedExamId = formData.get("selectedExamId") as string;
+    const childId = formData.get("childId") as string;
+
+    // קביעת שם הילד לפי הבחירה
+    let childName = "ילד";
+    if (childId === "custom") {
+      childName = (formData.get("customChildName") as string) || "ילד";
+    } else {
+      const selectedStudent = students.find((s) => s.profile.id === childId);
+      if (selectedStudent) {
+        childName = selectedStudent.profile.name;
+      }
+    }
 
     const newSettings: ChildSettings = {
-      childName: (formData.get("childName") as string) || "ילד",
+      childName,
       maxNumber: Number(formData.get("maxNumber")) === 10 ? 10 : 5,
       sessionLength: Number(formData.get("sessionLength")) as 5 | 7 | 10,
       showHints: formData.get("showHints") === "on",
@@ -398,13 +435,38 @@ function ParentPage() {
 
       <form className="parent-form" onSubmit={handleSubmit}>
         <label className="form-group">
-          <span>שם הילד/ה</span>
-          <input
-            name="childName"
-            defaultValue={settings.childName}
-            placeholder="שם"
-          />
+          <span>בחר ילד/ה</span>
+          <select
+            name="childId"
+            value={selectedChildId}
+            onChange={(e) => setSelectedChildId(e.target.value)}
+          >
+            {students.length > 0 ? (
+              <>
+                {students.map((student) => (
+                  <option key={student.profile.id} value={student.profile.id}>
+                    {student.profile.name}
+                  </option>
+                ))}
+                <option value="custom">אחר - הזן שם חדש</option>
+              </>
+            ) : (
+              <option value="custom">הזן שם ילד/ה</option>
+            )}
+          </select>
         </label>
+
+        {selectedChildId === "custom" && (
+          <label className="form-group">
+            <span>שם הילד/ה</span>
+            <input
+              name="customChildName"
+              value={customChildName}
+              onChange={(e) => setCustomChildName(e.target.value)}
+              placeholder="שם"
+            />
+          </label>
+        )}
 
         <label className="form-group">
           <span>מספרים עד:</span>
