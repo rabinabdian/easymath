@@ -22,8 +22,9 @@ export interface Question {
   subtopic?: string;
   difficulty: Difficulty;
 
-  // טקסט התרגיל
-  prompt: string;
+  // טקסט התרגיל - דו-לשוני
+  promptHe: string;
+  promptEn: string;
 
   // תשובה "ראשית" (בד"כ מספר)
   answer: number | string;
@@ -34,6 +35,7 @@ export interface Question {
   // לפעמים תרצה להציג תמונה / איור
   assetId?: string; // למשל "page_7_butterflies"
 
-  // הסבר לפידבק למורה / לתלמיד
-  explanation?: string;
+  // הסבר לפידבק למורה / לתלמיד - דו-לשוני
+  explanationHe?: string;
+  explanationEn?: string;
 }

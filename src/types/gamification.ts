@@ -6,8 +6,5 @@ export interface MonthBadge {
 }
 
 export interface StudentProgress {
-  id: string;           // e.g., "default_student"
-  yearLabel: string;    // e.g., "תשפ״ו"
-  grade: string;        // e.g., "א׳"
   monthBadges: MonthBadge[];
 }

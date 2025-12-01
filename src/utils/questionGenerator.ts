@@ -53,7 +53,8 @@ export function generateAdditionQuestions(t: AddTemplate): Question[] {
         topic,
         subtopic,
         difficulty,
-        prompt: `פתור: ${a} + ${b} = ?`,
+        promptHe: `פתור: ${a} + ${b} = ?`,
+        promptEn: `Solve: ${a} + ${b} = ?`,
         answer: sum,
       });
 
@@ -109,7 +110,8 @@ export function generateSubtractionQuestions(t: SubTemplate): Question[] {
         topic,
         subtopic,
         difficulty,
-        prompt: `פתור: ${start} - ${take} = ?`,
+        promptHe: `פתור: ${start} - ${take} = ?`,
+        promptEn: `Solve: ${start} - ${take} = ?`,
         answer: result,
       });
 
@@ -163,7 +165,8 @@ export function generateMultiplicationQuestions(t: MultiplicationTemplate): Ques
         topic,
         subtopic,
         difficulty,
-        prompt: `פתור: ${a} × ${b} = ?`,
+        promptHe: `פתור: ${a} × ${b} = ?`,
+        promptEn: `Solve: ${a} × ${b} = ?`,
         answer: product,
       });
 
@@ -191,15 +194,16 @@ interface WordTemplateConfig {
   context: WordContext;
 }
 
-const NAMES = ['נועה', 'יואב', 'דני', 'מיה', 'תמר', 'איתי'];
+const NAMES_HE = ['נועה', 'יואב', 'דני', 'מיה', 'תמר', 'איתי'];
+const NAMES_EN = ['Noah', 'Yoav', 'Danny', 'Mia', 'Tamar', 'Itai'];
 
 const CONTEXT_ITEMS: Record<
   WordContext,
-  { singular: string; plural: string }
+  { singularHe: string; pluralHe: string; singularEn: string; pluralEn: string }
 > = {
-  fruits: { singular: 'פרי', plural: 'פירות' },
-  kids: { singular: 'ילד', plural: 'ילדים' },
-  candies: { singular: 'מסטיק', plural: 'מסטיקים' },
+  fruits: { singularHe: 'פרי', pluralHe: 'פירות', singularEn: 'fruit', pluralEn: 'fruits' },
+  kids: { singularHe: 'ילד', pluralHe: 'ילדים', singularEn: 'kid', pluralEn: 'kids' },
+  candies: { singularHe: 'מסטיק', pluralHe: 'מסטיקים', singularEn: 'candy', pluralEn: 'candies' },
 };
 
 /**
@@ -244,17 +248,22 @@ export function generateWordProblems(cfg: WordTemplateConfig): Question[] {
 
     if (operation === 'sub' && b > a) continue; // שלא יצא שלילי
 
-    const name = NAMES[Math.floor(Math.random() * NAMES.length)];
+    const nameIndex = Math.floor(Math.random() * NAMES_HE.length);
+    const nameHe = NAMES_HE[nameIndex];
+    const nameEn = NAMES_EN[nameIndex];
 
-    let prompt: string;
+    let promptHe: string;
+    let promptEn: string;
     let answer: number;
 
     if (operation === 'add') {
       answer = a + b;
-      prompt = `${name} קיבל/ה ${a} ${ctx.plural}. אחר כך קיבל/ה עוד ${b} ${ctx.plural}. כמה ${ctx.plural} יש ל${name} בסך הכל?`;
+      promptHe = `${nameHe} קיבל/ה ${a} ${ctx.pluralHe}. אחר כך קיבל/ה עוד ${b} ${ctx.pluralHe}. כמה ${ctx.pluralHe} יש ל${nameHe} בסך הכל?`;
+      promptEn = `${nameEn} got ${a} ${ctx.pluralEn}. Then got ${b} more ${ctx.pluralEn}. How many ${ctx.pluralEn} does ${nameEn} have in total?`;
     } else {
       answer = a - b;
-      prompt = `${name} קיבל/ה ${a} ${ctx.plural}. ${b} ${ctx.plural} ניתנו לחבר. כמה ${ctx.plural} נשארו ל${name}?`;
+      promptHe = `${nameHe} קיבל/ה ${a} ${ctx.pluralHe}. ${b} ${ctx.pluralHe} ניתנו לחבר. כמה ${ctx.pluralHe} נשארו ל${nameHe}?`;
+      promptEn = `${nameEn} had ${a} ${ctx.pluralEn}. ${b} ${ctx.pluralEn} were given to a friend. How many ${ctx.pluralEn} are left for ${nameEn}?`;
     }
 
     const id = `${idPrefix}${String(counter).padStart(3, '0')}`;
@@ -264,7 +273,8 @@ export function generateWordProblems(cfg: WordTemplateConfig): Question[] {
       topic,
       difficulty,
       subtopic: operation === 'add' ? 'חיבור מילולי' : 'חיסור מילולי',
-      prompt,
+      promptHe,
+      promptEn,
       answer,
     });
 
