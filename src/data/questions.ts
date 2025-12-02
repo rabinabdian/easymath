@@ -7,6 +7,7 @@ import {
   generateWordProblems,
 } from '../utils/questionGenerator';
 import { wrapLTR } from '../utils/questionText';
+import { assignAssetsToQuestions } from '../utils/assignQuestionAssets';
 
 // ========================================
 // תרגילים אוטומטיים (מחוללים)
@@ -1361,7 +1362,8 @@ const MANUAL_QUESTIONS: Question[] = [
 // שילוב כל התרגילים
 // ========================================
 
-export const QUESTIONS: Question[] = [
+// Base questions before asset assignment
+const BASE_QUESTIONS: Question[] = [
   ...MANUAL_QUESTIONS,
   ...autoAddEasy,
   ...autoAddMedium,
@@ -1375,3 +1377,14 @@ export const QUESTIONS: Question[] = [
   ...autoAddWords,
   ...autoSubWords,
 ];
+
+/**
+ * Final questions array with automatically assigned assetIds.
+ *
+ * Questions with manually assigned assetIds (in MANUAL_QUESTIONS) are preserved.
+ * Questions without assetIds are automatically assigned one based on topic/subtopic
+ * from the appropriate pool in imageAssetPools.ts.
+ *
+ * The assignment is deterministic - the same question ID always gets the same asset.
+ */
+export const QUESTIONS: Question[] = assignAssetsToQuestions(BASE_QUESTIONS);
