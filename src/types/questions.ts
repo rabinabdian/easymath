@@ -39,4 +39,7 @@ export interface Question {
   // הסבר לפידבק למורה / לתלמיד - דו-לשוני
   explanationHe?: string;
   explanationEn?: string;
+
+  // האם זה תרגיל הקראה (המספר נקרא בקול במקום להציג אותו)
+  isReadingExercise?: boolean;
 }
