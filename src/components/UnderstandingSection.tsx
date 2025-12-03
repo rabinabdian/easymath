@@ -1,5 +1,7 @@
 // src/components/UnderstandingSection.tsx
+import type { Question } from '../types/questions';
 import { InlineSpeaker } from './SpeakerButton';
+import { ExplanationVisual } from './ExplanationVisual';
 
 interface UnderstandingSectionProps {
   locale: 'he' | 'en';
@@ -8,6 +10,7 @@ interface UnderstandingSectionProps {
   variant?: 'hint' | 'solution';
   showPrompt?: boolean;
   className?: string;
+  question?: Question; // Optional question for visual explanation
 }
 
 /**
@@ -20,7 +23,8 @@ export function UnderstandingSection({
   explanation,
   variant = 'hint',
   showPrompt = false,
-  className = ''
+  className = '',
+  question
 }: UnderstandingSectionProps) {
   const isHebrew = locale === 'he';
   const isSolution = variant === 'solution';
@@ -64,9 +68,14 @@ export function UnderstandingSection({
         </div>
       )}
 
-      <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line">
+      <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line mb-4">
         {explanation}
       </p>
+
+      {/* Visual explanation for better understanding */}
+      {question && isSolution && (
+        <ExplanationVisual question={question} className="mt-4" />
+      )}
     </div>
   );
 }
