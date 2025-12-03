@@ -109,6 +109,7 @@ export default function TeacherDashboard() {
   const [newStudentAvatar, setNewStudentAvatar] = useState<AvatarType>('boy');
   const [newStudentColor, setNewStudentColor] = useState('#f97316');
   const [photoUploadMode, setPhotoUploadMode] = useState(false);
+  const [unsavedPhotoUrl, setUnsavedPhotoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     setSavedExams(loadExams());
@@ -161,13 +162,8 @@ export default function TeacherDashboard() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const photoUrl = e.target?.result as string;
-      setStudents((prev) =>
-        prev.map((s) =>
-          s.profile.id === studentId
-            ? { ...s, profile: { ...s.profile, photoUrl } }
-            : s
-        )
-      );
+      // Store temporarily instead of saving immediately
+      setUnsavedPhotoUrl(photoUrl);
     };
     reader.readAsDataURL(file);
   };
@@ -186,6 +182,23 @@ export default function TeacherDashboard() {
         break;
       }
     }
+  };
+
+  const handleSavePhoto = (studentId: string) => {
+    if (!unsavedPhotoUrl) return;
+    
+    setStudents((prev) =>
+      prev.map((s) =>
+        s.profile.id === studentId
+          ? { ...s, profile: { ...s.profile, photoUrl: unsavedPhotoUrl } }
+          : s
+      )
+    );
+    setUnsavedPhotoUrl(null);
+  };
+
+  const handleCancelPhoto = () => {
+    setUnsavedPhotoUrl(null);
   };
 
   const handlePhotoDelete = (studentId: string) => {
@@ -471,7 +484,10 @@ export default function TeacherDashboard() {
                 <select
                   className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm"
                   value={selectedStudentId}
-                  onChange={(e) => setSelectedStudentId(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedStudentId(e.target.value);
+                    setUnsavedPhotoUrl(null);
+                  }}
                 >
                   {students.map((s) => (
                     <option key={s.profile.id} value={s.profile.id}>
@@ -482,7 +498,12 @@ export default function TeacherDashboard() {
 
                 <button
                   type="button"
-                  onClick={() => setPhotoUploadMode(!photoUploadMode)}
+                  onClick={() => {
+                    setPhotoUploadMode(!photoUploadMode);
+                    if (photoUploadMode) {
+                      setUnsavedPhotoUrl(null);
+                    }
+                  }}
                   className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
                 >
                   {photoUploadMode
@@ -569,7 +590,20 @@ export default function TeacherDashboard() {
                 <div className="flex flex-col gap-3 md:flex-row md:items-start">
                   {/* Current Photo Display */}
                   <div className="flex flex-col items-center gap-2">
-                    {activeStudent.profile.photoUrl ? (
+                    {unsavedPhotoUrl ? (
+                      <div className="relative">
+                        <img
+                          src={unsavedPhotoUrl}
+                          alt={activeStudent.profile.name}
+                          className="h-32 w-32 rounded-lg border-2 border-blue-400 object-cover"
+                        />
+                        <div className="absolute -top-2 -right-2 flex items-center gap-1">
+                          <span className="rounded-full bg-blue-500 px-2 py-1 text-xs font-medium text-white">
+                            {locale === 'he' ? 'חדש' : 'New'}
+                          </span>
+                        </div>
+                      </div>
+                    ) : activeStudent.profile.photoUrl ? (
                       <div className="relative">
                         <img
                           src={activeStudent.profile.photoUrl}
@@ -638,6 +672,27 @@ export default function TeacherDashboard() {
                           : 'Copy an image and paste it in this area'}
                       </p>
                     </div>
+
+                    {/* Save Button - appears when there's an unsaved photo */}
+                    {unsavedPhotoUrl && (
+                      <div className="flex gap-2 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => handleSavePhoto(activeStudent.profile.id)}
+                          className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+                        >
+                          <span>💾</span>
+                          <span>{locale === 'he' ? 'שמור תמונה' : 'Save Photo'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCancelPhoto}
+                          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                        >
+                          {locale === 'he' ? 'בטל' : 'Cancel'}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
