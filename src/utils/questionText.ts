@@ -39,3 +39,42 @@ export function getQuestionExplanation(
   }
   return q.explanationEn || q.explanationHe;
 }
+
+interface UnderstandingNarrationOptions {
+  includeAnswer?: boolean;
+}
+
+/**
+ * Build a friendly narration that guides the student through the question.
+ * Can optionally include the final answer when we need to auto-solve.
+ */
+export function buildUnderstandingNarration(
+  question: Question,
+  locale: Locale,
+  options: UnderstandingNarrationOptions = {}
+): string {
+  const { includeAnswer = false } = options;
+  const explanation =
+    locale === 'he'
+      ? question.autoSolveExplanationHe || question.explanationHe
+      : question.autoSolveExplanationEn || question.explanationEn;
+
+  const fallbackText =
+    locale === 'he'
+      ? 'נחשוב על הבעיה שלב אחרי שלב, ונשתמש בציור או בספירה כדי להבין.'
+      : 'Let’s think through the problem step by step and use a drawing or counting to help.';
+
+  const narrationParts: string[] = [];
+  narrationParts.push((explanation && explanation.trim()) || fallbackText);
+
+  if (includeAnswer) {
+    const answerStr = String(question.answer);
+    narrationParts.push(
+      locale === 'he'
+        ? `לכן התשובה הנכונה היא ${answerStr}.`
+        : `Therefore, the correct answer is ${answerStr}.`
+    );
+  }
+
+  return narrationParts.join('\n\n');
+}

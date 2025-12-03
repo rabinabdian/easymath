@@ -2,11 +2,12 @@
 import { useEffect, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
+import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { InlineSpeaker } from './SpeakerButton';
-import { getQuestionPrompt } from '../utils/questionText';
+import { UnderstandingSection } from './UnderstandingSection';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -45,6 +46,13 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
 
   const current = questions[index];
+  const questionPrompt = current ? getQuestionPrompt(current, locale) : '';
+  const understandingHint = current
+    ? buildUnderstandingNarration(current, locale, { includeAnswer: false })
+    : '';
+  const understandingSolution = current
+    ? buildUnderstandingNarration(current, locale, { includeAnswer: true })
+    : '';
 
   // Initialize timer and reset state for each new question
   useEffect(() => {
@@ -235,13 +243,35 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
   // Show auto-solve explanation after 3 failed attempts
   if (showAutoSolve) {
-    const autoSolveExplanation = locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn;
-    const questionText = getQuestionPrompt(current, locale);
+    const autoSolveExplanation =
+      locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn;
     const answerText = String(current.answer);
-    const fullExplanation = autoSolveExplanation || `בוא נבין למה התשובה היא ${answerText}`;
+    const fallbackExplanation =
+      locale === 'he'
+        ? `נבין למה התשובה היא ${answerText}.`
+        : `Let’s understand why the answer is ${answerText}.`;
+    const solutionExplanation =
+      (autoSolveExplanation && autoSolveExplanation.trim()) ||
+      understandingSolution ||
+      fallbackExplanation;
+    const questionRecapTitle = locale === 'he' ? 'נחזור על השאלה' : 'Question recap';
+    const questionRecapSubtitle =
+      locale === 'he'
+        ? 'נקריא אותה שוב כדי להבין בדיוק מה ביקשו.'
+        : 'Read it again to remember what was asked.';
+    const showQuestionRecap = questionPrompt.trim().length > 0;
 
-    // Build full audio text for combined speaker
-    const fullAudioText = `השאלה הייתה: ${questionText}. התשובה הנכונה היא ${answerText}. ${fullExplanation}`;
+    const introAudioPrefix =
+      questionPrompt.trim().length > 0
+        ? locale === 'he'
+          ? `השאלה הייתה: ${questionPrompt}. `
+          : `The question was: ${questionPrompt}. `
+        : '';
+    const answerAudioPart =
+      locale === 'he'
+        ? `התשובה הנכונה היא ${answerText}. `
+        : `The correct answer is ${answerText}. `;
+    const fullAudioText = `${introAudioPrefix}${answerAudioPart}${solutionExplanation}`;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -260,11 +290,14 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
                 <span className="text-4xl">❓</span>
                 <h3 className="text-2xl font-bold text-slate-800">השאלה הייתה</h3>
               </div>
-              <InlineSpeaker text={`השאלה הייתה: ${questionText}`} />
+              {questionPrompt && (
+                <InlineSpeaker text={`השאלה הייתה: ${questionPrompt}`} />
+              )}
             </div>
             <div className="rounded-2xl bg-white p-6 shadow-sm">
               <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line text-center">
-                {questionText}
+                {questionPrompt ||
+                  (locale === 'he' ? 'אין טקסט לשאלה הזו.' : 'No question text for this exercise.')}
               </p>
             </div>
             {/* Show visual aids from the question */}
@@ -274,6 +307,22 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
               </div>
             )}
           </div>
+
+          {/* Question recap */}
+          {showQuestionRecap && (
+            <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="text-4xl">📝</span>
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-800">{questionRecapTitle}</h3>
+                  <p className="text-sm text-slate-600">{questionRecapSubtitle}</p>
+                </div>
+              </div>
+              <p className="text-xl leading-relaxed text-slate-800 whitespace-pre-line">
+                {questionPrompt}
+              </p>
+            </div>
+          )}
 
           {/* Answer Card */}
           <div className="mb-6 rounded-3xl bg-gradient-to-br from-green-100 to-emerald-100 p-8 shadow-lg border-4 border-green-400">
@@ -298,19 +347,16 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </div>
           )}
 
-          {/* Explanation Card with Speaker */}
-          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl">💡</span>
-                <h3 className="text-2xl font-bold text-slate-800">בוא נבין למה</h3>
-              </div>
-              <InlineSpeaker text={fullExplanation} />
-            </div>
-            <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
-              {fullExplanation}
-            </p>
-          </div>
+          {/* Explanation Card */}
+          <UnderstandingSection
+            locale={locale}
+            prompt={questionPrompt}
+            explanation={solutionExplanation}
+            variant="solution"
+            showPrompt={false}
+            className="mb-8"
+            speakerText={solutionExplanation}
+          />
 
           {/* Full Audio Button - Listen to everything together */}
           <div className="mb-6 rounded-3xl bg-gradient-to-br from-purple-100 to-pink-100 p-6 shadow-lg border-2 border-purple-300">
@@ -423,6 +469,17 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
               {feedback}
             </div>
           )}
+        </div>
+
+        <div className="mt-4">
+          <UnderstandingSection
+            locale={locale}
+            prompt={questionPrompt}
+            explanation={understandingHint}
+            variant="hint"
+            showPrompt={false}
+            speakerText={understandingHint}
+          />
         </div>
       </div>
     </div>
