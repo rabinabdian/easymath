@@ -20,6 +20,14 @@ function HomePage() {
   const navigate = useNavigate();
   const { settings } = useChildSettings();
 
+  // Get the currently loaded exam name
+  const currentExam = settings.selectedExamId
+    ? getExamById(settings.selectedExamId)
+    : null;
+  const examIndicator = currentExam
+    ? currentExam.name
+    : "ברירת מחדל (ספירה)";
+
   return (
     <div className="page page-right">
       <h1 className="title">Easymath</h1>
@@ -27,7 +35,10 @@ function HomePage() {
       <p className="subtitle-small">שלום {settings.childName} 😊</p>
 
       <div className="buttons">
-        <button onClick={() => navigate("/session")}>התחל תרגול</button>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <button onClick={() => navigate("/session")}>התחל תרגול</button>
+          <span className="badge">מבחן נוכחי: {examIndicator}</span>
+        </div>
         <button onClick={() => navigate("/parent")}>כניסת הורה</button>
         <button onClick={() => navigate("/teacher")}>כניסת מורה</button>
       </div>
