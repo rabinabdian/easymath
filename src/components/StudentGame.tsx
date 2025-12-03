@@ -2,11 +2,11 @@
 import { useEffect, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
+import { getQuestionPrompt } from '../utils/questionText';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { InlineSpeaker } from './SpeakerButton';
-import { getQuestionPrompt } from '../utils/questionText';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
