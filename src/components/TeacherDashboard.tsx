@@ -87,6 +87,10 @@ export default function TeacherDashboard() {
   const [count, setCount] = useState(10);
   const [generated, setGenerated] = useState<Question[]>([]);
 
+  // Mixed Exercise Mode
+  const [isMixedMode, setIsMixedMode] = useState(false);
+  const [selectedTopics, setSelectedTopics] = useState<Set<TopicId>>(new Set());
+
   const [examName, setExamName] = useState('');
   const [savedExams, setSavedExams] = useState<SavedExam[]>([]);
   const [jsonImportError, setJsonImportError] = useState<string | null>(null);
@@ -143,12 +147,33 @@ export default function TeacherDashboard() {
   );
   const subtopics = topic?.subtopics ?? [];
 
-  const handleGenerate = () => {
-    let filtered = QUESTIONS.filter((q) => q.topic === selectedTopic);
+  const toggleTopicSelection = (topicId: TopicId) => {
+    setSelectedTopics((prev) => {
+      const next = new Set(prev);
+      if (next.has(topicId)) {
+        next.delete(topicId);
+      } else {
+        next.add(topicId);
+      }
+      return next;
+    });
+  };
 
-    if (selectedSubtopic) {
-      filtered = filtered.filter((q) => q.subtopic === selectedSubtopic);
+  const handleGenerate = () => {
+    let filtered: Question[];
+
+    if (isMixedMode && selectedTopics.size > 0) {
+      // Mixed mode: filter questions from all selected topics
+      filtered = QUESTIONS.filter((q) => selectedTopics.has(q.topic));
+    } else {
+      // Regular mode: filter by single topic
+      filtered = QUESTIONS.filter((q) => q.topic === selectedTopic);
+
+      if (selectedSubtopic) {
+        filtered = filtered.filter((q) => q.subtopic === selectedSubtopic);
+      }
     }
+
     if (difficulty !== 'all') {
       filtered = filtered.filter((q) => q.difficulty === difficulty);
     }
@@ -467,41 +492,114 @@ export default function TeacherDashboard() {
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
                 {t('teacher.topic.title')}
               </h2>
-              <label className="mb-3 block text-sm text-slate-700">
-                {t('teacher.topic.select')}
-                <select
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
-                  value={selectedTopic}
-                  onChange={(e) => {
-                    const value = e.target.value as TopicId;
-                    setSelectedTopic(value);
-                    setSelectedSubtopic('');
-                  }}
-                >
-                  {TOPICS.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
 
-              {subtopics.length > 0 && (
-                <label className="block text-sm text-slate-700">
-                  {t('teacher.topic.subtopic')}
-                  <select
-                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
-                    value={selectedSubtopic}
-                    onChange={(e) => setSelectedSubtopic(e.target.value)}
-                  >
-                    <option value="">{t('teacher.topic.allSubtopics')}</option>
-                    {subtopics.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+              {/* Mixed Mode Toggle */}
+              <div className="mb-4 flex items-center gap-2 text-sm">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMixedMode(false);
+                    setSelectedTopics(new Set());
+                  }}
+                  className={[
+                    'rounded-full border px-3 py-1 transition-colors',
+                    !isMixedMode
+                      ? 'border-blue-600 bg-blue-600 text-white'
+                      : 'border-slate-300 bg-white text-slate-700 hover:border-blue-400',
+                  ].join(' ')}
+                >
+                  {locale === 'he' ? 'נושא בודד' : 'Single Topic'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsMixedMode(true)}
+                  className={[
+                    'rounded-full border px-3 py-1 transition-colors',
+                    isMixedMode
+                      ? 'border-blue-600 bg-blue-600 text-white'
+                      : 'border-slate-300 bg-white text-slate-700 hover:border-blue-400',
+                  ].join(' ')}
+                >
+                  {locale === 'he' ? 'תרגיל מגוון' : 'Mixed Exercise'}
+                </button>
+              </div>
+
+              {!isMixedMode ? (
+                <>
+                  {/* Single Topic Mode */}
+                  <label className="mb-3 block text-sm text-slate-700">
+                    {t('teacher.topic.select')}
+                    <select
+                      className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
+                      value={selectedTopic}
+                      onChange={(e) => {
+                        const value = e.target.value as TopicId;
+                        setSelectedTopic(value);
+                        setSelectedSubtopic('');
+                      }}
+                    >
+                      {TOPICS.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  {subtopics.length > 0 && (
+                    <label className="block text-sm text-slate-700">
+                      {t('teacher.topic.subtopic')}
+                      <select
+                        className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
+                        value={selectedSubtopic}
+                        onChange={(e) => setSelectedSubtopic(e.target.value)}
+                      >
+                        <option value="">{t('teacher.topic.allSubtopics')}</option>
+                        {subtopics.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                </>
+              ) : (
+                <>
+                  {/* Mixed Mode: Multiple Topic Selection */}
+                  <div className="space-y-2">
+                    <p className="text-xs text-slate-600">
+                      {locale === 'he'
+                        ? 'בחר נושאים (לפחות אחד):'
+                        : 'Select topics (at least one):'}
+                    </p>
+                    <div className="space-y-1.5">
+                      {TOPICS.map((t) => (
+                        <label
+                          key={t.id}
+                          className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm hover:bg-slate-100 cursor-pointer transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedTopics.has(t.id)}
+                            onChange={() => toggleTopicSelection(t.id)}
+                            className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="font-medium text-slate-800">
+                            {t.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                    {selectedTopics.size > 0 && (
+                      <p className="text-xs text-blue-600">
+                        {locale === 'he'
+                          ? `נבחרו ${selectedTopics.size} נושאים`
+                          : `${selectedTopics.size} topic(s) selected`}
+                      </p>
+                    )}
+                  </div>
+                </>
               )}
             </section>
 
