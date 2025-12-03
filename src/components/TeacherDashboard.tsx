@@ -109,6 +109,7 @@ export default function TeacherDashboard() {
   const [newStudentAvatar, setNewStudentAvatar] = useState<AvatarType>('boy');
   const [newStudentColor, setNewStudentColor] = useState('#f97316');
   const [photoUploadMode, setPhotoUploadMode] = useState(false);
+  const [pendingPhotoUrl, setPendingPhotoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     setSavedExams(loadExams());
@@ -145,6 +146,11 @@ export default function TeacherDashboard() {
     }
   }, [students]);
 
+  // Reset pending photo when switching students or closing photo upload mode
+  useEffect(() => {
+    setPendingPhotoUrl(null);
+  }, [selectedStudentId, photoUploadMode]);
+
   const topic = useMemo(
     () => TOPICS.find((t) => t.id === selectedTopic),
     [selectedTopic]
@@ -152,7 +158,7 @@ export default function TeacherDashboard() {
   const subtopics = topic?.subtopics ?? [];
 
   // Image handling functions
-  const handlePhotoUpload = (file: File, studentId: string) => {
+  const handlePhotoUpload = (file: File, _studentId: string) => {
     if (!file.type.startsWith('image/')) {
       alert(locale === 'he' ? 'אנא בחר קובץ תמונה' : 'Please select an image file');
       return;
@@ -161,13 +167,7 @@ export default function TeacherDashboard() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const photoUrl = e.target?.result as string;
-      setStudents((prev) =>
-        prev.map((s) =>
-          s.profile.id === studentId
-            ? { ...s, profile: { ...s.profile, photoUrl } }
-            : s
-        )
-      );
+      setPendingPhotoUrl(photoUrl);
     };
     reader.readAsDataURL(file);
   };
@@ -188,6 +188,23 @@ export default function TeacherDashboard() {
     }
   };
 
+  const handlePhotoSave = (studentId: string) => {
+    if (!pendingPhotoUrl) return;
+    
+    setStudents((prev) =>
+      prev.map((s) =>
+        s.profile.id === studentId
+          ? { ...s, profile: { ...s.profile, photoUrl: pendingPhotoUrl } }
+          : s
+      )
+    );
+    setPendingPhotoUrl(null);
+  };
+
+  const handlePhotoCancel = () => {
+    setPendingPhotoUrl(null);
+  };
+
   const handlePhotoDelete = (studentId: string) => {
     setStudents((prev) =>
       prev.map((s) =>
@@ -196,6 +213,7 @@ export default function TeacherDashboard() {
           : s
       )
     );
+    setPendingPhotoUrl(null);
   };
 
   const toggleTopicSelection = (topicId: TopicId) => {
@@ -569,7 +587,18 @@ export default function TeacherDashboard() {
                 <div className="flex flex-col gap-3 md:flex-row md:items-start">
                   {/* Current Photo Display */}
                   <div className="flex flex-col items-center gap-2">
-                    {activeStudent.profile.photoUrl ? (
+                    {pendingPhotoUrl ? (
+                      <div className="relative">
+                        <img
+                          src={pendingPhotoUrl}
+                          alt={locale === 'he' ? 'תמונה זמנית' : 'Pending photo'}
+                          className="h-32 w-32 rounded-lg border-2 border-blue-500 object-cover"
+                        />
+                        <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white text-xs">
+                          ✓
+                        </div>
+                      </div>
+                    ) : activeStudent.profile.photoUrl ? (
                       <div className="relative">
                         <img
                           src={activeStudent.profile.photoUrl}
@@ -638,6 +667,26 @@ export default function TeacherDashboard() {
                           : 'Copy an image and paste it in this area'}
                       </p>
                     </div>
+
+                    {/* Save/Cancel Buttons - Only shown when there's a pending photo */}
+                    {pendingPhotoUrl && (
+                      <div className="flex gap-2 pt-2 border-t border-slate-200">
+                        <button
+                          type="button"
+                          onClick={() => handlePhotoSave(activeStudent.profile.id)}
+                          className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                        >
+                          {locale === 'he' ? '💾 שמור תמונה' : '💾 Save Photo'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handlePhotoCancel}
+                          className="flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                        >
+                          {locale === 'he' ? 'ביטול' : 'Cancel'}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
