@@ -306,7 +306,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </div>
           )}
 
-          {/* Explanation Card using UnderstandingSection */}
+          {/* Explanation Card using UnderstandingSection with Visual */}
           <UnderstandingSection
             locale={locale}
             prompt={questionPrompt}
@@ -314,6 +314,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             variant="solution"
             showPrompt={false}
             className="mb-6"
+            question={current}
           />
 
           {/* Full Audio Button - Listen to everything together */}
@@ -437,6 +438,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             explanation={understandingHint}
             variant="hint"
             showPrompt={false}
+            question={current}
           />
         </div>
       </div>
