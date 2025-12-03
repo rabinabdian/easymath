@@ -314,13 +314,26 @@ export default function TeacherDashboard() {
     <div className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-6xl px-4 py-6 md:py-8">
         <header className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              {t('teacher.title')}
-            </h1>
-            <p className="text-sm text-slate-600">
-              {t('teacher.subtitle')}
-            </p>
+          <div className="flex items-center gap-3">
+            {/* Back to Home Button */}
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 transition-colors"
+              aria-label={locale === 'he' ? 'חזרה למסך הראשי' : 'Back to Home'}
+            >
+              <span className="text-lg">←</span>
+              <span>{locale === 'he' ? 'חזרה' : 'Back'}</span>
+            </button>
+
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">
+                {t('teacher.title')}
+              </h1>
+              <p className="text-sm text-slate-600">
+                {t('teacher.subtitle')}
+              </p>
+            </div>
           </div>
 
           {/* Language Switcher */}
