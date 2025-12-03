@@ -5,6 +5,8 @@ import { useI18n } from '../i18n';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
+import { InlineSpeaker } from './SpeakerButton';
+import { getQuestionPrompt } from '../utils/questionText';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -234,7 +236,12 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   // Show auto-solve explanation after 3 failed attempts
   if (showAutoSolve) {
     const autoSolveExplanation = locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn;
-    const defaultExplanation = `התשובה הנכונה היא: ${current.answer}\n\nבוא נבין למה:`;
+    const questionText = getQuestionPrompt(current, locale);
+    const answerText = String(current.answer);
+    const fullExplanation = autoSolveExplanation || `בוא נבין למה התשובה היא ${answerText}`;
+
+    // Build full audio text for combined speaker
+    const fullAudioText = `השאלה הייתה: ${questionText}. התשובה הנכונה היא ${answerText}. ${fullExplanation}`;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -242,15 +249,40 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
           {/* Header */}
           <div className="mb-6 text-center">
             <div className="mb-3 text-6xl">🎓</div>
-            <h2 className="text-3xl font-bold text-slate-800">בוא נפתור ביחד!</h2>
-            <p className="mt-2 text-lg text-slate-600">אחרי 3 ניסיונות, אני אעזור לך</p>
+            <h2 className="text-3xl font-bold text-slate-800">בואו נבין למה!</h2>
+            <p className="mt-2 text-lg text-slate-600">לחץ על הרמקול כדי לשמוע 🔈</p>
+          </div>
+
+          {/* Question Repeat Card - Show the question again */}
+          <div className="mb-6 rounded-3xl bg-gradient-to-br from-blue-100 to-indigo-100 p-8 shadow-lg border-4 border-blue-300">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">❓</span>
+                <h3 className="text-2xl font-bold text-slate-800">השאלה הייתה</h3>
+              </div>
+              <InlineSpeaker text={`השאלה הייתה: ${questionText}`} />
+            </div>
+            <div className="rounded-2xl bg-white p-6 shadow-sm">
+              <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line text-center">
+                {questionText}
+              </p>
+            </div>
+            {/* Show visual aids from the question */}
+            {current.visualAids && current.visualAids.length > 0 && (
+              <div className="mt-4">
+                <VisualAidsDisplay visualAids={current.visualAids} />
+              </div>
+            )}
           </div>
 
           {/* Answer Card */}
           <div className="mb-6 rounded-3xl bg-gradient-to-br from-green-100 to-emerald-100 p-8 shadow-lg border-4 border-green-400">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="text-5xl">✅</span>
-              <h3 className="text-2xl font-bold text-slate-800">התשובה הנכונה</h3>
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-5xl">✅</span>
+                <h3 className="text-2xl font-bold text-slate-800">התשובה הנכונה</h3>
+              </div>
+              <InlineSpeaker text={`התשובה הנכונה היא ${answerText}`} />
             </div>
             <div className="rounded-2xl bg-white p-6 shadow-sm">
               <p className="text-4xl font-bold text-center text-green-600">
@@ -266,15 +298,27 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </div>
           )}
 
-          {/* Explanation Card */}
-          <div className="mb-8 rounded-3xl bg-white p-8 shadow-lg">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="text-4xl">💡</span>
-              <h3 className="text-2xl font-bold text-slate-800">הסבר</h3>
+          {/* Explanation Card with Speaker */}
+          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">💡</span>
+                <h3 className="text-2xl font-bold text-slate-800">בוא נבין למה</h3>
+              </div>
+              <InlineSpeaker text={fullExplanation} />
             </div>
             <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
-              {autoSolveExplanation || defaultExplanation}
+              {fullExplanation}
             </p>
+          </div>
+
+          {/* Full Audio Button - Listen to everything together */}
+          <div className="mb-6 rounded-3xl bg-gradient-to-br from-purple-100 to-pink-100 p-6 shadow-lg border-2 border-purple-300">
+            <div className="flex items-center justify-center gap-4">
+              <span className="text-3xl">🎧</span>
+              <span className="text-xl font-bold text-slate-800">שמע הכל ביחד</span>
+              <InlineSpeaker text={fullAudioText} />
+            </div>
           </div>
 
           {/* Continue Button */}
