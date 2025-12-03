@@ -1,10 +1,12 @@
 // src/components/StudentGame.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
+import { UnderstandingSection } from './UnderstandingSection';
+import { getQuestionPrompt } from '../utils/questionText';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -43,6 +45,10 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
 
   const current = questions[index];
+  const currentPrompt = useMemo(
+    () => (current ? getQuestionPrompt(current, locale) : ''),
+    [current, locale]
+  );
 
   // Initialize timer and reset state for each new question
   useEffect(() => {
@@ -234,7 +240,11 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   // Show auto-solve explanation after 3 failed attempts
   if (showAutoSolve) {
     const autoSolveExplanation = locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn;
-    const defaultExplanation = `התשובה הנכונה היא: ${current.answer}\n\nבוא נבין למה:`;
+    const defaultExplanation =
+      locale === 'he'
+        ? `התשובה הנכונה היא: ${current.answer}\n\nבוא נבין למה:`
+        : `The correct answer is ${current.answer}.\n\nLet's understand why:`;
+    const combinedExplanation = autoSolveExplanation || defaultExplanation;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -246,11 +256,21 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             <p className="mt-2 text-lg text-slate-600">אחרי 3 ניסיונות, אני אעזור לך</p>
           </div>
 
+          {/* Question Repeat */}
+          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg">
+            <div className="mb-2 text-sm font-semibold text-slate-500">
+              {t('student.solution.questionTitle')}
+            </div>
+            <p className="text-xl font-bold text-slate-900 whitespace-pre-line">
+              {currentPrompt}
+            </p>
+          </div>
+
           {/* Answer Card */}
           <div className="mb-6 rounded-3xl bg-gradient-to-br from-green-100 to-emerald-100 p-8 shadow-lg border-4 border-green-400">
             <div className="mb-4 flex items-center gap-3">
               <span className="text-5xl">✅</span>
-              <h3 className="text-2xl font-bold text-slate-800">התשובה הנכונה</h3>
+              <h3 className="text-2xl font-bold text-slate-800">{t('student.solution.answerTitle')}</h3>
             </div>
             <div className="rounded-2xl bg-white p-6 shadow-sm">
               <p className="text-4xl font-bold text-center text-green-600">
@@ -270,11 +290,19 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
           <div className="mb-8 rounded-3xl bg-white p-8 shadow-lg">
             <div className="mb-4 flex items-center gap-3">
               <span className="text-4xl">💡</span>
-              <h3 className="text-2xl font-bold text-slate-800">הסבר</h3>
+              <h3 className="text-2xl font-bold text-slate-800">{t('student.solution.explanationTitle')}</h3>
             </div>
             <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
-              {autoSolveExplanation || defaultExplanation}
+              {combinedExplanation}
             </p>
+          </div>
+
+          <div className="mb-8">
+            <UnderstandingSection
+              question={current}
+              variant="solution"
+              explanationText={combinedExplanation}
+            />
           </div>
 
           {/* Continue Button */}

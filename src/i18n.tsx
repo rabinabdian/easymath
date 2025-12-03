@@ -55,6 +55,14 @@ type TransKey =
   | 'student.wrong'
   | 'student.wrongAnswer'
   | 'student.timeUp'
+  | 'student.understand.title'
+  | 'student.understand.description'
+  | 'student.understand.play'
+  | 'student.understand.playing'
+  | 'student.solution.questionTitle'
+  | 'student.solution.answerTitle'
+  | 'student.solution.explanationTitle'
+  | 'student.solution.play'
   | 'student.finished.title'
   | 'student.finished.score'
   | 'student.finished.excellent'
@@ -128,6 +136,14 @@ const translations: Record<Locale, Record<TransKey, string>> = {
     'student.wrong': 'לא מדויק... נסה שוב 🙂',
     'student.wrongAnswer': 'לא מדויק... התשובה הנכונה היא: {answer}',
     'student.timeUp': 'נגמר הזמן ⏱️',
+    'student.understand.title': 'בואו נבין למה הכל ריק',
+    'student.understand.description': 'לחצו על הרמקול כדי לשמוע שוב את השאלה ולהבין מה חסר בשלב הבא.',
+    'student.understand.play': 'השמע הסבר',
+    'student.understand.playing': 'מנגן...',
+    'student.solution.questionTitle': 'השאלה שוב',
+    'student.solution.answerTitle': 'התשובה הנכונה',
+    'student.solution.explanationTitle': 'הסבר מפורט',
+    'student.solution.play': 'השמע פתרון',
     'student.finished.title': 'כל הכבוד! סיימת את כל התרגילים 🎉',
     'student.finished.score': 'ניקוד:',
     'student.finished.excellent': 'תלמיד על חלל!',
@@ -201,6 +217,15 @@ const translations: Record<Locale, Record<TransKey, string>> = {
     'student.wrong': 'Not quite... try again 🙂',
     'student.wrongAnswer': 'Not quite... the correct answer is: {answer}',
     'student.timeUp': "Time's up ⏱️",
+    'student.understand.title': "Let's Understand Why Everything is Empty",
+    'student.understand.description':
+      'Tap the speaker to hear why empty spots appear and how to fill them.',
+    'student.understand.play': 'Play explanation',
+    'student.understand.playing': 'Playing...',
+    'student.solution.questionTitle': 'Question again',
+    'student.solution.answerTitle': 'Answer',
+    'student.solution.explanationTitle': 'Detailed explanation',
+    'student.solution.play': 'Play solution audio',
     'student.finished.title': 'Great job! You completed all exercises 🎉',
     'student.finished.score': 'Score:',
     'student.finished.excellent': 'Outstanding student!',

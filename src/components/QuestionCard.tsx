@@ -1,11 +1,12 @@
 // src/components/QuestionCard.tsx
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getAssetUrl } from '../utils/assets';
 import { speak } from '../utils/speech';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
+import { UnderstandingSection } from './UnderstandingSection';
 
 interface QuestionCardProps {
   question: Question;
@@ -33,13 +34,18 @@ export function QuestionCard({
   const { locale } = useI18n();
   const assetUrl = getAssetUrl(question.assetId);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const questionPrompt = useMemo(() => getQuestionPrompt(question, locale), [question, locale]);
+  const normalizedPrompt = questionPrompt.replace(/\s+/g, ' ').trim();
+  const understandingDescription =
+    locale === 'he'
+      ? `נקשיב שוב לשאלה ונראה איזה חלק ריק מחכה שנמלא: ${normalizedPrompt || 'נזהה את המשבצות הריקות'}`
+      : `Listen again and notice which part still feels empty: ${normalizedPrompt || 'scan the empty spots carefully'}`;
 
   const handleSpeak = () => {
     if (isSpeaking) return;
     setIsSpeaking(true);
 
-    const textToSpeak = getQuestionPrompt(question, locale);
-    speak(textToSpeak);
+    speak(questionPrompt);
 
     // Reset after 3 seconds (approximate speech duration)
     setTimeout(() => {
@@ -89,7 +95,7 @@ export function QuestionCard({
         ) : (
           // Regular question - Show text
           <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
-            {getQuestionPrompt(question, locale)}
+            {questionPrompt}
           </p>
         )}
 
@@ -108,6 +114,11 @@ export function QuestionCard({
             ))}
           </div>
         )}
+
+        <UnderstandingSection
+          question={question}
+          explanationText={understandingDescription}
+        />
       </div>
     </div>
   );
