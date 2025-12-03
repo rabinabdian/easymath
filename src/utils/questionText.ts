@@ -39,3 +39,48 @@ export function getQuestionExplanation(
   }
   return q.explanationEn || q.explanationHe;
 }
+
+interface UnderstandingOptions {
+  includeAnswer?: boolean;
+}
+
+/**
+ * Build a narration text to help children understand the question
+ * This creates a friendly, step-by-step explanation of what the question is asking
+ */
+export function buildUnderstandingNarration(
+  q: Question,
+  locale: Locale,
+  options: UnderstandingOptions = {}
+): string {
+  const { includeAnswer = false } = options;
+  const isHebrew = locale === 'he';
+
+  // Get the auto-solve explanation if available
+  const autoSolveExplanation = isHebrew
+    ? q.autoSolveExplanationHe
+    : q.autoSolveExplanationEn;
+
+  if (autoSolveExplanation) {
+    if (includeAnswer) {
+      const answerPrefix = isHebrew ? 'התשובה היא' : 'The answer is';
+      return `${autoSolveExplanation} ${answerPrefix} ${q.answer}`;
+    }
+    return autoSolveExplanation;
+  }
+
+  // Fallback: Generate a simple explanation based on question type
+  const answer = String(q.answer);
+
+  if (includeAnswer) {
+    if (isHebrew) {
+      return `בוא נחשוב על זה ביחד. התשובה הנכונה היא ${answer}`;
+    }
+    return `Let's think about this together. The correct answer is ${answer}`;
+  }
+
+  if (isHebrew) {
+    return 'קרא את השאלה בעיון ונסה להבין מה מבקשים ממך';
+  }
+  return 'Read the question carefully and try to understand what is being asked';
+}

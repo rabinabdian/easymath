@@ -2,11 +2,12 @@
 import { useEffect, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
+import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
+import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
-import { getQuestionPrompt } from '../utils/questionText';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -45,6 +46,13 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
 
   const current = questions[index];
+  const questionPrompt = current ? getQuestionPrompt(current, locale) : '';
+  const understandingHint = current
+    ? buildUnderstandingNarration(current, locale, { includeAnswer: false })
+    : '';
+  const understandingSolution = current
+    ? buildUnderstandingNarration(current, locale, { includeAnswer: true })
+    : '';
 
   // Initialize timer and reset state for each new question
   useEffect(() => {
@@ -298,19 +306,15 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </div>
           )}
 
-          {/* Explanation Card with Speaker */}
-          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl">💡</span>
-                <h3 className="text-2xl font-bold text-slate-800">בוא נבין למה</h3>
-              </div>
-              <InlineSpeaker text={fullExplanation} />
-            </div>
-            <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
-              {fullExplanation}
-            </p>
-          </div>
+          {/* Explanation Card using UnderstandingSection */}
+          <UnderstandingSection
+            locale={locale}
+            prompt={questionPrompt}
+            explanation={understandingSolution}
+            variant="solution"
+            showPrompt={false}
+            className="mb-6"
+          />
 
           {/* Full Audio Button - Listen to everything together */}
           <div className="mb-6 rounded-3xl bg-gradient-to-br from-purple-100 to-pink-100 p-6 shadow-lg border-2 border-purple-300">
@@ -423,6 +427,17 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
               {feedback}
             </div>
           )}
+        </div>
+
+        {/* Understanding hint section */}
+        <div className="mt-4">
+          <UnderstandingSection
+            locale={locale}
+            prompt={questionPrompt}
+            explanation={understandingHint}
+            variant="hint"
+            showPrompt={false}
+          />
         </div>
       </div>
     </div>
