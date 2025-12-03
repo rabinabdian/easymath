@@ -1189,6 +1189,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה צלעות יש למשולש?',
     promptEn: 'How many צלעות יש למשולש?',
     answer: 3,
+    autoSolveExplanationHe:
+      'למשולש יש שלושה קודקודים. כל קודקוד מחובר לשניים האחרים בעזרת צלע, ולכן כשעוקבים אחרי הקווים מקבלים שלוש צלעות בדיוק.',
+    autoSolveExplanationEn:
+      'A triangle has three corners (vertices). Each corner is connected to the other two with a side, so when you trace the lines you always count exactly three sides.',
   },
   {
     id: 'geo_shapes_004',

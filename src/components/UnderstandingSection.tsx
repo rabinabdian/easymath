@@ -1,4 +1,5 @@
 // src/components/UnderstandingSection.tsx
+import type { ReactNode } from 'react';
 import { InlineSpeaker } from './SpeakerButton';
 
 interface UnderstandingSectionProps {
@@ -8,6 +9,8 @@ interface UnderstandingSectionProps {
   variant?: 'hint' | 'solution';
   showPrompt?: boolean;
   className?: string;
+  visualContent?: ReactNode;
+  visualCaption?: string;
 }
 
 /**
@@ -20,7 +23,9 @@ export function UnderstandingSection({
   explanation,
   variant = 'hint',
   showPrompt = false,
-  className = ''
+  className = '',
+  visualContent,
+  visualCaption
 }: UnderstandingSectionProps) {
   const isHebrew = locale === 'he';
   const isSolution = variant === 'solution';
@@ -67,6 +72,17 @@ export function UnderstandingSection({
       <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line">
         {explanation}
       </p>
+
+      {visualContent && (
+        <div className="mt-5 rounded-2xl bg-white/80 p-4 shadow-inner">
+          <div className="flex justify-center">{visualContent}</div>
+          {visualCaption && (
+            <p className="mt-3 text-center text-sm text-slate-600 whitespace-pre-line">
+              {visualCaption}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

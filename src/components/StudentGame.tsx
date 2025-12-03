@@ -1,13 +1,35 @@
 // src/components/StudentGame.tsx
 import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
+import type { Locale } from '../i18n';
 import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
+import { TriangleDiagram } from './TriangleDiagram';
+
+interface UnderstandingVisual {
+  node: ReactNode | null;
+  caption?: string;
+}
+
+function getUnderstandingVisual(question: Question, locale: Locale): UnderstandingVisual {
+  if (question.id === 'geo_shapes_003') {
+    return {
+      node: <TriangleDiagram locale={locale} />,
+      caption:
+        locale === 'he'
+          ? 'במשולש יש שלוש צלעות שמחברות בין שלושת הקודקודים. עקוב אחרי הקווים הצבעוניים באיור: כל קו מייצג צלע אחרת, ולכן סופרים שלוש צלעות בדיוק.'
+          : 'A triangle always has three sides connecting its three corners. Follow the colored lines in the diagram—each line marks a different side, so you count exactly three sides.'
+    };
+  }
+
+  return { node: null };
+}
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -247,6 +269,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     const questionText = getQuestionPrompt(current, locale);
     const answerText = String(current.answer);
     const fullExplanation = autoSolveExplanation || `בוא נבין למה התשובה היא ${answerText}`;
+    const { node: understandingVisual, caption: understandingCaption } = getUnderstandingVisual(current, locale);
 
     // Build full audio text for combined speaker
     const fullAudioText = `השאלה הייתה: ${questionText}. התשובה הנכונה היא ${answerText}. ${fullExplanation}`;
@@ -314,6 +337,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             variant="solution"
             showPrompt={false}
             className="mb-6"
+            visualContent={understandingVisual}
+            visualCaption={understandingCaption}
           />
 
           {/* Full Audio Button - Listen to everything together */}
