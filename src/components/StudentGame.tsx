@@ -5,6 +5,9 @@ import { useI18n } from '../i18n';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
+import { speak } from '../utils/speech';
+import { getQuestionPrompt } from '../utils/questionText';
+import { useChildSettings } from '../context/ChildSettingsContext';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -30,6 +33,7 @@ const MAX_ATTEMPTS_PER_QUESTION = 3; // Maximum attempts before auto-solve
 
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
   const { t, locale } = useI18n();
+  const { settings } = useChildSettings();
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -41,6 +45,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [showIntro, setShowIntro] = useState(true); // Show intro before each question
   const [attempts, setAttempts] = useState(0); // Track attempts for current question
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
+  const [isSpeakingExplanation, setIsSpeakingExplanation] = useState(false); // Track speech playback
 
   const current = questions[index];
 
@@ -147,6 +152,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     // After auto-solve, move to next question (no points awarded)
     setShowAutoSolve(false);
     setInput('');
+    setIsSpeakingExplanation(false);
     const nextIndex = index + 1;
     if (nextIndex >= totalQuestions) {
       setFinished(true);
@@ -154,6 +160,51 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
       setIndex(nextIndex);
     }
   }
+
+  // Function to speak question and explanation
+  function speakQuestionAndExplanation() {
+    if (!current || isSpeakingExplanation || !settings.soundsEnabled) return;
+    
+    setIsSpeakingExplanation(true);
+    const questionText = getQuestionPrompt(current, locale);
+    const autoSolveExplanation = locale === 'he' 
+      ? current.autoSolveExplanationHe 
+      : current.autoSolveExplanationEn;
+    const defaultExplanation = locale === 'he'
+      ? `התשובה הנכונה היא: ${current.answer}\n\nבוא נבין למה:`
+      : `The correct answer is: ${current.answer}\n\nLet's understand why:`;
+    
+    const explanation = autoSolveExplanation || defaultExplanation;
+    const answerText = locale === 'he'
+      ? `התשובה היא: ${current.answer}`
+      : `The answer is: ${current.answer}`;
+    
+    // Speak question first
+    speak(questionText);
+    
+    // Then speak answer and explanation after a delay
+    setTimeout(() => {
+      const fullExplanation = `${answerText}. ${explanation}`;
+      speak(fullExplanation);
+      
+      // Reset speaking state after speech completes (approximate duration)
+      setTimeout(() => {
+        setIsSpeakingExplanation(false);
+      }, 5000);
+    }, 3000);
+  }
+
+  // Auto-play sound when auto-solve screen appears
+  useEffect(() => {
+    if (showAutoSolve && settings.soundsEnabled && current && !isSpeakingExplanation) {
+      // Small delay to ensure screen is rendered
+      const timer = setTimeout(() => {
+        speakQuestionAndExplanation();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showAutoSolve, settings.soundsEnabled, current?.id]);
 
   function checkAnswer(valueFromClick?: string) {
     if (!current || finished) return;
@@ -234,7 +285,13 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   // Show auto-solve explanation after 3 failed attempts
   if (showAutoSolve) {
     const autoSolveExplanation = locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn;
-    const defaultExplanation = `התשובה הנכונה היא: ${current.answer}\n\nבוא נבין למה:`;
+    const defaultExplanation = locale === 'he'
+      ? `התשובה הנכונה היא: ${current.answer}\n\nבוא נבין למה:`
+      : `The correct answer is: ${current.answer}\n\nLet's understand why:`;
+    const questionText = getQuestionPrompt(current, locale);
+    const answerText = locale === 'he'
+      ? `התשובה היא: ${current.answer}`
+      : `The answer is: ${current.answer}`;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -242,15 +299,54 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
           {/* Header */}
           <div className="mb-6 text-center">
             <div className="mb-3 text-6xl">🎓</div>
-            <h2 className="text-3xl font-bold text-slate-800">בוא נפתור ביחד!</h2>
-            <p className="mt-2 text-lg text-slate-600">אחרי 3 ניסיונות, אני אעזור לך</p>
+            <h2 className="text-3xl font-bold text-slate-800">
+              {locale === 'he' ? 'בוא נפתור ביחד!' : "Let's solve together!"}
+            </h2>
+            <p className="mt-2 text-lg text-slate-600">
+              {locale === 'he' ? 'אחרי 3 ניסיונות, אני אעזור לך' : 'After 3 attempts, I will help you'}
+            </p>
+          </div>
+
+          {/* Question Card */}
+          <div className="mb-6 rounded-3xl bg-gradient-to-br from-blue-100 to-indigo-100 p-8 shadow-lg border-4 border-blue-400">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">❓</span>
+                <h3 className="text-2xl font-bold text-slate-800">
+                  {locale === 'he' ? 'השאלה' : 'Question'}
+                </h3>
+              </div>
+              {settings.soundsEnabled && (
+                <button
+                  type="button"
+                  onClick={speakQuestionAndExplanation}
+                  disabled={isSpeakingExplanation}
+                  className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                  aria-label={locale === 'he' ? 'הקרא את השאלה וההסבר' : 'Read question and explanation'}
+                >
+                  <span className="text-3xl">🔊</span>
+                  <span className="text-sm font-medium text-slate-700">
+                    {isSpeakingExplanation 
+                      ? (locale === 'he' ? 'מקריא...' : 'Speaking...')
+                      : (locale === 'he' ? 'לחץ לשמיעה' : 'Click to hear')}
+                  </span>
+                </button>
+              )}
+            </div>
+            <div className="rounded-2xl bg-white p-6 shadow-sm">
+              <p className="text-2xl font-semibold text-center text-slate-800 whitespace-pre-line">
+                {questionText}
+              </p>
+            </div>
           </div>
 
           {/* Answer Card */}
           <div className="mb-6 rounded-3xl bg-gradient-to-br from-green-100 to-emerald-100 p-8 shadow-lg border-4 border-green-400">
             <div className="mb-4 flex items-center gap-3">
               <span className="text-5xl">✅</span>
-              <h3 className="text-2xl font-bold text-slate-800">התשובה הנכונה</h3>
+              <h3 className="text-2xl font-bold text-slate-800">
+                {locale === 'he' ? 'התשובה הנכונה' : 'Correct Answer'}
+              </h3>
             </div>
             <div className="rounded-2xl bg-white p-6 shadow-sm">
               <p className="text-4xl font-bold text-center text-green-600">
@@ -268,13 +364,35 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
           {/* Explanation Card */}
           <div className="mb-8 rounded-3xl bg-white p-8 shadow-lg">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="text-4xl">💡</span>
-              <h3 className="text-2xl font-bold text-slate-800">הסבר</h3>
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">💡</span>
+                <h3 className="text-2xl font-bold text-slate-800">
+                  {locale === 'he' ? 'בוא נבין למה' : "Let's Understand Why"}
+                </h3>
+              </div>
+              {settings.soundsEnabled && (
+                <button
+                  type="button"
+                  onClick={speakQuestionAndExplanation}
+                  disabled={isSpeakingExplanation}
+                  className="flex items-center gap-2 rounded-xl bg-blue-50 px-4 py-2 shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                  aria-label={locale === 'he' ? 'הקרא את ההסבר' : 'Read explanation'}
+                >
+                  <span className="text-2xl">🔊</span>
+                </button>
+              )}
             </div>
-            <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
-              {autoSolveExplanation || defaultExplanation}
-            </p>
+            <div className="space-y-4">
+              <div className="rounded-xl bg-slate-50 p-4">
+                <p className="text-lg font-semibold text-slate-800 mb-2">
+                  {answerText}
+                </p>
+              </div>
+              <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
+                {autoSolveExplanation || defaultExplanation}
+              </p>
+            </div>
           </div>
 
           {/* Continue Button */}
@@ -284,7 +402,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             className="w-full rounded-3xl bg-gradient-to-r from-blue-500 to-indigo-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-blue-600 hover:to-indigo-700 transition-all transform hover:scale-105"
           >
             <span className="mr-2">➡️</span>
-            הבנתי! בואו נמשיך
+            {locale === 'he' ? 'הבנתי! בואו נמשיך' : "I understand! Let's continue"}
           </button>
         </div>
       </div>
