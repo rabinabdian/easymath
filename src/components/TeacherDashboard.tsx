@@ -109,6 +109,7 @@ export default function TeacherDashboard() {
   const [newStudentAvatar, setNewStudentAvatar] = useState<AvatarType>('boy');
   const [newStudentColor, setNewStudentColor] = useState('#f97316');
   const [photoUploadMode, setPhotoUploadMode] = useState(false);
+  const [photoDrafts, setPhotoDrafts] = useState<Record<string, string | undefined>>({});
 
   useEffect(() => {
     setSavedExams(loadExams());
@@ -152,6 +153,35 @@ export default function TeacherDashboard() {
   const subtopics = topic?.subtopics ?? [];
 
   // Image handling functions
+  const clearPhotoDraft = (studentId: string) => {
+    setPhotoDrafts((prev) => {
+      if (!(studentId in prev)) {
+        return prev;
+      }
+      const nextDrafts = { ...prev };
+      delete nextDrafts[studentId];
+      return nextDrafts;
+    });
+  };
+
+  const handleSavePhotoDraft = (studentId: string) => {
+    const draft = photoDrafts[studentId];
+    if (!draft) return;
+
+    setStudents((prev) =>
+      prev.map((s) =>
+        s.profile.id === studentId
+          ? { ...s, profile: { ...s.profile, photoUrl: draft } }
+          : s
+      )
+    );
+    clearPhotoDraft(studentId);
+  };
+
+  const handleDiscardPhotoDraft = (studentId: string) => {
+    clearPhotoDraft(studentId);
+  };
+
   const handlePhotoUpload = (file: File, studentId: string) => {
     if (!file.type.startsWith('image/')) {
       alert(locale === 'he' ? 'אנא בחר קובץ תמונה' : 'Please select an image file');
@@ -161,13 +191,10 @@ export default function TeacherDashboard() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const photoUrl = e.target?.result as string;
-      setStudents((prev) =>
-        prev.map((s) =>
-          s.profile.id === studentId
-            ? { ...s, profile: { ...s.profile, photoUrl } }
-            : s
-        )
-      );
+      setPhotoDrafts((prev) => ({
+        ...prev,
+        [studentId]: photoUrl,
+      }));
     };
     reader.readAsDataURL(file);
   };
@@ -196,6 +223,7 @@ export default function TeacherDashboard() {
           : s
       )
     );
+    clearPhotoDraft(studentId);
   };
 
   const toggleTopicSelection = (topicId: TopicId) => {
@@ -398,6 +426,12 @@ export default function TeacherDashboard() {
   }
 
   const activeStudent = students.find((s) => s.profile.id === selectedStudentId);
+  const activePhotoDraft = activeStudent
+    ? photoDrafts[activeStudent.profile.id]
+    : undefined;
+  const activePhotoPreview = activeStudent
+    ? activePhotoDraft ?? activeStudent.profile.photoUrl
+    : undefined;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -569,10 +603,10 @@ export default function TeacherDashboard() {
                 <div className="flex flex-col gap-3 md:flex-row md:items-start">
                   {/* Current Photo Display */}
                   <div className="flex flex-col items-center gap-2">
-                    {activeStudent.profile.photoUrl ? (
+                    {activePhotoPreview ? (
                       <div className="relative">
                         <img
-                          src={activeStudent.profile.photoUrl}
+                          src={activePhotoPreview}
                           alt={activeStudent.profile.name}
                           className="h-32 w-32 rounded-lg border-2 border-slate-300 object-cover"
                         />
@@ -584,6 +618,11 @@ export default function TeacherDashboard() {
                         >
                           ✕
                         </button>
+                        {activePhotoDraft && (
+                          <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-500 px-2 py-0.5 text-[0.65rem] font-semibold text-white shadow">
+                            {locale === 'he' ? 'ממתין לשמירה' : 'Unsaved'}
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <div className="flex h-32 w-32 items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-slate-50">
@@ -638,6 +677,32 @@ export default function TeacherDashboard() {
                           : 'Copy an image and paste it in this area'}
                       </p>
                     </div>
+
+                    {activePhotoDraft && (
+                      <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                        <div className="mb-2 font-medium">
+                          {locale === 'he'
+                            ? 'התמונה חדשה – יש לשמור כדי לעדכן את הפרופיל.'
+                            : 'New photo ready. Save it to update the profile.'}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleSavePhotoDraft(activeStudent.profile.id)}
+                            className="rounded-lg bg-amber-600 px-3 py-1 text-xs font-semibold text-white hover:bg-amber-700 transition-colors"
+                          >
+                            {locale === 'he' ? 'שמור תמונה' : 'Save Photo'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDiscardPhotoDraft(activeStudent.profile.id)}
+                            className="rounded-lg border border-transparent px-2 py-1 text-xs font-medium text-amber-700 hover:underline"
+                          >
+                            {locale === 'he' ? 'בטל' : 'Cancel'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
