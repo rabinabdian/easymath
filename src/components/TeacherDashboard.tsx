@@ -109,6 +109,9 @@ export default function TeacherDashboard() {
   const [newStudentAvatar, setNewStudentAvatar] = useState<AvatarType>('boy');
   const [newStudentColor, setNewStudentColor] = useState('#f97316');
   const [photoUploadMode, setPhotoUploadMode] = useState(false);
+  const [pendingPhotoByStudent, setPendingPhotoByStudent] = useState<
+    Record<string, string>
+  >({});
 
   useEffect(() => {
     setSavedExams(loadExams());
@@ -161,13 +164,10 @@ export default function TeacherDashboard() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const photoUrl = e.target?.result as string;
-      setStudents((prev) =>
-        prev.map((s) =>
-          s.profile.id === studentId
-            ? { ...s, profile: { ...s.profile, photoUrl } }
-            : s
-        )
-      );
+      setPendingPhotoByStudent((prev) => ({
+        ...prev,
+        [studentId]: photoUrl,
+      }));
     };
     reader.readAsDataURL(file);
   };
@@ -188,6 +188,33 @@ export default function TeacherDashboard() {
     }
   };
 
+  const handleSavePendingPhoto = (studentId: string) => {
+    const photoUrl = pendingPhotoByStudent[studentId];
+    if (!photoUrl) return;
+
+    setStudents((prev) =>
+      prev.map((s) =>
+        s.profile.id === studentId
+          ? { ...s, profile: { ...s.profile, photoUrl } }
+          : s
+      )
+    );
+
+    setPendingPhotoByStudent((prev) => {
+      const next = { ...prev };
+      delete next[studentId];
+      return next;
+    });
+  };
+
+  const handleCancelPendingPhoto = (studentId: string) => {
+    setPendingPhotoByStudent((prev) => {
+      const next = { ...prev };
+      delete next[studentId];
+      return next;
+    });
+  };
+
   const handlePhotoDelete = (studentId: string) => {
     setStudents((prev) =>
       prev.map((s) =>
@@ -196,6 +223,7 @@ export default function TeacherDashboard() {
           : s
       )
     );
+    handleCancelPendingPhoto(studentId);
   };
 
   const toggleTopicSelection = (topicId: TopicId) => {
@@ -398,6 +426,10 @@ export default function TeacherDashboard() {
   }
 
   const activeStudent = students.find((s) => s.profile.id === selectedStudentId);
+  const pendingPhoto =
+    activeStudent ? pendingPhotoByStudent[activeStudent.profile.id] : undefined;
+  const photoPreview = pendingPhoto ?? activeStudent?.profile.photoUrl;
+  const hasPendingPhoto = Boolean(pendingPhoto);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -569,13 +601,18 @@ export default function TeacherDashboard() {
                 <div className="flex flex-col gap-3 md:flex-row md:items-start">
                   {/* Current Photo Display */}
                   <div className="flex flex-col items-center gap-2">
-                    {activeStudent.profile.photoUrl ? (
+                    {photoPreview ? (
                       <div className="relative">
                         <img
-                          src={activeStudent.profile.photoUrl}
+                          src={photoPreview}
                           alt={activeStudent.profile.name}
                           className="h-32 w-32 rounded-lg border-2 border-slate-300 object-cover"
                         />
+                        {hasPendingPhoto && (
+                          <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-amber-500 px-2 py-0.5 text-[0.6rem] font-semibold text-white shadow">
+                            {locale === 'he' ? 'מחכה לשמירה' : 'Pending save'}
+                          </span>
+                        )}
                         <button
                           type="button"
                           onClick={() => handlePhotoDelete(activeStudent.profile.id)}
@@ -638,6 +675,32 @@ export default function TeacherDashboard() {
                           : 'Copy an image and paste it in this area'}
                       </p>
                     </div>
+
+                    {hasPendingPhoto && (
+                      <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
+                        <p className="mb-2 text-xs font-medium text-amber-700">
+                          {locale === 'he'
+                            ? 'תמונה חדשה ממתינה לשמירה בפרופיל התלמיד.'
+                            : 'A new photo is waiting to be saved to the student profile.'}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleSavePendingPhoto(activeStudent.profile.id)}
+                            className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700"
+                          >
+                            {locale === 'he' ? 'שמור תמונה' : 'Save photo'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleCancelPendingPhoto(activeStudent.profile.id)}
+                            className="rounded-lg border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-white"
+                          >
+                            {locale === 'he' ? 'בטל' : 'Cancel'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
