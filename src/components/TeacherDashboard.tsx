@@ -547,7 +547,7 @@ export default function TeacherDashboard() {
                     >
                       {TOPICS.map((t) => (
                         <option key={t.id} value={t.id}>
-                          {t.label}
+                          {t.icon ? `${t.icon} ` : ''}{t.label}
                         </option>
                       ))}
                     </select>
@@ -592,6 +592,11 @@ export default function TeacherDashboard() {
                             onChange={() => toggleTopicSelection(t.id)}
                             className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                           />
+                          {t.icon && (
+                            <span className="text-lg" role="img" aria-label={t.label}>
+                              {t.icon}
+                            </span>
+                          )}
                           <span className="font-medium text-slate-800">
                             {t.label}
                           </span>
