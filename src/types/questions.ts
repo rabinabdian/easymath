@@ -14,6 +14,7 @@ export interface Topic {
   id: TopicId;
   label: string;
   subtopics?: string[];
+  icon?: string; // תמונה/אייקון של הנושא
 }
 
 export interface Question {
