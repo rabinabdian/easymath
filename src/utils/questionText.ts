@@ -39,3 +39,56 @@ export function getQuestionExplanation(
   }
   return q.explanationEn || q.explanationHe;
 }
+
+interface NarrationOptions {
+  includeAnswer?: boolean;
+}
+
+/**
+ * Build a friendly narration string that helps children understand the question
+ * When includeAnswer=true the message ends with the concrete solution.
+ */
+export function buildUnderstandingNarration(
+  question: Question,
+  locale: Locale,
+  options: NarrationOptions = {}
+): string {
+  const prompt = getQuestionPrompt(question, locale).trim();
+  const localizedExplanation =
+    locale === 'he'
+      ? question.autoSolveExplanationHe ||
+        question.explanationHe ||
+        question.introExplanationHe ||
+        question.introExampleHe
+      : question.autoSolveExplanationEn ||
+        question.explanationEn ||
+        question.introExplanationEn ||
+        question.introExampleEn;
+  const answerText = question.answer !== undefined ? String(question.answer) : '';
+  const includeAnswer = options.includeAnswer ?? false;
+
+  if (localizedExplanation) {
+    if (includeAnswer && answerText && !localizedExplanation.includes(answerText)) {
+      return `${localizedExplanation}\n\n${
+        locale === 'he' ? 'התשובה היא' : 'The answer is'
+      } ${answerText}`;
+    }
+    return localizedExplanation;
+  }
+
+  if (includeAnswer && answerText) {
+    return locale === 'he'
+      ? `${prompt ? `השאלה הייתה: ${prompt}\n` : ''}התשובה הנכונה היא ${answerText}`
+      : `${prompt ? `The question was: ${prompt}\n` : ''}The correct answer is ${answerText}`;
+  }
+
+  if (prompt) {
+    return locale === 'he'
+      ? `נסה לחשוב כך: ${prompt}`
+      : `Try thinking like this: ${prompt}`;
+  }
+
+  return locale === 'he'
+    ? 'בוא נפרק את הבעיה לצעדים קטנים ונשתמש בעזרים הוויזואליים.'
+    : 'Break the problem into small steps and use the visual aids to help.';
+}
