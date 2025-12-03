@@ -87,10 +87,22 @@ export function QuestionCard({
             </button>
           </div>
         ) : (
-          // Regular question - Show text
-          <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
-            {getQuestionPrompt(question, locale)}
-          </p>
+          // Regular question - Show text with speaker icon
+          <div className="flex items-start gap-3">
+            <p className="flex-1 text-lg font-semibold text-slate-900 whitespace-pre-line">
+              {getQuestionPrompt(question, locale)}
+            </p>
+            <button
+              type="button"
+              onClick={handleSpeak}
+              disabled={isSpeaking}
+              className="flex-shrink-0 rounded-lg bg-blue-50 p-2 hover:bg-blue-100 transition-all disabled:opacity-50 border border-blue-200"
+              aria-label="הקרא את השאלה"
+              title="לחץ לשמוע את השאלה"
+            >
+              <span className="text-2xl">🔊</span>
+            </button>
+          </div>
         )}
 
         {/* Multiple Choice Options */}

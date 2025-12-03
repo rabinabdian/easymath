@@ -961,6 +961,8 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'היו 12 בלונים. 4 התפוצצו ואז עוד 3 עפו. כמה בלונים נשארו?',
     promptEn: 'היו 12 balloons. 4 התפוצצו ואז עוד 3 עפו. How many balloons נשארו?',
     answer: 5,
+    autoSolveExplanationHe: 'בוא נבין ביחד!\n\nהיו לנו בהתחלה: 12 בלונים 🎈\n\nאז מה קרה?\n• 4 בלונים התפוצצו 💥\n• עוד 3 בלונים עפו לשמיים ☁️\n\nעכשיו בואו נחשב:\n12 - 4 = 8 בלונים\n8 - 3 = 5 בלונים\n\nנשארו לנו 5 בלונים! 🎈🎈🎈🎈🎈',
+    autoSolveExplanationEn: "Let's understand together!\n\nWe had at the start: 12 balloons 🎈\n\nSo what happened?\n• 4 balloons popped 💥\n• 3 more balloons flew away ☁️\n\nNow let's calculate:\n12 - 4 = 8 balloons\n8 - 3 = 5 balloons\n\nWe have 5 balloons left! 🎈🎈🎈🎈🎈",
   },
   {
     id: 'sub_hard_041',
@@ -970,6 +972,8 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'בכיתה היו 15 תלמידים. 5 יצאו להפסקה מוקדמת ו-4 חזרו. כמה תלמידים בכיתה עכשיו?',
     promptEn: 'בכיתה היו 15 students. 5 יצאו להפסקה מוקדמת ו-4 חזרו. How many students בכיתה עכשיו?',
     answer: 14,
+    autoSolveExplanationHe: 'בוא נפתור ביחד!\n\nהיו בכיתה: 15 תלמידים 👦👧\n\nמה קרה?\n• 5 תלמידים יצאו להפסקה → נשארו 15 - 5 = 10\n• 4 תלמידים חזרו לכיתה → עכשיו יש 10 + 4 = 14\n\nאז עכשיו בכיתה יש 14 תלמידים! ✓',
+    autoSolveExplanationEn: "Let's solve together!\n\nThere were in class: 15 students 👦👧\n\nWhat happened?\n• 5 students left for break → 15 - 5 = 10 remained\n• 4 students came back → now there are 10 + 4 = 14\n\nSo now there are 14 students in class! ✓",
   },
   {
     id: 'sub_chain_042',
@@ -981,6 +985,8 @@ const MANUAL_QUESTIONS: Question[] = [
     answer: 5,
     explanationHe: '12 - 4 - 3 = 5.',
     explanationEn: '12 - 4 - 3 = 5.',
+    autoSolveExplanationHe: 'בוא נחשב צעד אחר צעד!\n\nהיו לנו: 12 בלונים 🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈\n\nצעד 1️⃣: 4 התפוצצו\n12 - 4 = 8 בלונים נשארו\n\nצעד 2️⃣: עוד 3 עפו\n8 - 3 = 5 בלונים\n\nהתשובה הסופית: 5 בלונים! 🎈🎈🎈🎈🎈',
+    autoSolveExplanationEn: "Let's calculate step by step!\n\nWe had: 12 balloons 🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈\n\nStep 1️⃣: 4 popped\n12 - 4 = 8 balloons remained\n\nStep 2️⃣: 3 more flew away\n8 - 3 = 5 balloons\n\nFinal answer: 5 balloons! 🎈🎈🎈🎈🎈",
   },
   {
     id: 'sub_chain_043',
@@ -990,6 +996,8 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('18 - 9 =')}`,
     promptEn: 'Solve: 18 - 9 = ?',
     answer: 9,
+    autoSolveExplanationHe: 'בוא נפתור!\n\n18 - 9 = ?\n\nדרך קלה לחשב:\n• 18 זה כמו 10 + 8\n• נחסיר קודם 9 מה-10: 10 - 9 = 1\n• עכשיו נוסיף את ה-8 שנשאר: 1 + 8 = 9\n\nאו פשוט:\n18 - 9 = 9 ✓\n\nכי 9 + 9 = 18!',
+    autoSolveExplanationEn: "Let's solve!\n\n18 - 9 = ?\n\nEasy way to calculate:\n• 18 is like 10 + 8\n• First subtract 9 from 10: 10 - 9 = 1\n• Now add the 8 that remained: 1 + 8 = 9\n\nOr simply:\n18 - 9 = 9 ✓\n\nBecause 9 + 9 = 18!",
   },
   {
     id: 'sub_chain_044',
@@ -1001,6 +1009,8 @@ const MANUAL_QUESTIONS: Question[] = [
     answer: 7,
     explanationHe: '20 - 8 - 5 = 7.',
     explanationEn: '20 - 8 - 5 = 7.',
+    autoSolveExplanationHe: 'בוא נחשב ביחד!\n\nהיו לנו: 20 ממתקים 🍬🍬🍬...\n\nמה קרה?\nצעד 1️⃣: חילקו 8 ממתקים לילדים\n20 - 8 = 12 ממתקים נשארו\n\nצעד 2️⃣: נתנו עוד 5 ממתקים לבני\n12 - 5 = 7 ממתקים\n\nסה"כ נשארו 7 ממתקים! 🍬🍬🍬🍬🍬🍬🍬',
+    autoSolveExplanationEn: "Let's calculate together!\n\nWe had: 20 candies 🍬🍬🍬...\n\nWhat happened?\nStep 1️⃣: Gave 8 candies to children\n20 - 8 = 12 candies remained\n\nStep 2️⃣: Gave 5 more candies to Benny\n12 - 5 = 7 candies\n\nTotal: 7 candies left! 🍬🍬🍬🍬🍬🍬🍬",
   },
   {
     id: 'sub_chain_045',
@@ -1010,6 +1020,8 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('16 - 7 =')}`,
     promptEn: 'Solve: 16 - 7 = ?',
     answer: 9,
+    autoSolveExplanationHe: 'בוא נחשב!\n\n16 - 7 = ?\n\nדרך 1: נחשב צעד אחר צעד\n• 16 - 6 = 10 (קל!)\n• 10 - 1 = 9 (עוד יותר קל!)\n• אז 16 - 7 = 9 ✓\n\nדרך 2: נחשוב להיפך\n• 7 + ? = 16\n• 7 + 9 = 16 ✓\n\nאז התשובה היא 9!',
+    autoSolveExplanationEn: "Let's calculate!\n\n16 - 7 = ?\n\nWay 1: Calculate step by step\n• 16 - 6 = 10 (easy!)\n• 10 - 1 = 9 (even easier!)\n• So 16 - 7 = 9 ✓\n\nWay 2: Think backwards\n• 7 + ? = 16\n• 7 + 9 = 16 ✓\n\nSo the answer is 9!",
   },
 
   // ======================

@@ -5,6 +5,7 @@ import { useI18n } from '../i18n';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
+import { speak } from '../utils/speech';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -235,6 +236,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   if (showAutoSolve) {
     const autoSolveExplanation = locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn;
     const defaultExplanation = `התשובה הנכונה היא: ${current.answer}\n\nבוא נבין למה:`;
+    const questionPrompt = locale === 'he' ? current.promptHe : current.promptEn;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -244,6 +246,28 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             <div className="mb-3 text-6xl">🎓</div>
             <h2 className="text-3xl font-bold text-slate-800">בוא נפתור ביחד!</h2>
             <p className="mt-2 text-lg text-slate-600">אחרי 3 ניסיונות, אני אעזור לך</p>
+          </div>
+
+          {/* Question Reminder Card */}
+          <div className="mb-6 rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-50 p-6 shadow-lg border-2 border-blue-200">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">❓</span>
+                <h3 className="text-xl font-bold text-slate-800">השאלה</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => speak(questionPrompt)}
+                className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:shadow-md transition-all"
+                aria-label="הקרא את השאלה"
+              >
+                <span className="text-2xl">🔊</span>
+                <span>שמע</span>
+              </button>
+            </div>
+            <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line">
+              {questionPrompt}
+            </p>
           </div>
 
           {/* Answer Card */}
@@ -268,9 +292,20 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
           {/* Explanation Card */}
           <div className="mb-8 rounded-3xl bg-white p-8 shadow-lg">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="text-4xl">💡</span>
-              <h3 className="text-2xl font-bold text-slate-800">הסבר</h3>
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">💡</span>
+                <h3 className="text-2xl font-bold text-slate-800">הסבר מפורט</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => speak(autoSolveExplanation || defaultExplanation)}
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:shadow-md transition-all border border-purple-200"
+                aria-label="הקרא את ההסבר"
+              >
+                <span className="text-2xl">🔊</span>
+                <span>שמע הסבר</span>
+              </button>
             </div>
             <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
               {autoSolveExplanation || defaultExplanation}
