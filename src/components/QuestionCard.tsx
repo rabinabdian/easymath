@@ -5,6 +5,7 @@ import { useI18n } from '../i18n';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getAssetUrl } from '../utils/assets';
 import { speak } from '../utils/speech';
+import { VisualAidsDisplay } from './VisualAidsDisplay';
 
 interface QuestionCardProps {
   question: Question;
@@ -60,6 +61,11 @@ export function QuestionCard({
             }}
           />
         </div>
+      )}
+
+      {/* Visual Aids - for children with learning disabilities */}
+      {question.visualAids && question.visualAids.length > 0 && (
+        <VisualAidsDisplay visualAids={question.visualAids} />
       )}
 
       {/* Question Text */}

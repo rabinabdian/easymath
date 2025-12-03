@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { QuestionCard } from './QuestionCard';
+import { IntroScreen } from './IntroScreen';
+import { VisualAidsDisplay } from './VisualAidsDisplay';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -23,33 +25,39 @@ interface Props {
   onFinished?: (result: GameResult) => void;
 }
 
-const MAX_LIVES = 3;
 const TIME_PER_QUESTION = 30; // seconds
+const MAX_ATTEMPTS_PER_QUESTION = 3; // Maximum attempts before auto-solve
 
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
   const [score, setScore] = useState(0);
-  const [lives, setLives] = useState(MAX_LIVES);
   const [timeLeft, setTimeLeft] = useState(TIME_PER_QUESTION);
   const [finished, setFinished] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
+
+  // New state for interactive exercise system
+  const [showIntro, setShowIntro] = useState(true); // Show intro before each question
+  const [attempts, setAttempts] = useState(0); // Track attempts for current question
+  const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
 
   const current = questions[index];
 
-  // Initialize timer for each new question
+  // Initialize timer and reset state for each new question
   useEffect(() => {
-    if (!current || finished || gameOver) return;
+    if (!current || finished) return;
     setTimeLeft(TIME_PER_QUESTION);
-  }, [index, finished, gameOver, !!current]);
+    setAttempts(0); // Reset attempts for new question
+    setShowIntro(true); // Show intro for new question
+    setShowAutoSolve(false); // Reset auto-solve
+  }, [index, finished, !!current]);
 
-  // Timer countdown
+  // Timer countdown (only when not showing intro or auto-solve)
   useEffect(() => {
-    if (!current || finished || gameOver) return;
+    if (!current || finished || showIntro || showAutoSolve) return;
     if (timeLeft <= 0) {
-      // Time's up - count as wrong
+      // Time's up - count as wrong attempt
       handleWrong(t('student.timeUp'));
       return;
     }
@@ -59,7 +67,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     }, 1000);
 
     return () => clearTimeout(id);
-  }, [timeLeft, current, finished, gameOver]);
+  }, [timeLeft, current, finished, showIntro, showAutoSolve]);
 
   // Call onFinished when game is completed successfully
   useEffect(() => {
@@ -75,35 +83,53 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
   const totalQuestions = questions.length;
   const progress = totalQuestions > 0 ? (index / totalQuestions) * 100 : 0;
-  const hearts = Array.from({ length: MAX_LIVES }, (_, i) => i < lives);
 
   function handleWrong(customMessage?: string) {
+    const newAttempts = attempts + 1;
+    setAttempts(newAttempts);
+
+    // Check if reached max attempts - trigger auto-solve
+    if (newAttempts >= MAX_ATTEMPTS_PER_QUESTION) {
+      setFeedback('אופס! בוא נראה איך פותרים את זה ביחד 🤔');
+      setTimeout(() => {
+        setFeedback(null);
+        setShowAutoSolve(true);
+      }, 1500);
+      return;
+    }
+
+    // Show encouraging feedback based on attempt number
+    const encouragement =
+      newAttempts === 1 ? 'נסה שוב! אתה יכול! 💪' :
+      newAttempts === 2 ? 'כמעט! עוד ניסיון אחד! 🌟' :
+      'לא נורא, בוא ננסה שוב';
+
     setFeedback(
-      customMessage ??
-        t('student.wrongAnswer', { answer: String(current?.answer ?? '') })
+      customMessage ?? `${encouragement}\nהתשובה הנכונה היא: ${String(current?.answer ?? '')}`
     );
 
-    setLives((prev) => {
-      const next = prev - 1;
-      if (next <= 0) {
-        setGameOver(true);
-        setTimeout(() => {
-          setFeedback(null);
-        }, 1000);
-      } else {
-        setTimeout(() => {
-          setFeedback(null);
-          setInput('');
-          setIndex((i) => i + 1);
-        }, 1000);
-      }
-      return next;
-    });
+    // Don't lose a life on wrong attempt - only after auto-solve
+    setTimeout(() => {
+      setFeedback(null);
+      setInput('');
+    }, 2000);
   }
 
   function handleCorrect() {
-    setFeedback(t('student.correct'));
-    setScore((s) => s + 1);
+    // Award points based on attempts (fewer attempts = more points)
+    const points = attempts === 0 ? 1 : attempts === 1 ? 0.7 : 0.5;
+
+    const successMessages = [
+      'כל הכבוד! 🎉',
+      'מעולה! ⭐',
+      'נכון מאוד! 👏',
+      'יפה! 🌟',
+      'אלוף! 💪'
+    ];
+    const randomMessage = successMessages[Math.floor(Math.random() * successMessages.length)];
+
+    setFeedback(randomMessage);
+    setScore((s) => s + points);
 
     setTimeout(() => {
       setFeedback(null);
@@ -114,11 +140,23 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
       } else {
         setIndex(nextIndex);
       }
-    }, 800);
+    }, 1200);
+  }
+
+  function handleAutoSolveContinue() {
+    // After auto-solve, move to next question (no points awarded)
+    setShowAutoSolve(false);
+    setInput('');
+    const nextIndex = index + 1;
+    if (nextIndex >= totalQuestions) {
+      setFinished(true);
+    } else {
+      setIndex(nextIndex);
+    }
   }
 
   function checkAnswer(valueFromClick?: string) {
-    if (!current || finished || gameOver) return;
+    if (!current || finished) return;
 
     const correctStr = String(current.answer).trim();
     const userStr = (valueFromClick ?? input).trim();
@@ -183,37 +221,74 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     );
   }
 
-  // Game Over screen
-  if (gameOver) {
+
+  if (!current) {
+    return null;
+  }
+
+  // Show intro screen before each question (if has intro content)
+  if (showIntro && (current.introExplanationHe || current.introExampleHe)) {
+    return <IntroScreen question={current} onContinue={() => setShowIntro(false)} />;
+  }
+
+  // Show auto-solve explanation after 3 failed attempts
+  if (showAutoSolve) {
+    const autoSolveExplanation = locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn;
+    const defaultExplanation = `התשובה הנכונה היא: ${current.answer}\n\nבוא נבין למה:`;
+
     return (
-      <div className="min-h-screen bg-slate-50">
-        <div className="mx-auto flex max-w-xl flex-col gap-4 px-4 py-10">
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <h2 className="mb-2 text-xl font-bold text-slate-900">
-              {t('student.gameOver.title')}
-            </h2>
-            <p className="mb-3 text-slate-700">
-              {t('student.gameOver.tried')} {index + 1} · {t('student.gameOver.score')} {score}
-            </p>
-            <p className="text-sm text-slate-600">
-              {t('student.gameOver.hint')}
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
+        <div className="mx-auto max-w-2xl px-4 py-8">
+          {/* Header */}
+          <div className="mb-6 text-center">
+            <div className="mb-3 text-6xl">🎓</div>
+            <h2 className="text-3xl font-bold text-slate-800">בוא נפתור ביחד!</h2>
+            <p className="mt-2 text-lg text-slate-600">אחרי 3 ניסיונות, אני אעזור לך</p>
+          </div>
+
+          {/* Answer Card */}
+          <div className="mb-6 rounded-3xl bg-gradient-to-br from-green-100 to-emerald-100 p-8 shadow-lg border-4 border-green-400">
+            <div className="mb-4 flex items-center gap-3">
+              <span className="text-5xl">✅</span>
+              <h3 className="text-2xl font-bold text-slate-800">התשובה הנכונה</h3>
+            </div>
+            <div className="rounded-2xl bg-white p-6 shadow-sm">
+              <p className="text-4xl font-bold text-center text-green-600">
+                {current.answer}
+              </p>
+            </div>
+          </div>
+
+          {/* Visual Aid for Auto-Solve */}
+          {current.autoSolveVisualAid && (
+            <div className="mb-6">
+              <VisualAidsDisplay visualAids={[current.autoSolveVisualAid]} />
+            </div>
+          )}
+
+          {/* Explanation Card */}
+          <div className="mb-8 rounded-3xl bg-white p-8 shadow-lg">
+            <div className="mb-4 flex items-center gap-3">
+              <span className="text-4xl">💡</span>
+              <h3 className="text-2xl font-bold text-slate-800">הסבר</h3>
+            </div>
+            <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
+              {autoSolveExplanation || defaultExplanation}
             </p>
           </div>
 
+          {/* Continue Button */}
           <button
             type="button"
-            onClick={onExit}
-            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            onClick={handleAutoSolveContinue}
+            className="w-full rounded-3xl bg-gradient-to-r from-blue-500 to-indigo-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-blue-600 hover:to-indigo-700 transition-all transform hover:scale-105"
           >
-            {t('student.gameOver.backButton')}
+            <span className="mr-2">➡️</span>
+            הבנתי! בואו נמשיך
           </button>
         </div>
       </div>
     );
-  }
-
-  if (!current) {
-    return null;
   }
 
   return (
@@ -231,14 +306,6 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
           <div className="flex flex-col items-end gap-1 text-xs text-slate-700">
             <div className="flex items-center gap-2">
-              <span>{t('student.hearts')}</span>
-              <div className="flex gap-0.5 text-lg">
-                {hearts.map((full, i) => (
-                  <span key={i}>{full ? '❤️' : '🤍'}</span>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
               <span>{t('student.timer')}</span>
               <span
                 className={
@@ -250,8 +317,15 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </div>
             <div>
               {t('student.score')}{' '}
-              <span className="font-semibold text-emerald-600">{score}</span>
+              <span className="font-semibold text-emerald-600">{Math.round(score)}</span>
             </div>
+            {/* Attempts indicator */}
+            {attempts > 0 && (
+              <div className="flex items-center gap-1 text-amber-600">
+                <span>ניסיונות:</span>
+                <span className="font-bold">{attempts}/3</span>
+              </div>
+            )}
           </div>
         </div>
 

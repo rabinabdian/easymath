@@ -17,6 +17,15 @@ export interface Topic {
   icon?: string; // תמונה/אייקון של הנושא
 }
 
+// Visual aid types for interactive exercises
+export interface VisualAid {
+  type: 'emoji' | 'icon' | 'shape' | 'image';
+  value: string; // emoji character, icon name, or image path
+  count?: number; // for displaying multiple instances
+  color?: string; // for shapes
+  size?: 'small' | 'medium' | 'large';
+}
+
 export interface Question {
   id: string;
   topic: TopicId;
@@ -42,4 +51,22 @@ export interface Question {
 
   // האם זה תרגיל הקראה (המספר נקרא בקול במקום להציג אותו)
   isReadingExercise?: boolean;
+
+  // ===== מערכת תרגילים אינטראקטיביים לילדים עם לקויות למידה =====
+
+  // הסבר כללי ודוגמא לפני התרגיל
+  introExplanationHe?: string;
+  introExplanationEn?: string;
+  introExampleHe?: string;
+  introExampleEn?: string;
+
+  // אלמנטים ויזואליים לעזרה בפתרון (אימוג'י, צורות, אייקונים)
+  visualAids?: VisualAid[];
+
+  // הסבר שמוצג אחרי 3 ניסיונות כושלים (פתרון אוטומטי)
+  autoSolveExplanationHe?: string;
+  autoSolveExplanationEn?: string;
+
+  // אימוג'י או אייקון להצגה בהסבר האוטומטי
+  autoSolveVisualAid?: VisualAid;
 }
