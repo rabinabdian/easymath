@@ -428,6 +428,19 @@ function ParentPage() {
 
   return (
     <div className="page page-right">
+      {/* Back to Home Button */}
+      <div className="flex items-center gap-3 mb-4">
+        <button
+          type="button"
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 transition-colors"
+          style={{ direction: 'ltr' }}
+        >
+          <span className="text-lg">←</span>
+          <span>חזרה</span>
+        </button>
+      </div>
+
       <h2 className="title">מוד הורה</h2>
       <p className="subtitle">
         הגדרות בסיסיות ל-{settings.childName}. השינויים נשמרים במכשיר.
