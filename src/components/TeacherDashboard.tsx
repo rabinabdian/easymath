@@ -109,6 +109,7 @@ export default function TeacherDashboard() {
   const [newStudentAvatar, setNewStudentAvatar] = useState<AvatarType>('boy');
   const [newStudentColor, setNewStudentColor] = useState('#f97316');
   const [photoUploadMode, setPhotoUploadMode] = useState(false);
+  const [photoNeedsSave, setPhotoNeedsSave] = useState(false);
 
   useEffect(() => {
     setSavedExams(loadExams());
@@ -168,6 +169,7 @@ export default function TeacherDashboard() {
             : s
         )
       );
+      setPhotoNeedsSave(true);
     };
     reader.readAsDataURL(file);
   };
@@ -196,6 +198,14 @@ export default function TeacherDashboard() {
           : s
       )
     );
+    setPhotoNeedsSave(true);
+  };
+
+  const handlePhotoSave = () => {
+    if (students.length) {
+      saveStudentRecords(students);
+      setPhotoNeedsSave(false);
+    }
   };
 
   const toggleTopicSelection = (topicId: TopicId) => {
@@ -471,7 +481,10 @@ export default function TeacherDashboard() {
                 <select
                   className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm"
                   value={selectedStudentId}
-                  onChange={(e) => setSelectedStudentId(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedStudentId(e.target.value);
+                    setPhotoNeedsSave(false);
+                  }}
                 >
                   {students.map((s) => (
                     <option key={s.profile.id} value={s.profile.id}>
@@ -482,7 +495,12 @@ export default function TeacherDashboard() {
 
                 <button
                   type="button"
-                  onClick={() => setPhotoUploadMode(!photoUploadMode)}
+                  onClick={() => {
+                    setPhotoUploadMode(!photoUploadMode);
+                    if (photoUploadMode) {
+                      setPhotoNeedsSave(false);
+                    }
+                  }}
                   className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
                 >
                   {photoUploadMode
@@ -638,6 +656,25 @@ export default function TeacherDashboard() {
                           : 'Copy an image and paste it in this area'}
                       </p>
                     </div>
+
+                    {/* Save Button - appears after upload/paste */}
+                    {photoNeedsSave && (
+                      <div>
+                        <button
+                          type="button"
+                          onClick={handlePhotoSave}
+                          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+                        >
+                          <span>💾</span>
+                          <span>{locale === 'he' ? 'שמור תמונה' : 'Save Photo'}</span>
+                        </button>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {locale === 'he'
+                            ? 'לחץ כדי לשמור את התמונה'
+                            : 'Click to save the photo'}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
