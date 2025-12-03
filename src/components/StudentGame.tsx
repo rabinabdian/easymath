@@ -299,14 +299,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </div>
           </div>
 
-          {/* Visual Aid for Auto-Solve */}
-          {current.autoSolveVisualAid && (
-            <div className="mb-6">
-              <VisualAidsDisplay visualAids={[current.autoSolveVisualAid]} />
-            </div>
-          )}
-
-          {/* Explanation Card using UnderstandingSection */}
+          {/* Explanation Card using UnderstandingSection with Visual Aids */}
           <UnderstandingSection
             locale={locale}
             prompt={questionPrompt}
@@ -314,6 +307,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             variant="solution"
             showPrompt={false}
             className="mb-6"
+            visualAids={current.autoSolveVisualAid ? [current.autoSolveVisualAid] : undefined}
           />
 
           {/* Full Audio Button - Listen to everything together */}
@@ -437,6 +431,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             explanation={understandingHint}
             variant="hint"
             showPrompt={false}
+            visualAids={current.visualAids}
           />
         </div>
       </div>

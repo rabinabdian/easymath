@@ -1,5 +1,7 @@
 // src/components/UnderstandingSection.tsx
 import { InlineSpeaker } from './SpeakerButton';
+import { VisualAidsDisplay } from './VisualAidsDisplay';
+import type { VisualAid } from '../types/questions';
 
 interface UnderstandingSectionProps {
   locale: 'he' | 'en';
@@ -8,11 +10,13 @@ interface UnderstandingSectionProps {
   variant?: 'hint' | 'solution';
   showPrompt?: boolean;
   className?: string;
+  visualAids?: VisualAid[]; // תמיכה בעזרים ויזואליים להסבר
 }
 
 /**
  * UnderstandingSection - A component that displays educational explanations
  * with text-to-speech support for children with learning disabilities
+ * Now supports visual aids (images, drawings, sketches) to enhance understanding
  */
 export function UnderstandingSection({
   locale,
@@ -20,7 +24,8 @@ export function UnderstandingSection({
   explanation,
   variant = 'hint',
   showPrompt = false,
-  className = ''
+  className = '',
+  visualAids
 }: UnderstandingSectionProps) {
   const isHebrew = locale === 'he';
   const isSolution = variant === 'solution';
@@ -61,6 +66,13 @@ export function UnderstandingSection({
           <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line">
             {prompt}
           </p>
+        </div>
+      )}
+
+      {/* Visual Aids - תמונות, שרטוטים, סקיצות להבנה מירבית */}
+      {visualAids && visualAids.length > 0 && (
+        <div className="mb-4">
+          <VisualAidsDisplay visualAids={visualAids} />
         </div>
       )}
 
