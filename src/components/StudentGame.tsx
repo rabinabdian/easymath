@@ -45,6 +45,15 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
 
   const current = questions[index];
+  const questionPrompt = current ? getQuestionPrompt(current, locale) : '';
+  const understandingHint = current
+    ? (locale === 'he' ? current.explanationHe : current.explanationEn) || ''
+    : '';
+  const understandingSolution = current
+    ? (locale === 'he' 
+        ? (current.autoSolveExplanationHe || current.explanationHe)
+        : (current.autoSolveExplanationEn || current.explanationEn)) || ''
+    : '';
 
   // Initialize timer and reset state for each new question
   useEffect(() => {
@@ -424,6 +433,22 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </div>
           )}
         </div>
+
+        {/* Understanding Hint Section */}
+        {understandingHint && (
+          <div className="mt-4 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 p-4 shadow-sm border border-blue-200">
+            <div className="mb-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">💡</span>
+                <h3 className="text-sm font-semibold text-slate-700">רמז להבנה</h3>
+              </div>
+              <InlineSpeaker text={understandingHint} />
+            </div>
+            <p className="text-sm leading-relaxed text-slate-700 whitespace-pre-line">
+              {understandingHint}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
