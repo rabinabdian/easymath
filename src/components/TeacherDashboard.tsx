@@ -235,6 +235,13 @@ export default function TeacherDashboard() {
     setSavedExams((prev) => prev.filter((e) => e.id !== id));
   };
 
+  const handlePracticeExam = (id: string) => {
+    const exam = savedExams.find((e) => e.id === id);
+    if (!exam) return;
+    setGenerated(exam.questions);
+    setMode('student');
+  };
+
   const handleImportJson: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -913,6 +920,13 @@ export default function TeacherDashboard() {
                         </div>
                       </div>
                       <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handlePracticeExam(exam.id)}
+                          className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700 transition-colors"
+                        >
+                          {locale === 'he' ? 'תרגול' : 'Practice'}
+                        </button>
                         <button
                           type="button"
                           onClick={() => handleLoadExam(exam.id)}
