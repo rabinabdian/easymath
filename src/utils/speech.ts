@@ -25,7 +25,12 @@ function initVoice() {
     null;
 }
 
-export function speak(text: string) {
+/**
+ * Speak text using the browser's speech synthesis
+ * @param text - The text to speak
+ * @param onEnd - Optional callback when speech ends
+ */
+export function speak(text: string, onEnd?: () => void) {
   if (typeof window === "undefined") return;
   if (!("speechSynthesis" in window)) return;
 
@@ -55,7 +60,31 @@ export function speak(text: string) {
   };
   utter.onend = () => {
     isSpeaking = false;
+    onEnd?.();
+  };
+  utter.onerror = () => {
+    isSpeaking = false;
+    onEnd?.();
   };
 
   synth.speak(utter);
+}
+
+/**
+ * Stop any ongoing speech
+ */
+export function stopSpeaking() {
+  if (typeof window === "undefined") return;
+  if (!("speechSynthesis" in window)) return;
+
+  const synth = window.speechSynthesis;
+  synth.cancel();
+  isSpeaking = false;
+}
+
+/**
+ * Check if currently speaking
+ */
+export function isCurrentlySpeaking(): boolean {
+  return isSpeaking;
 }
