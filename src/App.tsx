@@ -41,7 +41,7 @@ type FeedbackState = "idle" | "correct" | "wrong" | "finished";
  * תרגיל דוגמה מודרך:
  * 3 עיגולים, הילד צריך ללחוץ על "3"
  */
-function TutorialExercise({ onDone }: { onDone: () => void }) {
+function TutorialExercise({ onDone, onExit }: { onDone: () => void; onExit: () => void }) {
   const { settings } = useChildSettings();
   const [feedback, setFeedback] = useState<FeedbackState>("idle");
 
@@ -89,6 +89,19 @@ function TutorialExercise({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="page page-right">
+      {/* Back to Home Button */}
+      <div className="flex items-center gap-3 mb-4">
+        <button
+          type="button"
+          onClick={onExit}
+          className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 transition-colors"
+          style={{ direction: 'ltr' }}
+        >
+          <span className="text-lg">←</span>
+          <span>חזרה</span>
+        </button>
+      </div>
+
       <div className="title-row">
         <h2 className="title">דוגמה</h2>
         <button
@@ -194,12 +207,15 @@ function SessionPage() {
 
   // אם עוד לא עברנו דוגמה – מציגים רק אותה
   if (!tutorialDone) {
-    return <TutorialExercise onDone={() => {
-      setTutorialDone(true);
-      setCurrentIndex(0);
-      setFeedback("idle");
-      setIntroSpoken(false);
-    }} />;
+    return <TutorialExercise
+      onDone={() => {
+        setTutorialDone(true);
+        setCurrentIndex(0);
+        setFeedback("idle");
+        setIntroSpoken(false);
+      }}
+      onExit={() => navigate("/")}
+    />;
   }
 
   // Defensive: ensure we have exercises and currentIndex is valid
@@ -296,6 +312,19 @@ function SessionPage() {
 
   return (
     <div className="page page-right">
+      {/* Back to Home Button */}
+      <div className="flex items-center gap-3 mb-4">
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 transition-colors"
+          style={{ direction: 'ltr' }}
+        >
+          <span className="text-lg">←</span>
+          <span>חזרה</span>
+        </button>
+      </div>
+
       <div className="title-row">
         <h2 className="title">ספור ולחץ על המספר הנכון</h2>
         <button
