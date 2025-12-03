@@ -47,7 +47,7 @@ export function QuestionCard({
 
       {/* Question Text */}
       <div className="flex flex-1 flex-col gap-3">
-        <p className="text-lg font-semibold text-slate-900">
+        <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
           {getQuestionPrompt(question, locale)}
         </p>
 
