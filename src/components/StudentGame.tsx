@@ -5,6 +5,9 @@ import { useI18n } from '../i18n';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
+import { speak } from '../utils/speech';
+import { useChildSettings } from '../context/ChildSettingsContext';
+import { getQuestionPrompt, getQuestionExplanation } from '../utils/questionText';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -30,6 +33,7 @@ const MAX_ATTEMPTS_PER_QUESTION = 3; // Maximum attempts before auto-solve
 
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
   const { t, locale } = useI18n();
+  const { settings } = useChildSettings();
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -41,6 +45,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [showIntro, setShowIntro] = useState(true); // Show intro before each question
   const [attempts, setAttempts] = useState(0); // Track attempts for current question
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
+  const [isSpeakingSolution, setIsSpeakingSolution] = useState(false); // Track if solution is being spoken
 
   const current = questions[index];
 
@@ -231,10 +236,31 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     return <IntroScreen question={current} onContinue={() => setShowIntro(false)} />;
   }
 
+  // Handle speaking the solution (question + answer + explanation)
+  const handleSpeakSolution = () => {
+    if (isSpeakingSolution) return;
+    setIsSpeakingSolution(true);
+
+    const questionText = getQuestionPrompt(current, locale);
+    const explanation = getQuestionExplanation(current, locale) || 
+                       (locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn) ||
+                       `התשובה הנכונה היא: ${current.answer}`;
+
+    const fullText = `${questionText}\n\nהתשובה הנכונה היא: ${current.answer}\n\n${explanation}`;
+
+    speak(fullText);
+    // Reset after speech completes (rough estimate)
+    setTimeout(() => {
+      setIsSpeakingSolution(false);
+    }, fullText.length * 100 + 3000);
+  };
+
   // Show auto-solve explanation after 3 failed attempts
   if (showAutoSolve) {
     const autoSolveExplanation = locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn;
+    const explanation = getQuestionExplanation(current, locale) || autoSolveExplanation;
     const defaultExplanation = `התשובה הנכונה היא: ${current.answer}\n\nבוא נבין למה:`;
+    const questionText = getQuestionPrompt(current, locale);
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -242,8 +268,32 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
           {/* Header */}
           <div className="mb-6 text-center">
             <div className="mb-3 text-6xl">🎓</div>
-            <h2 className="text-3xl font-bold text-slate-800">בוא נפתור ביחד!</h2>
-            <p className="mt-2 text-lg text-slate-600">אחרי 3 ניסיונות, אני אעזור לך</p>
+            <h2 className="text-3xl font-bold text-slate-800">בוא נבין למה!</h2>
+            <p className="mt-2 text-lg text-slate-600">אחרי 3 ניסיונות, אני אעזור לך להבין</p>
+          </div>
+
+          {/* Question Card - Show question first */}
+          <div className="mb-6 rounded-3xl bg-gradient-to-br from-blue-100 to-indigo-100 p-8 shadow-lg border-4 border-blue-300">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">❓</span>
+                <h3 className="text-2xl font-bold text-slate-800">השאלה</h3>
+              </div>
+              <button
+                type="button"
+                onClick={handleSpeakSolution}
+                disabled={isSpeakingSolution}
+                className="flex items-center justify-center p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="הקרא את השאלה וההסבר"
+              >
+                <span className="text-2xl">{isSpeakingSolution ? '🔊' : '🔇'}</span>
+              </button>
+            </div>
+            <div className="rounded-2xl bg-white p-6 shadow-sm">
+              <p className="text-xl font-semibold text-slate-800 whitespace-pre-line text-center">
+                {questionText}
+              </p>
+            </div>
           </div>
 
           {/* Answer Card */}
@@ -268,12 +318,23 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
           {/* Explanation Card */}
           <div className="mb-8 rounded-3xl bg-white p-8 shadow-lg">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="text-4xl">💡</span>
-              <h3 className="text-2xl font-bold text-slate-800">הסבר</h3>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">💡</span>
+                <h3 className="text-2xl font-bold text-slate-800">הסבר מפורט</h3>
+              </div>
+              <button
+                type="button"
+                onClick={handleSpeakSolution}
+                disabled={isSpeakingSolution}
+                className="flex items-center justify-center p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="הקרא את ההסבר"
+              >
+                <span className="text-2xl">{isSpeakingSolution ? '🔊' : '🔇'}</span>
+              </button>
             </div>
             <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
-              {autoSolveExplanation || defaultExplanation}
+              {explanation || defaultExplanation}
             </p>
           </div>
 
