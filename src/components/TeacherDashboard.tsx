@@ -91,6 +91,9 @@ export default function TeacherDashboard() {
   const [isMixedMode, setIsMixedMode] = useState(false);
   const [selectedTopics, setSelectedTopics] = useState<Set<TopicId>>(new Set());
 
+  // Reading Exercise Mode
+  const [isReadingMode, setIsReadingMode] = useState(false);
+
   const [examName, setExamName] = useState('');
   const [savedExams, setSavedExams] = useState<SavedExam[]>([]);
   const [jsonImportError, setJsonImportError] = useState<string | null>(null);
@@ -179,7 +182,13 @@ export default function TeacherDashboard() {
     }
 
     const chosen = getRandomSubset(filtered, count);
-    setGenerated(chosen);
+
+    // If reading mode is enabled, mark all questions as reading exercises
+    const finalQuestions = isReadingMode
+      ? chosen.map(q => ({ ...q, isReadingExercise: true }))
+      : chosen;
+
+    setGenerated(finalQuestions);
   };
 
   const handleDownloadPdf = () => {
@@ -656,6 +665,20 @@ export default function TeacherDashboard() {
                   }
                   className="w-20 rounded-lg border border-slate-300 p-1 text-center"
                 />
+              </label>
+
+              {/* Reading Exercise Mode Toggle */}
+              <label className="mt-4 flex items-center gap-2 text-sm cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isReadingMode}
+                  onChange={(e) => setIsReadingMode(e.target.checked)}
+                  className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
+                />
+                <span className="text-slate-700 flex items-center gap-1">
+                  <span>🔊</span>
+                  <span>תרגילי הקראה (המספר נקרא בקול)</span>
+                </span>
               </label>
             </section>
 
