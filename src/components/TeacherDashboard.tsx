@@ -108,6 +108,7 @@ export default function TeacherDashboard() {
   const [newStudentName, setNewStudentName] = useState('');
   const [newStudentAvatar, setNewStudentAvatar] = useState<AvatarType>('boy');
   const [newStudentColor, setNewStudentColor] = useState('#f97316');
+  const [photoUploadMode, setPhotoUploadMode] = useState(false);
 
   useEffect(() => {
     setSavedExams(loadExams());
@@ -149,6 +150,53 @@ export default function TeacherDashboard() {
     [selectedTopic]
   );
   const subtopics = topic?.subtopics ?? [];
+
+  // Image handling functions
+  const handlePhotoUpload = (file: File, studentId: string) => {
+    if (!file.type.startsWith('image/')) {
+      alert(locale === 'he' ? 'אנא בחר קובץ תמונה' : 'Please select an image file');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const photoUrl = e.target?.result as string;
+      setStudents((prev) =>
+        prev.map((s) =>
+          s.profile.id === studentId
+            ? { ...s, profile: { ...s.profile, photoUrl } }
+            : s
+        )
+      );
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handlePhotoPaste = (e: React.ClipboardEvent, studentId: string) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.startsWith('image/')) {
+        const file = items[i].getAsFile();
+        if (file) {
+          handlePhotoUpload(file, studentId);
+          e.preventDefault();
+        }
+        break;
+      }
+    }
+  };
+
+  const handlePhotoDelete = (studentId: string) => {
+    setStudents((prev) =>
+      prev.map((s) =>
+        s.profile.id === studentId
+          ? { ...s, profile: { ...s.profile, photoUrl: undefined } }
+          : s
+      )
+    );
+  };
 
   const toggleTopicSelection = (topicId: TopicId) => {
     setSelectedTopics((prev) => {
@@ -406,30 +454,42 @@ export default function TeacherDashboard() {
 
         {/* Student Profile Selection */}
         <section className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="text-sm font-semibold text-slate-900">
-                {locale === 'he' ? 'פרופיל תלמיד' : 'Student Profile'}
-              </h2>
-              <p className="text-xs text-slate-600">
-                {locale === 'he'
-                  ? 'בחר תלמיד כדי שההתקדמות והתגים יישמרו רק עבורו.'
-                  : 'Select a student to track their progress and badges.'}
-              </p>
-            </div>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-sm font-semibold text-slate-900">
+                  {locale === 'he' ? 'פרופיל תלמיד' : 'Student Profile'}
+                </h2>
+                <p className="text-xs text-slate-600">
+                  {locale === 'he'
+                    ? 'בחר תלמיד כדי שההתקדמות והתגים יישמרו רק עבורו.'
+                    : 'Select a student to track their progress and badges.'}
+                </p>
+              </div>
 
-            <div className="flex flex-col items-stretch gap-2 md:flex-row md:items-center">
-              <select
-                className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm"
-                value={selectedStudentId}
-                onChange={(e) => setSelectedStudentId(e.target.value)}
-              >
-                {students.map((s) => (
-                  <option key={s.profile.id} value={s.profile.id}>
-                    {avatarEmoji(s.profile.avatar)} {s.profile.name} ({s.profile.grade})
-                  </option>
-                ))}
-              </select>
+              <div className="flex flex-col items-stretch gap-2 md:flex-row md:items-center">
+                <select
+                  className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm"
+                  value={selectedStudentId}
+                  onChange={(e) => setSelectedStudentId(e.target.value)}
+                >
+                  {students.map((s) => (
+                    <option key={s.profile.id} value={s.profile.id}>
+                      {avatarEmoji(s.profile.avatar)} {s.profile.name} ({s.profile.grade})
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  type="button"
+                  onClick={() => setPhotoUploadMode(!photoUploadMode)}
+                  className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
+                >
+                  {photoUploadMode
+                    ? (locale === 'he' ? 'סגור תמונה' : 'Close Photo')
+                    : (locale === 'he' ? '📸 תמונת תלמיד' : '📸 Student Photo')}
+                </button>
+              </div>
 
               <div className="flex flex-col gap-2 md:flex-row md:items-center">
                 <input
@@ -496,6 +556,92 @@ export default function TeacherDashboard() {
                 </button>
               </div>
             </div>
+
+            {/* Photo Upload Section */}
+            {photoUploadMode && activeStudent && (
+              <div className="border-t border-slate-200 pt-4">
+                <h3 className="mb-3 text-sm font-semibold text-slate-900">
+                  {locale === 'he'
+                    ? `תמונת ${activeStudent.profile.name}`
+                    : `${activeStudent.profile.name}'s Photo`}
+                </h3>
+
+                <div className="flex flex-col gap-3 md:flex-row md:items-start">
+                  {/* Current Photo Display */}
+                  <div className="flex flex-col items-center gap-2">
+                    {activeStudent.profile.photoUrl ? (
+                      <div className="relative">
+                        <img
+                          src={activeStudent.profile.photoUrl}
+                          alt={activeStudent.profile.name}
+                          className="h-32 w-32 rounded-lg border-2 border-slate-300 object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handlePhotoDelete(activeStudent.profile.id)}
+                          className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600 text-xs"
+                          title={locale === 'he' ? 'מחק תמונה' : 'Delete photo'}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex h-32 w-32 items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-slate-50">
+                        <span className="text-4xl">
+                          {avatarEmoji(activeStudent.profile.avatar)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Upload Controls */}
+                  <div className="flex-1 space-y-3">
+                    {/* File Upload Button */}
+                    <div>
+                      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-blue-600 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 transition-colors">
+                        <span>📁</span>
+                        <span>{locale === 'he' ? 'העלה תמונה' : 'Upload Photo'}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              handlePhotoUpload(file, activeStudent.profile.id);
+                            }
+                          }}
+                        />
+                      </label>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {locale === 'he'
+                          ? 'בחר תמונה מהמחשב'
+                          : 'Select an image from your computer'}
+                      </p>
+                    </div>
+
+                    {/* Paste Area */}
+                    <div>
+                      <div
+                        contentEditable
+                        onPaste={(e) => handlePhotoPaste(e, activeStudent.profile.id)}
+                        className="min-h-[60px] rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500 focus:border-blue-400 focus:outline-none"
+                        suppressContentEditableWarning
+                      >
+                        {locale === 'he'
+                          ? '📋 הדבק תמונה כאן (Ctrl+V / ⌘+V)'
+                          : '📋 Paste image here (Ctrl+V / ⌘+V)'}
+                      </div>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {locale === 'he'
+                          ? 'העתק תמונה והדבק אותה בשטח זה'
+                          : 'Copy an image and paste it in this area'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 

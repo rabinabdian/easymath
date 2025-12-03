@@ -16,6 +16,7 @@ export interface StudentProfile {
   yearLabel: string; // e.g., "תשפ״ו"
   avatar: AvatarType; // avatar icon type
   color: string; // hex color for UI (e.g., "#f97316")
+  photoUrl?: string; // optional student photo (base64 or URL)
 }
 
 /**
