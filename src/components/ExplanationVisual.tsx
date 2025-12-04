@@ -1,5 +1,6 @@
 // src/components/ExplanationVisual.tsx
 import type { Question } from '../types/questions';
+import { InlineSpeaker } from './SpeakerButton';
 
 interface ExplanationVisualProps {
   question: Question;
@@ -19,6 +20,7 @@ interface ExplanationVisualProps {
  */
 export function ExplanationVisual({ question, className = '' }: ExplanationVisualProps) {
   const visual = generateVisualForQuestion(question);
+  const explanationText = generateExplanationText(question);
   
   if (!visual) {
     return null;
@@ -26,9 +28,14 @@ export function ExplanationVisual({ question, className = '' }: ExplanationVisua
 
   return (
     <div className={`rounded-3xl bg-gradient-to-br from-yellow-50 to-amber-50 p-6 shadow-lg border-2 border-yellow-200 ${className}`}>
-      <div className="mb-4 flex items-center gap-3">
-        <span className="text-3xl">🎨</span>
-        <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">🎨</span>
+          <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
+        </div>
+        {explanationText && (
+          <InlineSpeaker text={explanationText} />
+        )}
       </div>
       
       <div className="rounded-2xl bg-white p-6 shadow-sm">
@@ -58,8 +65,134 @@ function generateVisualForQuestion(question: Question): React.ReactNode {
     case 'evenOdd':
       return generateEvenOddVisual(question);
     default:
-      return generateGenericVisual(question);
+      return generateGenericVisual();
   }
+}
+
+/**
+ * Generate spoken text explanation for the visual
+ */
+function generateExplanationText(question: Question): string {
+  const { topic, promptHe } = question;
+  
+  // Parse the math expression from the prompt
+  const mathMatch = promptHe.match(/(\d+)\s*([+\-×x*])\s*(\d+)/);
+  
+  switch (topic) {
+    case 'addition':
+      return generateAdditionText(mathMatch);
+    case 'subtraction':
+      return generateSubtractionText(mathMatch);
+    case 'multiplication':
+      return generateMultiplicationText(mathMatch);
+    case 'geometry':
+      return generateGeometryText(question);
+    case 'numbers':
+      return generateNumbersText(question);
+    case 'evenOdd':
+      return generateEvenOddText(question);
+    default:
+      return 'הסבר ויזואלי לעזור לכם להבין את השאלה';
+  }
+}
+
+// ===== TEXT GENERATION FOR SPEECH =====
+
+function generateAdditionText(mathMatch: RegExpMatchArray | null): string {
+  if (mathMatch) {
+    const a = parseInt(mathMatch[1]);
+    const b = parseInt(mathMatch[3]);
+    const sum = a + b;
+    
+    return `בואו נבין חיבור. יש לנו קבוצה ראשונה עם ${a} פריטים, וקבוצה שנייה עם ${b} פריטים. 
+כשמחברים אותם ביחד, אנחנו מקבלים ${sum} פריטים. 
+${a} ועוד ${b} שווה ${sum}. 
+על ציר המספרים, אנחנו מתחילים ב-${a}, ואז קופצים ${b} מקומות קדימה, ומגיעים ל-${sum}.`;
+  }
+  return 'בחיבור אנחנו מחברים שתי קבוצות ביחד, וסופרים כמה יש לנו בסך הכל.';
+}
+
+function generateSubtractionText(mathMatch: RegExpMatchArray | null): string {
+  if (mathMatch) {
+    const a = parseInt(mathMatch[1]);
+    const b = parseInt(mathMatch[3]);
+    const result = a - b;
+    
+    return `בואו נבין חיסור. התחלנו עם ${a} פריטים. 
+אנחנו מורידים ${b} פריטים. 
+כשמורידים ${b} מ-${a}, נשארים לנו ${result} פריטים. 
+${a} פחות ${b} שווה ${result}. 
+על ציר המספרים, מתחילים ב-${a} וקופצים ${b} מקומות אחורה, ומגיעים ל-${result}.`;
+  }
+  return 'בחיסור אנחנו מורידים פריטים מהקבוצה, וסופרים כמה נשאר.';
+}
+
+function generateMultiplicationText(mathMatch: RegExpMatchArray | null): string {
+  if (mathMatch) {
+    const a = parseInt(mathMatch[1]);
+    const b = parseInt(mathMatch[3]);
+    const product = a * b;
+    
+    return `בואו נבין כפל. ${a} כפול ${b} זה אומר: ${a} קבוצות, ובכל קבוצה יש ${b} פריטים. 
+אם נספור את כל הפריטים בכל הקבוצות, נקבל ${product} פריטים. 
+אפשר גם לראות את זה כטבלה: ${a} שורות כפול ${b} עמודות שווה ${product}.`;
+  }
+  return 'בכפל אנחנו סופרים כמה פריטים יש כשיש כמה קבוצות באותו הגודל.';
+}
+
+function generateGeometryText(question: Question): string {
+  const { promptHe } = question;
+  
+  if (promptHe.includes('משולש')) {
+    return 'משולש הוא צורה עם שלוש צלעות, שלושה קודקודים ושלוש זוויות. הקודקודים הם הפינות של המשולש.';
+  }
+  if (promptHe.includes('ריבוע')) {
+    return 'ריבוע הוא צורה עם ארבע צלעות שוות, ארבעה קודקודים וארבע זוויות ישרות. כל הצלעות באותו אורך.';
+  }
+  if (promptHe.includes('מעגל') || promptHe.includes('עיגול')) {
+    return 'מעגל הוא צורה עגולה וחלקה, בלי פינות ובלי צלעות. הוא עגול לגמרי מכל הכיוונים.';
+  }
+  if (promptHe.includes('סימטרי')) {
+    return 'סימטריה זה כשצורה נראית אותו דבר משני הצדדים של קו הסימטריה. זה כמו מראה - הצד השני זהה.';
+  }
+  return 'צורות גיאומטריות מוגדרות לפי הצלעות, הזוויות והפינות שלהן.';
+}
+
+function generateNumbersText(question: Question): string {
+  const { promptHe, subtopic, answer } = question;
+  
+  if (subtopic?.includes('ספירה') || promptHe.includes('ספור') || promptHe.includes('כמה')) {
+    const count = typeof answer === 'number' ? answer : 0;
+    return `בואו נספור ביחד! אחת, שתיים, שלוש... הכל ביחד יש לנו ${count} פריטים.`;
+  }
+  
+  if (subtopic?.includes('שכנים') || promptHe.includes('שכן')) {
+    const num = parseInt(promptHe.match(/\d+/)?.[0] || '0');
+    return `המספר ${num} יושב על ציר המספרים. השכן שלפניו הוא ${num - 1}, והשכן שאחריו הוא ${num + 1}.`;
+  }
+  
+  if (subtopic?.includes('דילוגים') || subtopic?.includes('סדרות') || promptHe.includes('השלם')) {
+    return 'בסדרות מספרים, חשוב למצוא את הדפוס. בדקו מה ההפרש בין המספרים, והאם הסדרה עולה או יורדת.';
+  }
+  
+  return 'מספרים עוזרים לנו לספור ולהבין כמויות.';
+}
+
+function generateEvenOddText(question: Question): string {
+  const { promptHe } = question;
+  const numMatch = promptHe.match(/המספר\s+(\d+)/);
+  const num = numMatch ? parseInt(numMatch[1]) : null;
+  
+  if (num !== null) {
+    const isEven = num % 2 === 0;
+    return `בואו נבדוק את המספר ${num}. אנחנו מנסים לסדר אותו בזוגות. 
+${isEven 
+  ? `כל הפריטים מסתדרים בזוגות! אז ${num} הוא מספר זוגי.` 
+  : `יש פריט אחד שנשאר בודד! אז ${num} הוא מספר אי-זוגי.`} 
+כלל חשוב: הספרה האחרונה של המספר קובעת אם הוא זוגי או אי-זוגי.`;
+  }
+  
+  return 'מספרים זוגיים מסתדרים בזוגות בלי שנשאר אף אחד לבד. מספרים אי-זוגיים תמיד משאירים אחד בודד.';
 }
 
 // ===== ADDITION VISUAL =====
@@ -759,7 +892,7 @@ function generateWordProblemVisual(question: Question, operation: 'addition' | '
 }
 
 // ===== GENERIC VISUAL =====
-function generateGenericVisual(_question: Question): React.ReactNode {
+function generateGenericVisual(): React.ReactNode {
   return (
     <div className="space-y-4 text-center">
       <div className="text-5xl">💡</div>
