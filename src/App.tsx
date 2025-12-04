@@ -26,9 +26,20 @@ export const APP_VERSION = "1.0.0";
 function StudentAvatar({ settings }: { settings: ChildSettings }) {
   const avatarDisplay = settings.studentAvatar ? avatarEmoji(settings.studentAvatar) : "🙂";
   const borderColor = settings.studentColor || "#3b82f6";
+  const [imageError, setImageError] = useState(false);
+
+  // איפוס שגיאת תמונה כשהתמונה משתנה
+  useEffect(() => {
+    setImageError(false);
+    if (settings.studentPhotoUrl) {
+      console.log("StudentAvatar: Photo URL available:", settings.studentPhotoUrl.substring(0, 50) + "...");
+    } else {
+      console.log("StudentAvatar: No photo URL in settings");
+    }
+  }, [settings.studentPhotoUrl]);
 
   // אם יש תמונה - מציגים אותה
-  if (settings.studentPhotoUrl) {
+  if (settings.studentPhotoUrl && !imageError) {
     return (
       <div
         className="student-avatar-container"
@@ -49,6 +60,10 @@ function StudentAvatar({ settings }: { settings: ChildSettings }) {
             width: "100%",
             height: "100%",
             objectFit: "cover",
+          }}
+          onError={() => {
+            console.warn("Failed to load student photo:", settings.studentPhotoUrl);
+            setImageError(true);
           }}
         />
       </div>
@@ -567,6 +582,11 @@ function ParentPage() {
         studentAvatar = selectedStudent.profile.avatar;
         studentColor = selectedStudent.profile.color;
         studentPhotoUrl = selectedStudent.profile.photoUrl;
+        console.log("Loading student photo:", {
+          studentId,
+          photoUrl: studentPhotoUrl,
+          hasPhoto: !!studentPhotoUrl,
+        });
       }
     }
 

@@ -41,7 +41,12 @@ export function ChildSettingsProvider({ children }: { children: ReactNode }) {
     try {
       const stored = localStorage.getItem("easymath-child-settings");
       if (stored) {
-        return JSON.parse(stored) as ChildSettings;
+        const parsed = JSON.parse(stored) as ChildSettings;
+        console.log("Loaded settings from localStorage:", {
+          hasPhotoUrl: !!parsed.studentPhotoUrl,
+          photoUrlLength: parsed.studentPhotoUrl?.length || 0,
+        });
+        return parsed;
       }
     } catch {
       // נתעלם משגיאות
@@ -56,6 +61,10 @@ export function ChildSettingsProvider({ children }: { children: ReactNode }) {
         "easymath-child-settings",
         JSON.stringify(newSettings)
       );
+      console.log("Saved settings to localStorage:", {
+        hasPhotoUrl: !!newSettings.studentPhotoUrl,
+        photoUrlLength: newSettings.studentPhotoUrl?.length || 0,
+      });
     } catch {
       // אם הדפדפן חוסם – לא נורא
     }
