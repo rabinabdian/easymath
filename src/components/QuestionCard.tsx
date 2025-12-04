@@ -33,13 +33,13 @@ export function QuestionCard({
   const { locale } = useI18n();
   const assetUrl = getAssetUrl(question.assetId);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const promptText = getQuestionPrompt(question, locale);
 
   const handleSpeak = () => {
     if (isSpeaking) return;
     setIsSpeaking(true);
 
-    const textToSpeak = getQuestionPrompt(question, locale);
-    speak(textToSpeak);
+    speak(promptText);
 
     // Reset after 3 seconds (approximate speech duration)
     setTimeout(() => {
@@ -70,9 +70,8 @@ export function QuestionCard({
 
       {/* Question Text */}
       <div className="flex flex-1 flex-col gap-3">
-        {question.isReadingExercise ? (
-          // Reading Exercise - Show speaker icon instead of text
-          <div className="flex items-center justify-center gap-3 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
+        {question.isReadingExercise && (
+          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 p-6 text-center">
             <button
               type="button"
               onClick={handleSpeak}
@@ -86,12 +85,10 @@ export function QuestionCard({
               </span>
             </button>
           </div>
-        ) : (
-          // Regular question - Show text
-          <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
-            {getQuestionPrompt(question, locale)}
-          </p>
         )}
+        <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
+          {promptText}
+        </p>
 
         {/* Multiple Choice Options */}
         {showOptions && question.options && (
