@@ -24,6 +24,7 @@ import type { StudentRecord, AvatarType } from '../types/students';
 import { QuestionCard } from './QuestionCard';
 import { avatarEmoji } from '../utils/avatar';
 import { APP_VERSION } from '../App';
+import { useChildSettings } from '../context/ChildSettingsContext';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
   const copy = [...items];
@@ -81,6 +82,7 @@ function buildQuestionsForWeek(
 export default function TeacherDashboard() {
   const navigate = useNavigate();
   const { t, locale, setLocale } = useI18n();
+  const { settings, setSettings } = useChildSettings();
   const [mode, setMode] = useState<'teacher' | 'student'>('teacher');
   const [selectedTopic, setSelectedTopic] = useState<TopicId>('numbers');
   const [selectedSubtopic, setSelectedSubtopic] = useState('');
@@ -145,6 +147,37 @@ export default function TeacherDashboard() {
       saveStudentRecords(students);
     }
   }, [students]);
+
+  // Keep child-facing settings in sync when the stored student profile changes
+  useEffect(() => {
+    if (!students.length) return;
+
+    const linkedStudent =
+      (settings.studentId &&
+        students.find((s) => s.profile.id === settings.studentId)) ||
+      students.find((s) => s.profile.name === settings.childName);
+
+    if (!linkedStudent) return;
+
+    const { profile } = linkedStudent;
+    const needsUpdate =
+      profile.photoUrl !== settings.studentPhotoUrl ||
+      profile.avatar !== settings.studentAvatar ||
+      profile.color !== settings.studentColor ||
+      profile.name !== settings.childName ||
+      profile.id !== settings.studentId;
+
+    if (!needsUpdate) return;
+
+    setSettings({
+      ...settings,
+      childName: profile.name,
+      studentId: profile.id,
+      studentAvatar: profile.avatar,
+      studentColor: profile.color,
+      studentPhotoUrl: profile.photoUrl,
+    });
+  }, [settings, setSettings, students]);
 
   const topic = useMemo(
     () => TOPICS.find((t) => t.id === selectedTopic),
