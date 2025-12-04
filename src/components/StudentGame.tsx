@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
+import { generateHint, generateDetailedSolution, generateTopicExpansion } from '../utils/hints';
+import { speak } from '../utils/speech';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
@@ -91,38 +93,77 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     });
   }, [finished, onFinished, score, context]);
 
+  // Auto-play full explanation when auto-solve screen appears
+  useEffect(() => {
+    if (!showAutoSolve || !current) return;
+    
+    const questionText = getQuestionPrompt(current, locale);
+    const answerText = String(current.answer);
+    const detailedSolution = generateDetailedSolution(current, locale);
+    const topicExpansion = generateTopicExpansion(current, locale);
+    
+    const fullAudioText = locale === 'he'
+      ? `השאלה הייתה: ${questionText}. התשובה הנכונה היא ${answerText}. ${detailedSolution}${topicExpansion ? `. ${topicExpansion}` : ''}`
+      : `The question was: ${questionText}. The correct answer is ${answerText}. ${detailedSolution}${topicExpansion ? `. ${topicExpansion}` : ''}`;
+    
+    const timer = setTimeout(() => {
+      speak(fullAudioText);
+    }, 1000); // Small delay to let screen render
+    
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showAutoSolve, index]); // index changes when question changes
+
   const totalQuestions = questions.length;
   const progress = totalQuestions > 0 ? (index / totalQuestions) * 100 : 0;
 
   function handleWrong(customMessage?: string) {
+    if (!current) return;
+    
     const newAttempts = attempts + 1;
     setAttempts(newAttempts);
 
     // Check if reached max attempts - trigger auto-solve
     if (newAttempts >= MAX_ATTEMPTS_PER_QUESTION) {
-      setFeedback('אופס! בוא נראה איך פותרים את זה ביחד 🤔');
-      setTimeout(() => {
-        setFeedback(null);
-        setShowAutoSolve(true);
-      }, 1500);
+      const message = locale === 'he' 
+        ? 'אופס! בוא נראה איך פותרים את זה ביחד 🤔'
+        : 'Oops! Let\'s see how to solve this together 🤔';
+      setFeedback(message);
+      
+      // Speak the transition message
+      speak(message, () => {
+        setTimeout(() => {
+          setFeedback(null);
+          setShowAutoSolve(true);
+        }, 500);
+      });
       return;
     }
 
+    // Generate and speak hint automatically
+    const hint = generateHint(current, newAttempts, locale);
+    
     // Show encouraging feedback based on attempt number
-    const encouragement =
-      newAttempts === 1 ? 'נסה שוב! אתה יכול! 💪' :
-      newAttempts === 2 ? 'כמעט! עוד ניסיון אחד! 🌟' :
-      'לא נורא, בוא ננסה שוב';
+    const encouragement = locale === 'he'
+      ? (newAttempts === 1 ? 'נסה שוב! אתה יכול! 💪' :
+         newAttempts === 2 ? 'כמעט! עוד ניסיון אחד! 🌟' :
+         'לא נורא, בוא ננסה שוב')
+      : (newAttempts === 1 ? 'Try again! You can do it! 💪' :
+         newAttempts === 2 ? 'Almost! One more try! 🌟' :
+         'No worries, let\'s try again');
 
-    setFeedback(
-      customMessage ?? `${encouragement}\nהתשובה הנכונה היא: ${String(current?.answer ?? '')}`
-    );
+    setFeedback(customMessage ?? encouragement);
 
-    // Don't lose a life on wrong attempt - only after auto-solve
+    // Automatically speak the hint after a short delay
+    setTimeout(() => {
+      speak(hint);
+    }, 500);
+
+    // Clear feedback and input after hint is spoken
     setTimeout(() => {
       setFeedback(null);
       setInput('');
-    }, 2000);
+    }, 6000); // Give time for hint to be spoken
   }
 
   function handleCorrect() {
@@ -243,13 +284,17 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
   // Show auto-solve explanation after 3 failed attempts
   if (showAutoSolve) {
-    const autoSolveExplanation = locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn;
     const questionText = getQuestionPrompt(current, locale);
     const answerText = String(current.answer);
-    const fullExplanation = autoSolveExplanation || `בוא נבין למה התשובה היא ${answerText}`;
-
+    
+    // Use detailed solution generator
+    const detailedSolution = generateDetailedSolution(current, locale);
+    const topicExpansion = generateTopicExpansion(current, locale);
+    
     // Build full audio text for combined speaker
-    const fullAudioText = `השאלה הייתה: ${questionText}. התשובה הנכונה היא ${answerText}. ${fullExplanation}`;
+    const fullAudioText = locale === 'he'
+      ? `השאלה הייתה: ${questionText}. התשובה הנכונה היא ${answerText}. ${detailedSolution}${topicExpansion ? `. ${topicExpansion}` : ''}`
+      : `The question was: ${questionText}. The correct answer is ${answerText}. ${detailedSolution}${topicExpansion ? `. ${topicExpansion}` : ''}`;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
@@ -310,12 +355,32 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
           <UnderstandingSection
             locale={locale}
             prompt={questionPrompt}
-            explanation={understandingSolution}
+            explanation={detailedSolution}
             variant="solution"
             showPrompt={false}
             className="mb-6"
             question={current}
           />
+          
+          {/* Topic Expansion Section - Additional Learning */}
+          {topicExpansion && (
+            <div className="mb-6 rounded-3xl bg-gradient-to-br from-indigo-50 to-purple-50 p-8 shadow-lg border-2 border-indigo-200">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="text-4xl">📚</span>
+                <h3 className="text-2xl font-bold text-slate-800">
+                  {locale === 'he' ? 'למידה נוספת' : 'Additional Learning'}
+                </h3>
+              </div>
+              <div className="rounded-2xl bg-white p-6 shadow-sm">
+                <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line">
+                  {topicExpansion}
+                </p>
+              </div>
+              <div className="mt-4 flex justify-center">
+                <InlineSpeaker text={topicExpansion} />
+              </div>
+            </div>
+          )}
 
           {/* Full Audio Button - Listen to everything together */}
           <div className="mb-6 rounded-3xl bg-gradient-to-br from-purple-100 to-pink-100 p-6 shadow-lg border-2 border-purple-300">
