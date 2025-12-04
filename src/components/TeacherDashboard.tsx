@@ -23,6 +23,7 @@ import {
 import type { StudentRecord, AvatarType } from '../types/students';
 import { QuestionCard } from './QuestionCard';
 import { avatarEmoji } from '../utils/avatar';
+import { APP_VERSION } from '../App';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
   const copy = [...items];
@@ -1123,6 +1124,23 @@ export default function TeacherDashboard() {
             </section>
           </div>
         </div>
+      </div>
+
+      {/* Version Badge */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: "16px",
+          left: "16px",
+          fontSize: "0.75rem",
+          color: "#94a3b8",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          padding: "4px 10px",
+          borderRadius: "12px",
+          backdropFilter: "blur(4px)",
+        }}
+      >
+        גרסה {APP_VERSION}
       </div>
     </div>
   );

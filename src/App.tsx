@@ -15,6 +15,91 @@ import type { SavedExam } from "./utils/examsStorage";
 import StudentGame from "./components/StudentGame";
 import { loadStudentRecords } from "./utils/studentStorage";
 import type { StudentRecord } from "./types/students";
+import { avatarEmoji } from "./utils/avatar";
+
+// גרסת האפליקציה
+export const APP_VERSION = "1.0.0";
+
+/**
+ * StudentAvatar - מציג תמונה או אווטר של התלמיד
+ */
+function StudentAvatar({ settings }: { settings: ChildSettings }) {
+  const avatarDisplay = settings.studentAvatar ? avatarEmoji(settings.studentAvatar) : "🙂";
+  const borderColor = settings.studentColor || "#3b82f6";
+
+  // אם יש תמונה - מציגים אותה
+  if (settings.studentPhotoUrl) {
+    return (
+      <div
+        className="student-avatar-container"
+        style={{
+          width: "120px",
+          height: "120px",
+          borderRadius: "50%",
+          border: `4px solid ${borderColor}`,
+          overflow: "hidden",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+          marginBottom: "16px",
+        }}
+      >
+        <img
+          src={settings.studentPhotoUrl}
+          alt={`תמונה של ${settings.childName}`}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+      </div>
+    );
+  }
+
+  // אחרת מציגים אווטר אימוג'י
+  return (
+    <div
+      className="student-avatar-emoji"
+      style={{
+        width: "120px",
+        height: "120px",
+        borderRadius: "50%",
+        border: `4px solid ${borderColor}`,
+        backgroundColor: "#f0f9ff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "64px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+        marginBottom: "16px",
+      }}
+    >
+      {avatarDisplay}
+    </div>
+  );
+}
+
+/**
+ * VersionBadge - מציג את גרסת האפליקציה
+ */
+function VersionBadge() {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        bottom: "16px",
+        left: "16px",
+        fontSize: "0.75rem",
+        color: "#94a3b8",
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        padding: "4px 10px",
+        borderRadius: "12px",
+        backdropFilter: "blur(4px)",
+      }}
+    >
+      גרסה {APP_VERSION}
+    </div>
+  );
+}
 
 function HomePage() {
   const navigate = useNavigate();
@@ -32,6 +117,10 @@ function HomePage() {
     <div className="page page-right">
       <h1 className="title">Easymath</h1>
       <p className="subtitle">חשבון פשוט לילדים</p>
+
+      {/* תמונת/אווטר התלמיד */}
+      <StudentAvatar settings={settings} />
+
       <p className="subtitle-small">שלום {settings.childName} 😊</p>
 
       <div className="buttons">
@@ -42,6 +131,8 @@ function HomePage() {
         <button onClick={() => navigate("/parent")}>כניסת הורה</button>
         <button onClick={() => navigate("/teacher")}>כניסת מורה</button>
       </div>
+
+      <VersionBadge />
     </div>
   );
 }
@@ -151,6 +242,8 @@ function TutorialExercise({ onDone, onExit }: { onDone: () => void; onExit: () =
         {feedback === "correct" && <span>כל הכבוד! 🎉</span>}
         {feedback === "wrong" && <span>ננסה שוב לבחור שלוש 🙂</span>}
       </div>
+
+      <VersionBadge />
     </div>
   );
 }
@@ -158,20 +251,6 @@ function TutorialExercise({ onDone, onExit }: { onDone: () => void; onExit: () =
 function SessionPage() {
   const { settings } = useChildSettings();
   const navigate = useNavigate();
-
-  // אם נבחר מבחן מהמורה, נשתמש ב-StudentGame
-  if (settings.selectedExamId) {
-    const exam = getExamById(settings.selectedExamId);
-    if (exam && exam.questions.length > 0) {
-      // השתמש במשחק של תלמיד עם השאלות מהמבחן הנבחר
-      return (
-        <StudentGame
-          questions={exam.questions.slice(0, settings.sessionLength)}
-          onExit={() => navigate("/")}
-        />
-      );
-    }
-  }
 
   // ברירת מחדל: תרגילי ספירה
   const allExercises: CountExercise[] = countTo5Exercises;
@@ -182,13 +261,20 @@ function SessionPage() {
     : 5;
   const sessionExercises = allExercises.slice(0, safeSessionLength);
 
+  // All hooks must be called before any conditional returns
   const [tutorialDone, setTutorialDone] = useState(false);
   const [introSpoken, setIntroSpoken] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>("idle");
 
+  // Check if using teacher's exam
+  const examToUse = settings.selectedExamId ? getExamById(settings.selectedExamId) : null;
+  const useTeacherExam = !!(examToUse && examToUse.questions.length > 0);
+
   // פתיח פעם אחת בלבד בתחילת הסשן
   useEffect(() => {
+    // Skip if using teacher exam
+    if (useTeacherExam) return;
     if (!settings.soundsEnabled || !tutorialDone || introSpoken) return;
 
     const total = sessionExercises.length;
@@ -196,10 +282,12 @@ function SessionPage() {
 
     speak(text);
     setIntroSpoken(true);
-  }, [tutorialDone, introSpoken, sessionExercises.length, settings.soundsEnabled, settings.childName]);
+  }, [tutorialDone, introSpoken, sessionExercises.length, settings.soundsEnabled, settings.childName, useTeacherExam]);
 
   // לכל תרגיל: "עכשיו תרגיל X מתוך Y..."
   useEffect(() => {
+    // Skip if using teacher exam
+    if (useTeacherExam) return;
     if (!settings.soundsEnabled || !tutorialDone || !introSpoken) return;
 
     const qNumber = currentIndex + 1;
@@ -214,7 +302,18 @@ function SessionPage() {
     introSpoken,
     sessionExercises.length,
     settings.soundsEnabled,
+    useTeacherExam,
   ]);
+
+  // אם נבחר מבחן מהמורה, נשתמש ב-StudentGame
+  if (useTeacherExam && examToUse) {
+    return (
+      <StudentGame
+        questions={examToUse.questions.slice(0, settings.sessionLength)}
+        onExit={() => navigate("/")}
+      />
+    );
+  }
 
   // אם עוד לא עברנו דוגמה – מציגים רק אותה
   if (!tutorialDone) {
@@ -241,6 +340,7 @@ function SessionPage() {
         <h2 className="title">שגיאה</h2>
         <p className="subtitle">לא נמצאו תרגילים (אורך: {sessionExercises.length}, אינדקס: {currentIndex})</p>
         <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
+        <VersionBadge />
       </div>
     );
   }
@@ -255,6 +355,7 @@ function SessionPage() {
         <h2 className="title">שגיאה</h2>
         <p className="subtitle">תרגיל נוכחי לא נמצא</p>
         <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
+        <VersionBadge />
       </div>
     );
   }
@@ -307,6 +408,7 @@ function SessionPage() {
             עוד סשן
           </button>
         </div>
+        <VersionBadge />
       </div>
     );
   }
@@ -386,6 +488,8 @@ function SessionPage() {
           💡 אם קשה, נספור ביחד בקול: אחד, שתיים, שלוש...
         </div>
       )}
+
+      <VersionBadge />
     </div>
   );
 }
@@ -441,14 +545,28 @@ function ParentPage() {
     const selectedExamId = formData.get("selectedExamId") as string;
     const childId = formData.get("childId") as string;
 
-    // קביעת שם הילד לפי הבחירה
+    // קביעת שם הילד ופרטי פרופיל לפי הבחירה
     let childName = "ילד";
+    let studentId: string | undefined;
+    let studentAvatar: ChildSettings["studentAvatar"];
+    let studentColor: string | undefined;
+    let studentPhotoUrl: string | undefined;
+
     if (childId === "custom") {
       childName = (formData.get("customChildName") as string) || "ילד";
+      // לילד חדש - לא מעבירים מידע על פרופיל
+      studentId = undefined;
+      studentAvatar = undefined;
+      studentColor = undefined;
+      studentPhotoUrl = undefined;
     } else {
       const selectedStudent = students.find((s) => s.profile.id === childId);
       if (selectedStudent) {
         childName = selectedStudent.profile.name;
+        studentId = selectedStudent.profile.id;
+        studentAvatar = selectedStudent.profile.avatar;
+        studentColor = selectedStudent.profile.color;
+        studentPhotoUrl = selectedStudent.profile.photoUrl;
       }
     }
 
@@ -460,6 +578,10 @@ function ParentPage() {
       animationsEnabled: formData.get("animationsEnabled") === "on",
       soundsEnabled: formData.get("soundsEnabled") === "on",
       selectedExamId: selectedExamId || undefined,
+      studentId,
+      studentAvatar,
+      studentColor,
+      studentPhotoUrl,
     };
 
     setSettings(newSettings);
@@ -584,6 +706,8 @@ function ParentPage() {
           </button>
         </div>
       </form>
+
+      <VersionBadge />
     </div>
   );
 }
