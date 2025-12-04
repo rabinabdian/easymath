@@ -15,6 +15,8 @@ import type { SavedExam } from "./utils/examsStorage";
 import StudentGame from "./components/StudentGame";
 import { loadStudentRecords } from "./utils/studentStorage";
 import type { StudentRecord } from "./types/students";
+import { avatarEmoji } from "./utils/avatar";
+import { VersionDisplay } from "./components/VersionDisplay";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -28,11 +30,65 @@ function HomePage() {
     ? currentExam.name
     : "ברירת מחדל (ספירה)";
 
+  // Get student record to display avatar/image
+  const students = loadStudentRecords();
+  const currentStudent = students.find(
+    (s) => s.profile.name === settings.childName
+  );
+
+  // Get student image/avatar
+  const studentAvatar = currentStudent
+    ? avatarEmoji(currentStudent.profile.avatar)
+    : "😊";
+  const studentPhotoUrl = currentStudent?.profile.photoUrl;
+
   return (
     <div className="page page-right">
+      <VersionDisplay />
       <h1 className="title">Easymath</h1>
       <p className="subtitle">חשבון פשוט לילדים</p>
-      <p className="subtitle-small">שלום {settings.childName} 😊</p>
+      
+      {/* Student Image/Avatar Display */}
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "0.5rem",
+        marginBottom: "1rem",
+      }}>
+        {studentPhotoUrl ? (
+          <img
+            src={studentPhotoUrl}
+            alt={settings.childName}
+            style={{
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+              objectFit: "cover",
+              border: "3px solid #3b82f6",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "3rem",
+              backgroundColor: currentStudent?.profile.color || "#e5e7eb",
+              border: "3px solid #3b82f6",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            }}
+          >
+            {studentAvatar}
+          </div>
+        )}
+        <p className="subtitle-small">שלום {settings.childName} {studentAvatar}</p>
+      </div>
 
       <div className="buttons">
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -100,6 +156,7 @@ function TutorialExercise({ onDone, onExit }: { onDone: () => void; onExit: () =
 
   return (
     <div className="page page-right">
+      <VersionDisplay />
       {/* Back to Home Button */}
       <div className="flex items-center gap-3 mb-4">
         <button
@@ -291,6 +348,7 @@ function SessionPage() {
   if (feedback === "finished") {
     return (
       <div className="page page-right">
+        <VersionDisplay />
         <h2 className="title">כל הכבוד {settings.childName}! 🎉</h2>
         <p className="subtitle">
           סיימנו {sessionExercises.length} תרגילים בסשן הזה.
@@ -323,6 +381,7 @@ function SessionPage() {
 
   return (
     <div className="page page-right">
+      <VersionDisplay />
       {/* Back to Home Button */}
       <div className="flex items-center gap-3 mb-4">
         <button
@@ -468,6 +527,7 @@ function ParentPage() {
 
   return (
     <div className="page page-right">
+      <VersionDisplay />
       {/* Back to Home Button */}
       <div className="flex items-center gap-3 mb-4">
         <button
