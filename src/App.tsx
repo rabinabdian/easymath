@@ -26,9 +26,15 @@ export const APP_VERSION = "1.0.0";
 function StudentAvatar({ settings }: { settings: ChildSettings }) {
   const avatarDisplay = settings.studentAvatar ? avatarEmoji(settings.studentAvatar) : "🙂";
   const borderColor = settings.studentColor || "#3b82f6";
+  const [imageError, setImageError] = useState(false);
 
-  // אם יש תמונה - מציגים אותה
-  if (settings.studentPhotoUrl) {
+  // איפוס שגיאת תמונה כשהתמונה משתנה
+  useEffect(() => {
+    setImageError(false);
+  }, [settings.studentPhotoUrl]);
+
+  // אם יש תמונה ולא הייתה שגיאה בטעינה - מציגים אותה
+  if (settings.studentPhotoUrl && !imageError) {
     return (
       <div
         className="student-avatar-container"
@@ -49,6 +55,14 @@ function StudentAvatar({ settings }: { settings: ChildSettings }) {
             width: "100%",
             height: "100%",
             objectFit: "cover",
+          }}
+          onError={() => {
+            // אם יש שגיאה בטעינת התמונה - נציג אווטר במקום
+            setImageError(true);
+          }}
+          onLoad={() => {
+            // איפוס שגיאה כשהתמונה נטענת בהצלחה
+            setImageError(false);
           }}
         />
       </div>
@@ -103,7 +117,39 @@ function VersionBadge() {
 
 function HomePage() {
   const navigate = useNavigate();
-  const { settings } = useChildSettings();
+  const { settings, setSettings } = useChildSettings();
+
+  // סנכרון אוטומטי של פרטי התלמיד מהרשימה (כולל תמונה)
+  // מתעדכן כשנבחר תלמיד או כשהדף נטען מחדש
+  useEffect(() => {
+    if (!settings.studentId) return;
+    
+    const loadedStudents = loadStudentRecords();
+    const student = loadedStudents.find((s) => s.profile.id === settings.studentId);
+    if (!student) return;
+
+    // עדכון ההגדרות אם יש שינויים בפרטי התלמיד (למשל תמונה חדשה)
+    setSettings((prev) => {
+      // בדיקה אם יש שינויים - רק אז נעדכן
+      if (
+        prev.studentPhotoUrl === student.profile.photoUrl &&
+        prev.studentAvatar === student.profile.avatar &&
+        prev.studentColor === student.profile.color &&
+        prev.childName === student.profile.name
+      ) {
+        return prev; // אין שינויים - החזר את אותו אובייקט
+      }
+      
+      // יש שינויים - עדכן
+      return {
+        ...prev,
+        childName: student.profile.name,
+        studentAvatar: student.profile.avatar,
+        studentColor: student.profile.color,
+        studentPhotoUrl: student.profile.photoUrl,
+      };
+    });
+  }, [settings.studentId, setSettings]);
 
   // Get the currently loaded exam name
   const currentExam = settings.selectedExamId
@@ -527,6 +573,19 @@ function ParentPage() {
       );
       if (existingStudent) {
         setSelectedChildId(existingStudent.profile.id);
+        // עדכון אוטומטי של ההגדרות עם פרטי התלמיד המעודכנים (כולל תמונה)
+        if (settings.studentId !== existingStudent.profile.id || 
+            settings.studentPhotoUrl !== existingStudent.profile.photoUrl ||
+            settings.studentAvatar !== existingStudent.profile.avatar ||
+            settings.studentColor !== existingStudent.profile.color) {
+          setSettings({
+            ...settings,
+            studentId: existingStudent.profile.id,
+            studentAvatar: existingStudent.profile.avatar,
+            studentColor: existingStudent.profile.color,
+            studentPhotoUrl: existingStudent.profile.photoUrl,
+          });
+        }
       } else {
         setSelectedChildId("custom");
         setCustomChildName(settings.childName);
