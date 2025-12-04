@@ -67,7 +67,15 @@ You can create simple placeholder images using:
 
 ### Geometry
 - `geometry/mix_shapes_1.png` - Mixed geometric shapes
-- `geometry/triangles_4.png` - 4 triangles
+- `geometry/find_squares.png` - Squares, circle and triangle for classification
+- `geometry/triangles_4.png` - Four colorful triangles
+- `geometry/triangle_sides.svg` - Triangle with labeled sides
+- `geometry/square_sides.png` - Square with numbered edges
+- `geometry/circle_smooth.png` - Smooth circle without corners
+- `geometry/hexagon_sides.png` - Hexagon with edges 1-6
+- `geometry/circle_symmetry.png` - Circle with many symmetry axes
+- `geometry/basic_shapes.png` - Basic set: square, circle, triangle, rectangle
+- `geometry/shape_patterns.png` - Pattern of repeating shapes
 - `geometry/heart_midline.png` - Heart with symmetry line
 - `geometry/arrow_right.png` - Arrow pointing right
 - `geometry/half_star.png` - Half of a star for symmetry exercise

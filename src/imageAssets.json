@@ -224,6 +224,94 @@
     "downloadUrl": "https://cdn.pixabay.com/photo/2017/01/31/16/25/shapes-2026612_1280.png"
   },
   {
+    "assetId": "geometry/find_squares",
+    "topic": "geometry",
+    "description": "סצנה עם ריבועים, עיגול ומשולש לזיהוי צורות",
+    "pageHint": "תרגילי 'סמן את הצורה' ומיון צורות",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/find_squares.png"
+  },
+  {
+    "assetId": "geometry/triangles_4",
+    "topic": "geometry",
+    "description": "ארבעה משולשים בצבעים שונים לספירה",
+    "pageHint": "תרגילי ספירת משולשים ועקרונות צורה",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/triangles_4.png"
+  },
+  {
+    "assetId": "geometry/square_sides",
+    "topic": "geometry",
+    "description": "ריבוע עם ארבע צלעות ממוספרות",
+    "pageHint": "הסבר על צלעות ומשמעותן בריבוע",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/square_sides.png"
+  },
+  {
+    "assetId": "geometry/circle_smooth",
+    "topic": "geometry",
+    "description": "עיגול חלק עם קווים רכים שמדגישים שאין פינות",
+    "pageHint": "הדגמת צורות עגולות ללא פינות",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/circle_smooth.png"
+  },
+  {
+    "assetId": "geometry/hexagon_sides",
+    "topic": "geometry",
+    "description": "משושה ירוק עם צלעות ממוספרות 1–6",
+    "pageHint": "תרגילי ספירת צלעות ופוליגונים",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/hexagon_sides.png"
+  },
+  {
+    "assetId": "geometry/circle_symmetry",
+    "topic": "geometry",
+    "description": "עיגול עם קווים החוצים את המרכז להדגמת סימטריה",
+    "pageHint": "הסבר על אינסוף צירי סימטריה של מעגל",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/circle_symmetry.png"
+  },
+  {
+    "assetId": "geometry/heart_midline",
+    "topic": "geometry",
+    "description": "לב מלא עם קו אמצע לסימטריה",
+    "pageHint": "תרגילי זיהוי סימטריה בצורות מוכרות",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/heart_midline.png"
+  },
+  {
+    "assetId": "geometry/arrow_right",
+    "topic": "geometry",
+    "description": "חץ שפונה ימינה וקו סימטריה להשוואה",
+    "pageHint": "דוגמא לחוסר סימטריה בצורות חד-כיווניות",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/arrow_right.png"
+  },
+  {
+    "assetId": "geometry/half_star",
+    "topic": "geometry",
+    "description": "כוכב חתוך וקו שיקוף להשלמה",
+    "pageHint": "תרגילי השלמת חצי צורה",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/half_star.png"
+  },
+  {
+    "assetId": "geometry/symmetry_choices",
+    "topic": "geometry",
+    "description": "שלוש צורות להשוואת סימטריה (ריבוע, משולש, חץ)",
+    "pageHint": "בחירת צורה שאינה סימטרית",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/symmetry_choices.png"
+  },
+  {
+    "assetId": "geometry/half_menorah",
+    "topic": "geometry",
+    "description": "חצי חנוכייה לציור השלמה סימטרית",
+    "pageHint": "משימות שיקוף בחגים",
+    "sourcePageUrl": "local",
+    "downloadUrl": "/assets/geometry/half_menorah.png"
+  },
+  {
     "assetId": "symmetry/heart_half",
     "topic": "geometry",
     "description": "לב חצי-ציור (להשלמה סימטרית)",

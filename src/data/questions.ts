@@ -1169,7 +1169,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'סמן את כל הריבועים בציור.',
     promptEn: 'Mark את כל הריבועים בציור.',
     answer: 'כל הריבועים',
-    assetId: 'geometry/mix_shapes_1',
+    assetId: 'geometry/find_squares',
+    explanationHe: 'באיור מופיעות כמה צורות בצבעים שונים. הריבועים הם הצורות הכחולה והירוקה שכוללות ארבע צלעות שוות וזוויות ישרות, לכן מסמנים דווקא אותן.',
+    explanationEn: 'The drawing shows several colorful shapes. The blue and green shapes are squares because they have four equal sides and right angles, so those are the ones you need to mark.',
   },
   {
     id: 'geo_shapes_002',
@@ -1180,6 +1182,8 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'How many משולשים יש בתמונה?',
     answer: 4,
     assetId: 'geometry/triangles_4',
+    explanationHe: 'באיור רואים ארבעה משולשים בצבעים שונים. כל צורה עם שלוש צלעות מחושבת, לכן סופרים אחד-אחד את המשולשים הסגול, האדום, הירוק והכתום ומקבלים 4.',
+    explanationEn: 'The illustration contains four triangles in different colors. Every shape with three sides counts, so add the purple, red, green, and orange triangles to get 4.',
   },
   {
     id: 'geo_shapes_003',
@@ -1189,6 +1193,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה צלעות יש למשולש?',
     promptEn: 'How many צלעות יש למשולש?',
     answer: 3,
+    assetId: 'geometry/triangle_sides.svg',
     explanationHe: 'משולש בנוי משלושה קווים ישרים שנפגשים ומסגירים שטח. לכל קו כזה קוראים צלע ולכן יש בדיוק 3 צלעות.',
     explanationEn: 'A triangle is made from three straight segments that meet and close a shape. Each segment is a side, so there are exactly 3 sides.',
     visualAids: [
@@ -1214,6 +1219,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה צלעות יש לריבוע?',
     promptEn: 'How many צלעות יש לריבוע?',
     answer: 4,
+    assetId: 'geometry/square_sides',
+    explanationHe: 'בריבוע שבתמונה מסומנים ארבעה קווים זהים שמקיפים את הצורה (1–4). כל קו הוא צלע, ולכן כשסופרים את המספרים סביב הריבוע מקבלים 4 צלעות.',
+    explanationEn: 'In the drawing each side of the square is numbered 1–4. When you follow the highlighted edges you count four equal segments, so a square always has 4 sides.',
   },
   {
     id: 'geo_shapes_005',
@@ -1223,6 +1231,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'האם למעגל יש פינות?',
     promptEn: 'Is למעגל יש פינות?',
     answer: 'לא',
+    assetId: 'geometry/circle_smooth',
+    explanationHe: 'התמונה מציגה מעגל חלק עם קו רציף שמתעקל לכל האורך בלי עצירות חדות. בגלל שאין נקודות שבהן הכיוון משתנה בפתאומיות, אין למעגל אפילו פינה אחת.',
+    explanationEn: 'The drawing shows a smooth circle whose outline bends all the way around without sharp turns. Because the curve never forms a corner, a circle has no corners at all.',
   },
 
   // ---- סימטריה בסיסית ----
@@ -1309,6 +1320,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה צלעות יש למשושה?',
     promptEn: 'How many צלעות יש למשושה?',
     answer: 6,
+    assetId: 'geometry/hexagon_sides',
+    explanationHe: 'באיור המשושה מסומן במספרים 1–6 לאורך הקווים הירוקים. כשעוברים עם האצבע סביב הצורה רואים שש קטעים ישרים ולכן למשושה יש תמיד 6 צלעות.',
+    explanationEn: 'The hexagon illustration labels each edge 1–6 along the green outline. Tracing the shape shows six straight segments, which is why a hexagon always has 6 sides.',
   },
   {
     id: 'geo_symmetry_025',
@@ -1360,6 +1374,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'איזו צורה יש לה אינסוף צירי סימטריה?',
     promptEn: 'איזו צורה יש לה אינסוף צירי סימטריה?',
     answer: 'מעגל',
+    assetId: 'geometry/circle_symmetry',
+    explanationHe: 'בשרטוט רואים מעגל עם הרבה קווים שעוברים דרך המרכז ומתפזרים לכל הכיוונים. אפשר לסובב את הקווים בלי סוף ולקבל תמיד שני חלקים חופפים, לכן רק המעגל מחזיק אינסוף צירי סימטריה.',
+    explanationEn: 'The diagram shows a circle with many lines passing through its center in every direction. You can rotate those lines infinitely and the halves will still match, so only a circle has infinitely many symmetry axes.',
   },
   {
     id: 'geo_symmetry_044',

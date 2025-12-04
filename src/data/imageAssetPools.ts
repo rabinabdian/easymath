@@ -85,9 +85,15 @@ export const ASSET_POOLS = {
   // Geometry - basic shapes
   geometry_shapes: [
     'geometry/mix_shapes_1',
+    'geometry/find_squares',
     'geometry/triangles_4',
+    'geometry/triangle_sides.svg',
+    'geometry/square_sides',
+    'geometry/circle_smooth',
+    'geometry/hexagon_sides',
     'geometry/basic_shapes',
     'geometry/shape_patterns',
+    'geometry/circle_symmetry',
   ],
 
   // Geometry - symmetry
