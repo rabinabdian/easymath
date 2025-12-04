@@ -1,6 +1,6 @@
 // src/App.tsx
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { FormEvent } from "react";
 import { countTo5Exercises } from "./data/countTo5";
 import type { CountExercise } from "./data/countTo5";
@@ -15,10 +15,20 @@ import type { SavedExam } from "./utils/examsStorage";
 import StudentGame from "./components/StudentGame";
 import { loadStudentRecords } from "./utils/studentStorage";
 import type { StudentRecord } from "./types/students";
+import { VersionDisplay } from "./components/VersionDisplay";
 
 function HomePage() {
   const navigate = useNavigate();
   const { settings } = useChildSettings();
+
+  // Load student record if studentId is set - using useMemo to avoid effect
+  const studentRecord = useMemo(() => {
+    if (settings.studentId) {
+      const students = loadStudentRecords();
+      return students.find(s => s.profile.id === settings.studentId) || null;
+    }
+    return null;
+  }, [settings.studentId]);
 
   // Get the currently loaded exam name
   const currentExam = settings.selectedExamId
@@ -30,9 +40,51 @@ function HomePage() {
 
   return (
     <div className="page page-right">
+      <VersionDisplay position="bottom-left" />
       <h1 className="title">Easymath</h1>
       <p className="subtitle">חשבון פשוט לילדים</p>
-      <p className="subtitle-small">שלום {settings.childName} 😊</p>
+      
+      {/* Student Avatar/Photo Display */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+        {studentRecord ? (
+          <>
+            {studentRecord.profile.photoUrl ? (
+              <img 
+                src={studentRecord.profile.photoUrl}
+                alt={studentRecord.profile.name}
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: `4px solid ${studentRecord.profile.color}`,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }}
+              />
+            ) : (
+              <div 
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  borderRadius: '50%',
+                  backgroundColor: studentRecord.profile.color,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '64px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }}
+              >
+                {(() => {
+                  const avatarMap = { boy: '👦', girl: '👧', robot: '🤖', star: '⭐' };
+                  return avatarMap[studentRecord.profile.avatar] || '😊';
+                })()}
+              </div>
+            )}
+          </>
+        ) : null}
+        <p className="subtitle-small">שלום {settings.childName} 😊</p>
+      </div>
 
       <div className="buttons">
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -100,6 +152,7 @@ function TutorialExercise({ onDone, onExit }: { onDone: () => void; onExit: () =
 
   return (
     <div className="page page-right">
+      <VersionDisplay position="bottom-left" />
       {/* Back to Home Button */}
       <div className="flex items-center gap-3 mb-4">
         <button
@@ -291,6 +344,7 @@ function SessionPage() {
   if (feedback === "finished") {
     return (
       <div className="page page-right">
+        <VersionDisplay position="bottom-left" />
         <h2 className="title">כל הכבוד {settings.childName}! 🎉</h2>
         <p className="subtitle">
           סיימנו {sessionExercises.length} תרגילים בסשן הזה.
@@ -323,6 +377,7 @@ function SessionPage() {
 
   return (
     <div className="page page-right">
+      <VersionDisplay position="bottom-left" />
       {/* Back to Home Button */}
       <div className="flex items-center gap-3 mb-4">
         <button
@@ -443,17 +498,22 @@ function ParentPage() {
 
     // קביעת שם הילד לפי הבחירה
     let childName = "ילד";
+    let studentId: string | undefined;
+    
     if (childId === "custom") {
       childName = (formData.get("customChildName") as string) || "ילד";
+      studentId = undefined;
     } else {
       const selectedStudent = students.find((s) => s.profile.id === childId);
       if (selectedStudent) {
         childName = selectedStudent.profile.name;
+        studentId = selectedStudent.profile.id;
       }
     }
 
     const newSettings: ChildSettings = {
       childName,
+      studentId,
       maxNumber: Number(formData.get("maxNumber")) === 10 ? 10 : 5,
       sessionLength: Number(formData.get("sessionLength")) as 5 | 7 | 10,
       showHints: formData.get("showHints") === "on",
@@ -468,6 +528,7 @@ function ParentPage() {
 
   return (
     <div className="page page-right">
+      <VersionDisplay position="bottom-left" />
       {/* Back to Home Button */}
       <div className="flex items-center gap-3 mb-4">
         <button

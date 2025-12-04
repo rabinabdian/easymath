@@ -9,6 +9,7 @@ import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
+import { VersionDisplay } from './VersionDisplay';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -427,6 +428,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <VersionDisplay position="bottom-left" />
       {/* Progressive Hint Display Overlay */}
       {showHint && currentHintText && (
         <HintDisplay

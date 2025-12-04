@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useMemo, useCallback, type ReactNo
 
 export type ChildSettings = {
   childName: string;
+  studentId?: string; // מזהה תלמיד (אם נבחר מרשימת התלמידים)
   maxNumber: 5 | 10; // כרגע 5 או 10
   sessionLength: 5 | 7 | 10; // כמה תרגילים בסשן
   showHints: boolean;
