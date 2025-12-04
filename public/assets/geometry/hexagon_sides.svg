@@ -1,0 +1,17 @@
+<svg width="240" height="200" viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="240" height="200" rx="20" fill="#ecfeff"/>
+  <polygon points="120,30 190,70 190,140 120,180 50,140 50,70" fill="#bae6fd" stroke="#0284c7" stroke-width="4"/>
+  <text x="120" y="24" text-anchor="middle" font-size="18" font-family="Arial" fill="#0f172a">Hexagon</text>
+  <circle cx="120" cy="30" r="5" fill="#0284c7"/>
+  <circle cx="190" cy="70" r="5" fill="#0284c7"/>
+  <circle cx="190" cy="140" r="5" fill="#0284c7"/>
+  <circle cx="120" cy="180" r="5" fill="#0284c7"/>
+  <circle cx="50" cy="140" r="5" fill="#0284c7"/>
+  <circle cx="50" cy="70" r="5" fill="#0284c7"/>
+  <text x="125" y="56" font-size="14" font-family="Arial" fill="#0c4a6e">1</text>
+  <text x="167" y="65" font-size="14" font-family="Arial" fill="#0c4a6e">2</text>
+  <text x="178" y="110" font-size="14" font-family="Arial" fill="#0c4a6e">3</text>
+  <text x="134" y="150" font-size="14" font-family="Arial" fill="#0c4a6e">4</text>
+  <text x="78" y="150" font-size="14" font-family="Arial" fill="#0c4a6e">5</text>
+  <text x="62" y="96" font-size="14" font-family="Arial" fill="#0c4a6e">6</text>
+</svg>

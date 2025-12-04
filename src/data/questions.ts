@@ -1169,7 +1169,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'סמן את כל הריבועים בציור.',
     promptEn: 'Mark את כל הריבועים בציור.',
     answer: 'כל הריבועים',
-    assetId: 'geometry/mix_shapes_1',
+    assetId: '/assets/geometry/mixed_shapes_grid.svg',
+    explanationHe: 'בציור יש כמה צורות שונות, אך רק הצורות הכחולות עם ארבע צלעות שוות הן ריבועים. סמן את שני הריבועים והימנע מהעגול ומהמשולש.',
+    explanationEn: 'The drawing shows several shapes, but only the dark-blue ones with four equal sides are squares. Mark those two squares and skip the circle and triangle.',
   },
   {
     id: 'geo_shapes_002',
@@ -1179,7 +1181,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה משולשים יש בתמונה?',
     promptEn: 'How many משולשים יש בתמונה?',
     answer: 4,
-    assetId: 'geometry/triangles_4',
+    assetId: '/assets/geometry/triangle_counting.svg',
+    explanationHe: 'באיור רואים ארבעה משולשים בצבעים שונים. כל צורה עם שלוש צלעות וקודקוד חד נספרת כמשולש, ולכן נספור 4.',
+    explanationEn: 'The illustration contains four triangles in different colors. Every shape with three sides and a pointed top counts as a triangle, so the total is 4.',
   },
   {
     id: 'geo_shapes_003',
@@ -1214,6 +1218,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה צלעות יש לריבוע?',
     promptEn: 'How many צלעות יש לריבוע?',
     answer: 4,
+    assetId: '/assets/geometry/square_sides.svg',
+    explanationHe: 'הציור מראה ריבוע שמודגש בו כל צד וממוספר 1 עד 4. כשעוקבים אחרי המספור סביב הריבוע מגלים שיש בדיוק ארבע צלעות.',
+    explanationEn: 'The drawing highlights a square and labels each edge 1 through 4. Tracing the labels around the shape shows that a square has exactly four sides.',
   },
   {
     id: 'geo_shapes_005',
@@ -1223,6 +1230,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'האם למעגל יש פינות?',
     promptEn: 'Is למעגל יש פינות?',
     answer: 'לא',
+    assetId: '/assets/geometry/circle_no_corners.svg',
+    explanationHe: 'באיור המעגל מצויר עם קווים מקווקווים שמדגישים שהשוליים שלו חלקים לגמרי. אין נקודות שבהן הקו נשבר, ולכן אין למעגל פינות.',
+    explanationEn: 'In the illustration the circle is smooth and the dashed guide lines show the edge never breaks. Because there are no sharp turning points, a circle has no corners.',
   },
 
   // ---- סימטריה בסיסית ----
@@ -1309,6 +1319,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה צלעות יש למשושה?',
     promptEn: 'How many צלעות יש למשושה?',
     answer: 6,
+    assetId: '/assets/geometry/hexagon_sides.svg',
+    explanationHe: 'באיור של המשושה כל צלע קיבלה מספר מ-1 עד 6. מעבר עם העיניים על המספרים עוזר לראות שיש שש צלעות שונות.',
+    explanationEn: 'In the hexagon drawing every side is labeled 1 through 6. Following the labels makes it clear that there are six distinct sides.',
   },
   {
     id: 'geo_symmetry_025',
@@ -1360,6 +1373,9 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'איזו צורה יש לה אינסוף צירי סימטריה?',
     promptEn: 'איזו צורה יש לה אינסוף צירי סימטריה?',
     answer: 'מעגל',
+    assetId: '/assets/geometry/circle_symmetry_lines.svg',
+    explanationHe: 'בתמונה רואים מעגל עם קווי סימטריה מקווקווים בארבעה כיוונים שונים. אפשר להמשיך ולצייר עוד ועוד קווים כאלה ולכן למעגל יש אינסוף צירי סימטריה.',
+    explanationEn: 'The drawing shows a circle with dashed symmetry lines in multiple directions. You can keep adding more lines through the center, so a circle has infinitely many axes of symmetry.',
   },
   {
     id: 'geo_symmetry_044',

@@ -1,0 +1,12 @@
+<svg width="240" height="200" viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="240" height="200" rx="20" fill="#eef2ff"/>
+  <circle cx="120" cy="100" r="70" fill="#c7d2fe" stroke="#312e81" stroke-width="4"/>
+  <g stroke="#6366f1" stroke-width="2.5" stroke-dasharray="6 6">
+    <line x1="120" y1="30" x2="120" y2="170"/>
+    <line x1="50" y1="100" x2="190" y2="100"/>
+    <line x1="70" y1="50" x2="170" y2="150"/>
+    <line x1="70" y1="150" x2="170" y2="50"/>
+  </g>
+  <text x="120" y="26" text-anchor="middle" font-size="18" font-family="Arial" fill="#312e81">Symmetry lines</text>
+  <text x="120" y="188" text-anchor="middle" font-size="16" font-family="Arial" fill="#312e81">Circle has infinitely many</text>
+</svg>

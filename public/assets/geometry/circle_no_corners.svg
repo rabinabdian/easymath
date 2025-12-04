@@ -1,0 +1,8 @@
+<svg width="240" height="200" viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="240" height="200" rx="20" fill="#fdf2f8"/>
+  <circle cx="120" cy="100" r="70" fill="#fef3c7" stroke="#f97316" stroke-width="5"/>
+  <path d="M120 30 Q150 100 120 170" stroke="#f97316" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+  <path d="M50 100 H190" stroke="#f97316" stroke-width="3" stroke-dasharray="8 8"/>
+  <text x="120" y="24" text-anchor="middle" font-size="18" font-family="Arial" fill="#9d174d">Smooth edge</text>
+  <text x="120" y="188" text-anchor="middle" font-size="18" font-family="Arial" fill="#9d174d">No corners</text>
+</svg>
