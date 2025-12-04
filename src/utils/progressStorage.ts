@@ -33,20 +33,40 @@ export function upsertMonthBadge(
   month: string,
   scorePercent: number
 ): StudentProgress {
-  const existing = progress.monthBadges.find((b) => b.month === month);
+  const existingIndex = progress.monthBadges.findIndex((b) => b.month === month);
 
-  if (!existing) {
+  if (existingIndex === -1) {
     // Add new badge
-    progress.monthBadges.push({
-      month,
-      earnedAt: new Date().toISOString(),
-      bestScore: scorePercent,
-    });
-  } else if (scorePercent > existing.bestScore) {
-    // Update existing badge with better score
-    existing.bestScore = scorePercent;
-    existing.earnedAt = new Date().toISOString();
+    return {
+      ...progress,
+      monthBadges: [
+        ...progress.monthBadges,
+        {
+          month,
+          earnedAt: new Date().toISOString(),
+          bestScore: scorePercent,
+        },
+      ],
+    };
   }
 
-  return { ...progress, monthBadges: [...progress.monthBadges] };
+  const existing = progress.monthBadges[existingIndex];
+  if (scorePercent > existing.bestScore) {
+    // Update existing badge with better score - create new badge object
+    return {
+      ...progress,
+      monthBadges: progress.monthBadges.map((badge, idx) =>
+        idx === existingIndex
+          ? {
+              ...badge,
+              bestScore: scorePercent,
+              earnedAt: new Date().toISOString(),
+            }
+          : badge
+      ),
+    };
+  }
+
+  // No change needed
+  return progress;
 }
