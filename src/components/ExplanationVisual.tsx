@@ -1,5 +1,15 @@
 // src/components/ExplanationVisual.tsx
 import type { Question } from '../types/questions';
+import { InlineSpeaker } from './SpeakerButton';
+
+const MATH_EXPRESSION_REGEX = /(\d+)\s*([+\-×x*])\s*(\d+)/;
+
+function extractMathMatch(prompt: string): RegExpMatchArray | null {
+  const normalizedPrompt = prompt
+    .replace(/−/g, '-')
+    .replace(/X/g, 'x');
+  return normalizedPrompt.match(MATH_EXPRESSION_REGEX);
+}
 
 interface ExplanationVisualProps {
   question: Question;
@@ -19,6 +29,7 @@ interface ExplanationVisualProps {
  */
 export function ExplanationVisual({ question, className = '' }: ExplanationVisualProps) {
   const visual = generateVisualForQuestion(question);
+  const narration = generateVisualNarration(question);
   
   if (!visual) {
     return null;
@@ -26,9 +37,12 @@ export function ExplanationVisual({ question, className = '' }: ExplanationVisua
 
   return (
     <div className={`rounded-3xl bg-gradient-to-br from-yellow-50 to-amber-50 p-6 shadow-lg border-2 border-yellow-200 ${className}`}>
-      <div className="mb-4 flex items-center gap-3">
-        <span className="text-3xl">🎨</span>
-        <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">🎨</span>
+          <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
+        </div>
+        <InlineSpeaker text={narration} className="shrink-0" />
       </div>
       
       <div className="rounded-2xl bg-white p-6 shadow-sm">
@@ -42,7 +56,7 @@ function generateVisualForQuestion(question: Question): React.ReactNode {
   const { topic, promptHe } = question;
   
   // Parse the math expression from the prompt
-  const mathMatch = promptHe.match(/(\d+)\s*([+\-×x*])\s*(\d+)/);
+  const mathMatch = extractMathMatch(promptHe);
   
   switch (topic) {
     case 'addition':
@@ -59,6 +73,87 @@ function generateVisualForQuestion(question: Question): React.ReactNode {
       return generateEvenOddVisual(question);
     default:
       return generateGenericVisual(question);
+  }
+}
+
+function generateVisualNarration(question: Question): string {
+  const { topic, promptHe, answer, subtopic } = question;
+  const mathMatch = extractMathMatch(promptHe);
+  const defaultNarration = 'הקשיבו להסבר על הציור שמחזק את ההבנה של התרגיל.';
+
+  switch (topic) {
+    case 'addition': {
+      if (mathMatch) {
+        const a = parseInt(mathMatch[1], 10);
+        const b = parseInt(mathMatch[3], 10);
+        return `בציור רואים ${a} עיגולים כחולים ועוד ${b} עיגולים אדומים. כשמחברים את שתי הקבוצות מקבלים ${a + b} פריטים בסך הכול.`;
+      }
+      return 'האיור מציג שתי קבוצות שמתחברות לקבוצה אחת גדולה כדי להמחיש חיבור.';
+    }
+    case 'subtraction': {
+      if (mathMatch) {
+        const a = parseInt(mathMatch[1], 10);
+        const b = parseInt(mathMatch[3], 10);
+        const remaining = Math.max(0, a - b);
+        return `אנחנו מתחילים עם ${a} פריטים. מורידים ${b} מהם ורואים בציור כמה נשארו, במקרה הזה ${remaining}.`;
+      }
+      return 'האיור מראה כמה פריטים היו בתחילה וכמה ירדו כדי להבין מה נשאר.';
+    }
+    case 'multiplication': {
+      if (mathMatch) {
+        const a = parseInt(mathMatch[1], 10);
+        const b = parseInt(mathMatch[3], 10);
+        return `מסדרים ${a} קבוצות שוות, ולכל קבוצה ${b} כוכבים. כך מגלים שיש ${a * b} פריטים בסך הכול דרך ציור של קבוצות.`;
+      }
+      return 'הציור מסדר קבוצות שוות כדי להמחיש כפל וסכימה של כמויות שוות.';
+    }
+    case 'geometry': {
+      if (promptHe.includes('משולש')) {
+        return 'האיור מדגים שלמשולש יש שלוש צלעות ושלושה קודקודים עם שמות לכל חלק.';
+      }
+      if (promptHe.includes('ריבוע')) {
+        return 'הציור מזכיר שלריבוע יש ארבע צלעות שוות וארבע זוויות ישרות.';
+      }
+      if (promptHe.includes('מעגל') || promptHe.includes('עיגול')) {
+        return 'האיור מראה מעגל חלק בלי פינות או צלעות כדי לזכור את תכונותיו.';
+      }
+      if (subtopic?.includes('סימטריה') || promptHe.includes('סימטר')) {
+        return 'הציור מציג שני חלקים זהים משני צידי קו סימטריה כדי להבין מהי סימטריה.';
+      }
+      return 'האיור מדגיש את החלקים השונים של הצורה והמאפיינים שכדאי לזכור.';
+    }
+    case 'numbers': {
+      const numericAnswer = typeof answer === 'number' ? answer : Number.parseInt(answer, 10);
+      if (subtopic?.includes('ספירה') || promptHe.includes('ספור') || promptHe.includes('כמה')) {
+        if (!Number.isNaN(numericAnswer) && numericAnswer > 0) {
+          return `נספור יחד ${numericAnswer} סמלים בציור ונאמר את המספרים בקול כדי לזכור את הכמות.`;
+        }
+        return 'נספור יחד את הסמלים בציור כדי לדעת כמה יש.';
+      }
+      if (subtopic?.includes('שכנים') || promptHe.includes('שכן')) {
+        const num = Number.parseInt(promptHe.match(/\d+/)?.[0] ?? '', 10);
+        if (!Number.isNaN(num)) {
+          return `בציור רואים את המספר ${num} באמצע ואת שכניו, ${num - 1} לפניו ו-${num + 1} אחריו, על ציר המספרים.`;
+        }
+        return 'התרשים מציג מספר במרכז ואת השכנים שלו לפני ואחרי על ציר המספרים.';
+      }
+      if (subtopic?.includes('דילוגים') || subtopic?.includes('סדרות') || promptHe.includes('השלם')) {
+        return 'האיור מדגים סדרה עוקבת ומראה אילו קפיצות חוזרות כדי להבין את הדילוגים.';
+      }
+      return 'הציור עוזר לראות מספרים על ציר או בקבוצות כדי להבין את הקשרים ביניהם.';
+    }
+    case 'evenOdd': {
+      const numMatch = promptHe.match(/(\d+)/);
+      const num = numMatch ? Number.parseInt(numMatch[1], 10) : null;
+      if (num !== null && !Number.isNaN(num)) {
+        const isEven = num % 2 === 0;
+        const ending = isEven ? 'זוגי ולכן אין נשאר לבד.' : 'אי-זוגי ולכן נשאר אחד לבד.';
+        return `מסדרים את ${num} בדמויות זוגיות כדי לבדוק אם נשאר מישהו לבד. כך מבינים שהמספר ${ending}`;
+      }
+      return 'בציור מסדרים דמויות בזוגות כדי לבדוק אם המספר זוגי או אי-זוגי.';
+    }
+    default:
+      return defaultNarration;
   }
 }
 
