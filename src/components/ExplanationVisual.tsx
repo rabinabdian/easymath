@@ -1,5 +1,6 @@
 // src/components/ExplanationVisual.tsx
 import type { Question } from '../types/questions';
+import { InlineSpeaker } from './SpeakerButton';
 
 interface ExplanationVisualProps {
   question: Question;
@@ -19,6 +20,7 @@ interface ExplanationVisualProps {
  */
 export function ExplanationVisual({ question, className = '' }: ExplanationVisualProps) {
   const visual = generateVisualForQuestion(question);
+  const audioText = generateAudioTextForQuestion(question);
   
   if (!visual) {
     return null;
@@ -26,9 +28,14 @@ export function ExplanationVisual({ question, className = '' }: ExplanationVisua
 
   return (
     <div className={`rounded-3xl bg-gradient-to-br from-yellow-50 to-amber-50 p-6 shadow-lg border-2 border-yellow-200 ${className}`}>
-      <div className="mb-4 flex items-center gap-3">
-        <span className="text-3xl">🎨</span>
-        <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">🎨</span>
+          <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
+        </div>
+        {audioText && (
+          <InlineSpeaker text={audioText} />
+        )}
       </div>
       
       <div className="rounded-2xl bg-white p-6 shadow-sm">
@@ -60,6 +67,138 @@ function generateVisualForQuestion(question: Question): React.ReactNode {
     default:
       return generateGenericVisual(question);
   }
+}
+
+/**
+ * Generate audio text for text-to-speech based on question type
+ * Returns a Hebrew explanation suitable for children
+ */
+function generateAudioTextForQuestion(question: Question): string | null {
+  const { topic, promptHe, answer, subtopic } = question;
+  
+  // Parse the math expression from the prompt
+  const mathMatch = promptHe.match(/(\d+)\s*([+\-×x*])\s*(\d+)/);
+  
+  switch (topic) {
+    case 'addition':
+      return generateAdditionAudioText(mathMatch);
+    case 'subtraction':
+      return generateSubtractionAudioText(mathMatch);
+    case 'multiplication':
+      return generateMultiplicationAudioText(mathMatch);
+    case 'geometry':
+      return generateGeometryAudioText(promptHe, answer);
+    case 'numbers':
+      return generateNumbersAudioText(promptHe, answer, subtopic);
+    case 'evenOdd':
+      return generateEvenOddAudioText(promptHe);
+    default:
+      return 'קראו את השאלה בעיון והשתמשו במה שלמדתם!';
+  }
+}
+
+// ===== AUDIO TEXT GENERATORS =====
+
+function generateAdditionAudioText(mathMatch: RegExpMatchArray | null): string | null {
+  if (mathMatch) {
+    const a = parseInt(mathMatch[1]);
+    const b = parseInt(mathMatch[3]);
+    const sum = a + b;
+    
+    if (a <= 12 && b <= 12) {
+      return `בואו נבין את החיבור. יש לנו קבוצה ראשונה עם ${a} פריטים. נוסיף לה קבוצה שנייה עם ${b} פריטים. כשנספור הכל ביחד נקבל ${sum}. אז ${a} ועוד ${b} שווה ${sum}.`;
+    }
+  }
+  return 'כשמוסיפים משהו, אנחנו מחברים. מחפשים את הסימן פלוס ומחברים את שני המספרים.';
+}
+
+function generateSubtractionAudioText(mathMatch: RegExpMatchArray | null): string | null {
+  if (mathMatch) {
+    const a = parseInt(mathMatch[1]);
+    const b = parseInt(mathMatch[3]);
+    const result = a - b;
+    
+    if (a <= 15 && b <= 15 && result >= 0) {
+      return `בואו נבין את החיסור. התחלנו עם ${a} פריטים. הורדנו ${b} פריטים. נשאר לנו ${result}. אז ${a} פחות ${b} שווה ${result}.`;
+    }
+  }
+  return 'כשמורידים או נותנים משהו, אנחנו מחסרים. מחפשים את הסימן מינוס ומחסרים.';
+}
+
+function generateMultiplicationAudioText(mathMatch: RegExpMatchArray | null): string | null {
+  if (mathMatch) {
+    const a = parseInt(mathMatch[1]);
+    const b = parseInt(mathMatch[3]);
+    const product = a * b;
+    
+    if (a <= 6 && b <= 6) {
+      return `בואו נבין את הכפל. ${a} כפול ${b} זה כמו ${a} קבוצות, ובכל קבוצה יש ${b} פריטים. אם נספור את כל הפריטים נקבל ${product}. אז ${a} כפול ${b} שווה ${product}.`;
+    }
+  }
+  return null;
+}
+
+function generateGeometryAudioText(promptHe: string, answer: number | string | string[]): string | null {
+  if (promptHe.includes('משולש')) {
+    return `בואו נלמד על משולש. למשולש יש שלוש צלעות, שלוש פינות שנקראות קודקודים, ושלוש זוויות. זכרו, המספר שלוש מופיע בכל מקום! למשולש יש ${typeof answer === 'number' ? answer : 3} צלעות.`;
+  }
+  
+  if (promptHe.includes('ריבוע')) {
+    return `בואו נלמד על ריבוע. לריבוע יש ארבע צלעות שוות, ארבע פינות, וארבע זוויות ישרות. זכרו, כל הצלעות שוות באורכן! לריבוע יש ${typeof answer === 'number' ? answer : 4} צלעות.`;
+  }
+  
+  if (promptHe.includes('מעגל') || promptHe.includes('עיגול')) {
+    return 'בואו נלמד על מעגל. המעגל הוא צורה עגולה וחלקה. אין לו פינות ואין לו צלעות. הוא עגול לגמרי!';
+  }
+  
+  if (promptHe.includes('סימטרי') || promptHe.includes('סימטריה')) {
+    return 'סימטריה זה כשצורה נראית אותו דבר משני הצדדים. אם נקפל אותה על קו הסימטריה, שני הצדדים יתאימו בדיוק. כמו פרפר או לב!';
+  }
+  
+  return 'צורות גיאומטריות מוגדרות לפי צלעות, זוויות ותכונות מיוחדות. בדקו כמה צלעות וכמה פינות יש לצורה.';
+}
+
+function generateNumbersAudioText(promptHe: string, answer: number | string | string[], subtopic?: string): string | null {
+  // Counting question
+  if (subtopic?.includes('ספירה') || promptHe.includes('ספור') || promptHe.includes('כמה')) {
+    const count = typeof answer === 'number' ? answer : 0;
+    if (count > 0 && count <= 15) {
+      return `בואו נספור ביחד! אחת, שתיים, שלוש... עד ${count}. יש לנו בסך הכל ${count} פריטים.`;
+    }
+  }
+  
+  // Neighbors question
+  if (subtopic?.includes('שכנים') || promptHe.includes('שכן')) {
+    const numMatch = promptHe.match(/\d+/);
+    const num = numMatch ? parseInt(numMatch[0]) : 0;
+    if (num > 0 && num <= 20) {
+      return `בואו נמצא את השכנים של ${num}. השכן שלפני הוא ${num - 1}, והשכן שאחרי הוא ${num + 1}. על ציר המספרים, ${num} נמצא בין ${num - 1} לבין ${num + 1}.`;
+    }
+  }
+  
+  // Sequence/Pattern question
+  if (subtopic?.includes('דילוגים') || subtopic?.includes('סדרות') || promptHe.includes('השלם')) {
+    return 'כדי לפתור סדרה, מחפשים את הדפוס. מה ההפרש בין כל שני מספרים? האם הסדרה עולה או יורדת? מצאו את הכלל וממשיכו!';
+  }
+  
+  return null;
+}
+
+function generateEvenOddAudioText(promptHe: string): string | null {
+  const numMatch = promptHe.match(/המספר\s+(\d+)/);
+  const num = numMatch ? parseInt(numMatch[1]) : null;
+  
+  if (num !== null && num <= 20) {
+    const isEven = num % 2 === 0;
+    
+    if (isEven) {
+      return `בואו נבדוק אם ${num} זוגי או אי-זוגי. ננסה לסדר את ${num} בזוגות. כולם מסודרים בזוגות! אף אחד לא נשאר לבד. לכן ${num} הוא מספר זוגי. מספרים זוגיים: 0, 2, 4, 6, 8, 10...`;
+    } else {
+      return `בואו נבדוק אם ${num} זוגי או אי-זוגי. ננסה לסדר את ${num} בזוגות. אחד נשאר לבד! לכן ${num} הוא מספר אי-זוגי. מספרים אי-זוגיים: 1, 3, 5, 7, 9, 11...`;
+    }
+  }
+  
+  return 'מספר זוגי הוא מספר שאפשר לחלק לשני חלקים שווים בלי שישאר שארית. מספר אי-זוגי הוא מספר שנשאר אחד לבד כשמחלקים לזוגות.';
 }
 
 // ===== ADDITION VISUAL =====
