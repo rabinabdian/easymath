@@ -20,7 +20,7 @@ interface ExplanationVisualProps {
  */
 export function ExplanationVisual({ question, className = '' }: ExplanationVisualProps) {
   const visual = generateVisualForQuestion(question);
-  const audioText = generateAudioTextForQuestion(question);
+  const audioText = buildVisualAudioText(question);
   
   if (!visual) {
     return null;
@@ -95,6 +95,24 @@ function generateAudioTextForQuestion(question: Question): string | null {
     default:
       return 'קראו את השאלה בעיון והשתמשו במה שלמדתם!';
   }
+}
+
+/**
+ * Build the final narration for the visual explanation.
+ * Falls back to per-question explanations or the prompt itself when
+ * a generated narration is unavailable.
+ */
+function buildVisualAudioText(question: Question): string | null {
+  const generated = generateAudioTextForQuestion(question);
+  if (generated) {
+    return generated;
+  }
+
+  if (question.explanationHe || question.explanationEn) {
+    return question.explanationHe || question.explanationEn || null;
+  }
+
+  return question.promptHe || question.promptEn || null;
 }
 
 // ===== AUDIO TEXT GENERATORS =====
