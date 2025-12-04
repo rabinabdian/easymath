@@ -14,11 +14,57 @@ import { loadExams, getExamById } from "./utils/examsStorage";
 import type { SavedExam } from "./utils/examsStorage";
 import StudentGame from "./components/StudentGame";
 import { loadStudentRecords } from "./utils/studentStorage";
-import type { StudentRecord } from "./types/students";
+import type { StudentRecord, AvatarType } from "./types/students";
+import { avatarEmoji } from "./utils/avatar";
+import VersionBadge from "./components/VersionBadge";
 
 function HomePage() {
   const navigate = useNavigate();
   const { settings } = useChildSettings();
+  const [studentVisual, setStudentVisual] = useState<{
+    name: string;
+    avatar?: AvatarType;
+    color?: string;
+    photoUrl?: string;
+  }>({
+    name: settings.childName,
+    avatar: settings.studentAvatar,
+    color: settings.studentColor,
+    photoUrl: settings.studentPhotoUrl,
+  });
+
+  useEffect(() => {
+    const fallback = {
+      name: settings.childName,
+      avatar: settings.studentAvatar,
+      color: settings.studentColor,
+      photoUrl: settings.studentPhotoUrl,
+    };
+
+    if (settings.selectedStudentId) {
+      const records = loadStudentRecords();
+      const match = records.find(
+        (record) => record.profile.id === settings.selectedStudentId
+      );
+      if (match) {
+        setStudentVisual({
+          name: match.profile.name,
+          avatar: match.profile.avatar,
+          color: match.profile.color,
+          photoUrl: match.profile.photoUrl,
+        });
+        return;
+      }
+    }
+
+    setStudentVisual(fallback);
+  }, [
+    settings.childName,
+    settings.selectedStudentId,
+    settings.studentAvatar,
+    settings.studentColor,
+    settings.studentPhotoUrl,
+  ]);
 
   // Get the currently loaded exam name
   const currentExam = settings.selectedExamId
@@ -28,11 +74,43 @@ function HomePage() {
     ? currentExam.name
     : "ברירת מחדל (ספירה)";
 
+  const displayName = studentVisual.name || settings.childName;
+  const accentColor = studentVisual.color || "#475569";
+  const avatarSymbol = avatarEmoji((studentVisual.avatar || "star") as AvatarType);
+
   return (
     <div className="page page-right">
       <h1 className="title">Easymath</h1>
       <p className="subtitle">חשבון פשוט לילדים</p>
-      <p className="subtitle-small">שלום {settings.childName} 😊</p>
+      <p className="subtitle-small">שלום {displayName} 😊</p>
+
+      <div className="student-card" style={{ borderColor: `${accentColor}33` }}>
+        <div className="student-photo-frame" style={{ borderColor: accentColor }}>
+          {studentVisual.photoUrl ? (
+            <img
+              src={studentVisual.photoUrl}
+              alt={displayName}
+              className="student-photo"
+            />
+          ) : (
+            <div
+              className="student-avatar"
+              style={{
+                backgroundColor: `${accentColor}22`,
+                color: accentColor,
+              }}
+            >
+              {avatarSymbol}
+            </div>
+          )}
+        </div>
+
+        <div className="student-card-info">
+          <p className="student-card-name">{displayName}</p>
+          <p className="student-card-caption">התמונה נמשכת מפרופיל התלמיד</p>
+          <VersionBadge context="מסך ראשי" className="student-card-version" />
+        </div>
+      </div>
 
       <div className="buttons">
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -404,8 +482,12 @@ function ParentPage() {
   const navigate = useNavigate();
   const [savedExams, setSavedExams] = useState<SavedExam[]>([]);
   const [students, setStudents] = useState<StudentRecord[]>([]);
-  const [selectedChildId, setSelectedChildId] = useState<string>("custom");
-  const [customChildName, setCustomChildName] = useState<string>("");
+  const [selectedChildId, setSelectedChildId] = useState<string>(
+    settings.selectedStudentId || "custom"
+  );
+  const [customChildName, setCustomChildName] = useState<string>(
+    settings.childName || ""
+  );
 
   useEffect(() => {
     // טעינת מבחנים שמורים
@@ -417,19 +499,29 @@ function ParentPage() {
     setStudents(loadedStudents);
 
     // אם יש שם ילד נוכחי בהגדרות, נסה למצוא אותו ברשימת התלמידים
+    if (settings.selectedStudentId) {
+      const byId = loadedStudents.find(
+        (s) => s.profile.id === settings.selectedStudentId
+      );
+      if (byId) {
+        setSelectedChildId(byId.profile.id);
+        setCustomChildName(byId.profile.name);
+        return;
+      }
+    }
+
     if (settings.childName && settings.childName !== "ילד") {
       const existingStudent = loadedStudents.find(
         (s) => s.profile.name === settings.childName
       );
       if (existingStudent) {
         setSelectedChildId(existingStudent.profile.id);
-      } else {
-        setSelectedChildId("custom");
-        setCustomChildName(settings.childName);
+        return;
       }
-    } else {
-      setCustomChildName(settings.childName);
     }
+
+    setSelectedChildId("custom");
+    setCustomChildName(settings.childName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -441,14 +533,23 @@ function ParentPage() {
     const selectedExamId = formData.get("selectedExamId") as string;
     const childId = formData.get("childId") as string;
 
-    // קביעת שם הילד לפי הבחירה
+    // קביעת שם הילד והמאפיינים הגרפיים לפי הבחירה
     let childName = "ילד";
+    let selectedStudentId: string | undefined;
+    let studentAvatar: AvatarType | undefined;
+    let studentColor: string | undefined;
+    let studentPhotoUrl: string | undefined;
+
     if (childId === "custom") {
       childName = (formData.get("customChildName") as string) || "ילד";
     } else {
       const selectedStudent = students.find((s) => s.profile.id === childId);
       if (selectedStudent) {
+        selectedStudentId = selectedStudent.profile.id;
         childName = selectedStudent.profile.name;
+        studentAvatar = selectedStudent.profile.avatar;
+        studentColor = selectedStudent.profile.color;
+        studentPhotoUrl = selectedStudent.profile.photoUrl;
       }
     }
 
@@ -460,6 +561,10 @@ function ParentPage() {
       animationsEnabled: formData.get("animationsEnabled") === "on",
       soundsEnabled: formData.get("soundsEnabled") === "on",
       selectedExamId: selectedExamId || undefined,
+      selectedStudentId,
+      studentAvatar,
+      studentColor,
+      studentPhotoUrl,
     };
 
     setSettings(newSettings);
@@ -590,12 +695,19 @@ function ParentPage() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/session" element={<SessionPage />} />
-      <Route path="/parent" element={<ParentPage />} />
-      <Route path="/teacher" element={<TeacherDashboard />} />
-      <Route path="/year-plan" element={<YearPlanPage />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/session" element={<SessionPage />} />
+        <Route path="/parent" element={<ParentPage />} />
+        <Route path="/teacher" element={<TeacherDashboard />} />
+        <Route path="/year-plan" element={<YearPlanPage />} />
+      </Routes>
+      <VersionBadge
+        layout="floating"
+        context="ניהול גרסאות פעיל"
+        showSummary
+      />
+    </>
   );
 }

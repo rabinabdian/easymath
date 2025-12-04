@@ -1,5 +1,13 @@
 // src/context/ChildSettingsContext.tsx
-import { createContext, useContext, useState, useMemo, useCallback, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useCallback,
+  type ReactNode,
+} from "react";
+import type { AvatarType } from "../types/students";
 
 export type ChildSettings = {
   childName: string;
@@ -9,6 +17,10 @@ export type ChildSettings = {
   animationsEnabled: boolean;
   soundsEnabled: boolean;
   selectedExamId?: string; // מזהה מבחן שנבחר ע"י הורה
+  selectedStudentId?: string;
+  studentAvatar?: AvatarType;
+  studentColor?: string;
+  studentPhotoUrl?: string;
 };
 
 const defaultSettings: ChildSettings = {
@@ -18,6 +30,10 @@ const defaultSettings: ChildSettings = {
   showHints: true,
   animationsEnabled: false,
   soundsEnabled: true,
+  selectedStudentId: undefined,
+  studentAvatar: undefined,
+  studentColor: undefined,
+  studentPhotoUrl: undefined,
 };
 
 type ChildSettingsContextType = {
