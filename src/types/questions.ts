@@ -69,4 +69,16 @@ export interface Question {
 
   // אימוג'י או אייקון להצגה בהסבר האוטומטי
   autoSolveVisualAid?: VisualAid;
+
+  // ===== מערכת רמזים מתקדמת - הכוונה הדרגתית לתלמיד =====
+  
+  // רמז ראשון (עדין) - מוצג אחרי ניסיון כושל ראשון
+  hint1He?: string;
+  hint1En?: string;
+  hint1VisualAid?: VisualAid;
+  
+  // רמז שני (יותר ישיר) - מוצג אחרי ניסיון כושל שני
+  hint2He?: string;
+  hint2En?: string;
+  hint2VisualAid?: VisualAid;
 }
