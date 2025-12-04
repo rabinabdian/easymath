@@ -1,9 +1,16 @@
 // src/components/ExplanationVisual.tsx
+import React from 'react';
 import type { Question } from '../types/questions';
+import { InlineSpeaker } from './SpeakerButton';
 
 interface ExplanationVisualProps {
   question: Question;
   className?: string;
+}
+
+interface VisualResult {
+  visual: React.ReactNode;
+  audioText: string;
 }
 
 /**
@@ -18,27 +25,30 @@ interface ExplanationVisualProps {
  * - Numbers: Counting helpers
  */
 export function ExplanationVisual({ question, className = '' }: ExplanationVisualProps) {
-  const visual = generateVisualForQuestion(question);
+  const result = generateVisualForQuestion(question);
   
-  if (!visual) {
+  if (!result) {
     return null;
   }
 
   return (
     <div className={`rounded-3xl bg-gradient-to-br from-yellow-50 to-amber-50 p-6 shadow-lg border-2 border-yellow-200 ${className}`}>
-      <div className="mb-4 flex items-center gap-3">
-        <span className="text-3xl">🎨</span>
-        <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">🎨</span>
+          <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
+        </div>
+        <InlineSpeaker text={result.audioText} />
       </div>
       
       <div className="rounded-2xl bg-white p-6 shadow-sm">
-        {visual}
+        {result.visual}
       </div>
     </div>
   );
 }
 
-function generateVisualForQuestion(question: Question): React.ReactNode {
+function generateVisualForQuestion(question: Question): VisualResult | null {
   const { topic, promptHe } = question;
   
   // Parse the math expression from the prompt
@@ -63,7 +73,7 @@ function generateVisualForQuestion(question: Question): React.ReactNode {
 }
 
 // ===== ADDITION VISUAL =====
-function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray | null): React.ReactNode {
+function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray | null): VisualResult | null {
   if (mathMatch) {
     const a = parseInt(mathMatch[1]);
     const b = parseInt(mathMatch[3]);
@@ -71,65 +81,70 @@ function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray 
     
     // Limit visual representation to reasonable numbers
     if (a <= 12 && b <= 12) {
-      return (
-        <div className="space-y-6">
-          {/* Step 1: First number */}
-          <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-blue-700">קבוצה ראשונה: {a}</div>
-            <div className="flex flex-wrap justify-center gap-2">
-              {Array.from({ length: a }).map((_, i) => (
-                <span key={`a-${i}`} className="text-4xl animate-bounce" style={{ animationDelay: `${i * 0.1}s` }}>
-                  🔵
-                </span>
-              ))}
+      const audioText = `בואו נבין חיבור. יש לנו קבוצה ראשונה עם ${a} פריטים, וקבוצה שנייה עם ${b} פריטים. כשמחברים את שתי הקבוצות ביחד, מקבלים ${sum} פריטים בסך הכל. כלומר ${a} ועוד ${b} שווה ${sum}.`;
+      
+      return {
+        visual: (
+          <div className="space-y-6">
+            {/* Step 1: First number */}
+            <div className="text-center">
+              <div className="mb-2 text-lg font-bold text-blue-700">קבוצה ראשונה: {a}</div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {Array.from({ length: a }).map((_, i) => (
+                  <span key={`a-${i}`} className="text-4xl animate-bounce" style={{ animationDelay: `${i * 0.1}s` }}>
+                    🔵
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Plus sign */}
+            <div className="text-center">
+              <span className="text-5xl font-bold text-green-600">+</span>
+            </div>
+
+            {/* Step 2: Second number */}
+            <div className="text-center">
+              <div className="mb-2 text-lg font-bold text-red-700">קבוצה שנייה: {b}</div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {Array.from({ length: b }).map((_, i) => (
+                  <span key={`b-${i}`} className="text-4xl animate-bounce" style={{ animationDelay: `${i * 0.1}s` }}>
+                    🔴
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Arrow */}
+            <div className="text-center">
+              <span className="text-4xl">⬇️</span>
+            </div>
+
+            {/* Result: Combined */}
+            <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
+              <div className="mb-2 text-lg font-bold text-green-800">ביחד: {sum}</div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {Array.from({ length: a }).map((_, i) => (
+                  <span key={`sum-a-${i}`} className="text-3xl">🔵</span>
+                ))}
+                {Array.from({ length: b }).map((_, i) => (
+                  <span key={`sum-b-${i}`} className="text-3xl">🔴</span>
+                ))}
+              </div>
+              <div className="mt-3 text-3xl font-bold text-green-700">
+                {a} + {b} = {sum}
+              </div>
+            </div>
+
+            {/* Number line visualization */}
+            <div className="mt-4">
+              <div className="mb-2 text-center text-lg font-bold text-purple-700">על ציר המספרים:</div>
+              <NumberLineVisualization start={0} jumps={[{ from: 0, to: a, color: 'blue' }, { from: a, to: sum, color: 'red' }]} />
             </div>
           </div>
-
-          {/* Plus sign */}
-          <div className="text-center">
-            <span className="text-5xl font-bold text-green-600">+</span>
-          </div>
-
-          {/* Step 2: Second number */}
-          <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-red-700">קבוצה שנייה: {b}</div>
-            <div className="flex flex-wrap justify-center gap-2">
-              {Array.from({ length: b }).map((_, i) => (
-                <span key={`b-${i}`} className="text-4xl animate-bounce" style={{ animationDelay: `${i * 0.1}s` }}>
-                  🔴
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Arrow */}
-          <div className="text-center">
-            <span className="text-4xl">⬇️</span>
-          </div>
-
-          {/* Result: Combined */}
-          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-            <div className="mb-2 text-lg font-bold text-green-800">ביחד: {sum}</div>
-            <div className="flex flex-wrap justify-center gap-2">
-              {Array.from({ length: a }).map((_, i) => (
-                <span key={`sum-a-${i}`} className="text-3xl">🔵</span>
-              ))}
-              {Array.from({ length: b }).map((_, i) => (
-                <span key={`sum-b-${i}`} className="text-3xl">🔴</span>
-              ))}
-            </div>
-            <div className="mt-3 text-3xl font-bold text-green-700">
-              {a} + {b} = {sum}
-            </div>
-          </div>
-
-          {/* Number line visualization */}
-          <div className="mt-4">
-            <div className="mb-2 text-center text-lg font-bold text-purple-700">על ציר המספרים:</div>
-            <NumberLineVisualization start={0} jumps={[{ from: 0, to: a, color: 'blue' }, { from: a, to: sum, color: 'red' }]} />
-          </div>
-        </div>
-      );
+        ),
+        audioText
+      };
     }
   }
   
@@ -138,74 +153,81 @@ function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray 
 }
 
 // ===== SUBTRACTION VISUAL =====
-function generateSubtractionVisual(question: Question, mathMatch: RegExpMatchArray | null): React.ReactNode {
+function generateSubtractionVisual(question: Question, mathMatch: RegExpMatchArray | null): VisualResult | null {
   if (mathMatch) {
     const a = parseInt(mathMatch[1]);
     const b = parseInt(mathMatch[3]);
     const result = a - b;
     
     if (a <= 15 && b <= 15 && result >= 0) {
-      return (
-        <div className="space-y-6">
-          {/* Step 1: Start with all items */}
-          <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-blue-700">התחלנו עם: {a}</div>
-            <div className="flex flex-wrap justify-center gap-2">
-              {Array.from({ length: a }).map((_, i) => (
-                <span 
-                  key={`start-${i}`} 
-                  className={`text-4xl ${i >= result ? 'opacity-100' : ''}`}
-                >
-                  🍎
-                </span>
-              ))}
+      const audioText = result === 0
+        ? `בואו נבין חיסור. התחלנו עם ${a} פריטים. הורדנו ${b} פריטים. עכשיו לא נשאר כלום. כלומר ${a} פחות ${b} שווה אפס.`
+        : `בואו נבין חיסור. התחלנו עם ${a} פריטים. הורדנו ${b} פריטים. נשארו לנו ${result} פריטים. כלומר ${a} פחות ${b} שווה ${result}.`;
+      
+      return {
+        visual: (
+          <div className="space-y-6">
+            {/* Step 1: Start with all items */}
+            <div className="text-center">
+              <div className="mb-2 text-lg font-bold text-blue-700">התחלנו עם: {a}</div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {Array.from({ length: a }).map((_, i) => (
+                  <span 
+                    key={`start-${i}`} 
+                    className={`text-4xl ${i >= result ? 'opacity-100' : ''}`}
+                  >
+                    🍎
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Minus sign */}
+            <div className="text-center">
+              <span className="text-5xl font-bold text-red-600">−</span>
+            </div>
+
+            {/* Step 2: Items being removed */}
+            <div className="text-center">
+              <div className="mb-2 text-lg font-bold text-red-700">הורדנו: {b}</div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {Array.from({ length: b }).map((_, i) => (
+                  <div key={`remove-${i}`} className="relative">
+                    <span className="text-4xl opacity-50">🍎</span>
+                    <span className="absolute inset-0 flex items-center justify-center text-4xl">❌</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Arrow */}
+            <div className="text-center">
+              <span className="text-4xl">⬇️</span>
+            </div>
+
+            {/* Result */}
+            <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
+              <div className="mb-2 text-lg font-bold text-green-800">נשאר: {result}</div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {Array.from({ length: result }).map((_, i) => (
+                  <span key={`result-${i}`} className="text-4xl">🍎</span>
+                ))}
+                {result === 0 && <span className="text-2xl text-gray-500">כלום לא נשאר</span>}
+              </div>
+              <div className="mt-3 text-3xl font-bold text-green-700">
+                {a} − {b} = {result}
+              </div>
+            </div>
+
+            {/* Number line */}
+            <div className="mt-4">
+              <div className="mb-2 text-center text-lg font-bold text-purple-700">על ציר המספרים:</div>
+              <NumberLineVisualization start={a} jumps={[{ from: a, to: result, color: 'red', direction: 'back' }]} showBackward />
             </div>
           </div>
-
-          {/* Minus sign */}
-          <div className="text-center">
-            <span className="text-5xl font-bold text-red-600">−</span>
-          </div>
-
-          {/* Step 2: Items being removed */}
-          <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-red-700">הורדנו: {b}</div>
-            <div className="flex flex-wrap justify-center gap-2">
-              {Array.from({ length: b }).map((_, i) => (
-                <div key={`remove-${i}`} className="relative">
-                  <span className="text-4xl opacity-50">🍎</span>
-                  <span className="absolute inset-0 flex items-center justify-center text-4xl">❌</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Arrow */}
-          <div className="text-center">
-            <span className="text-4xl">⬇️</span>
-          </div>
-
-          {/* Result */}
-          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-            <div className="mb-2 text-lg font-bold text-green-800">נשאר: {result}</div>
-            <div className="flex flex-wrap justify-center gap-2">
-              {Array.from({ length: result }).map((_, i) => (
-                <span key={`result-${i}`} className="text-4xl">🍎</span>
-              ))}
-              {result === 0 && <span className="text-2xl text-gray-500">כלום לא נשאר</span>}
-            </div>
-            <div className="mt-3 text-3xl font-bold text-green-700">
-              {a} − {b} = {result}
-            </div>
-          </div>
-
-          {/* Number line */}
-          <div className="mt-4">
-            <div className="mb-2 text-center text-lg font-bold text-purple-700">על ציר המספרים:</div>
-            <NumberLineVisualization start={a} jumps={[{ from: a, to: result, color: 'red', direction: 'back' }]} showBackward />
-          </div>
-        </div>
-      );
+        ),
+        audioText
+      };
     }
   }
 
@@ -213,7 +235,7 @@ function generateSubtractionVisual(question: Question, mathMatch: RegExpMatchArr
 }
 
 // ===== MULTIPLICATION VISUAL =====
-function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatchArray | null): React.ReactNode {
+function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatchArray | null): VisualResult | null {
   if (mathMatch) {
     const a = parseInt(mathMatch[1]);
     const b = parseInt(mathMatch[3]);
@@ -221,71 +243,76 @@ function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatc
     
     // Limit to reasonable sizes
     if (a <= 6 && b <= 6) {
-      return (
-        <div className="space-y-6">
-          {/* Explanation */}
-          <div className="text-center">
-            <div className="text-xl font-bold text-purple-700 mb-4">
-              {a} × {b} = {a} קבוצות של {b}
+      const audioText = `בואו נבין כפל. ${a} כפול ${b} זה ${a} קבוצות, כל קבוצה עם ${b} פריטים. כשסופרים את כל הפריטים ביחד, מקבלים ${product}. כלומר ${a} כפול ${b} שווה ${product}.`;
+      
+      return {
+        visual: (
+          <div className="space-y-6">
+            {/* Explanation */}
+            <div className="text-center">
+              <div className="text-xl font-bold text-purple-700 mb-4">
+                {a} × {b} = {a} קבוצות של {b}
+              </div>
             </div>
-          </div>
 
-          {/* Groups visualization */}
-          <div className="flex flex-wrap justify-center gap-4">
-            {Array.from({ length: a }).map((_, groupIndex) => (
-              <div 
-                key={`group-${groupIndex}`} 
-                className="rounded-2xl border-4 border-dashed border-purple-300 bg-purple-50 p-3"
-              >
-                <div className="text-center text-sm font-bold text-purple-600 mb-2">
-                  קבוצה {groupIndex + 1}
+            {/* Groups visualization */}
+            <div className="flex flex-wrap justify-center gap-4">
+              {Array.from({ length: a }).map((_, groupIndex) => (
+                <div 
+                  key={`group-${groupIndex}`} 
+                  className="rounded-2xl border-4 border-dashed border-purple-300 bg-purple-50 p-3"
+                >
+                  <div className="text-center text-sm font-bold text-purple-600 mb-2">
+                    קבוצה {groupIndex + 1}
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-1">
+                    {Array.from({ length: b }).map((_, itemIndex) => (
+                      <span key={`item-${groupIndex}-${itemIndex}`} className="text-3xl">
+                        ⭐
+                      </span>
+                    ))}
+                  </div>
+                  <div className="text-center text-sm font-bold text-purple-600 mt-1">
+                    = {b}
+                  </div>
                 </div>
-                <div className="flex flex-wrap justify-center gap-1">
-                  {Array.from({ length: b }).map((_, itemIndex) => (
-                    <span key={`item-${groupIndex}-${itemIndex}`} className="text-3xl">
-                      ⭐
-                    </span>
+              ))}
+            </div>
+
+            {/* Arrow */}
+            <div className="text-center">
+              <span className="text-4xl">⬇️</span>
+            </div>
+
+            {/* Result */}
+            <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
+              <div className="mb-2 text-lg font-bold text-green-800">
+                {a} קבוצות × {b} בכל קבוצה = {product}
+              </div>
+              <div className="text-4xl font-bold text-green-700">
+                {a} × {b} = {product}
+              </div>
+            </div>
+
+            {/* Array/Grid visualization */}
+            <div className="mt-4">
+              <div className="mb-2 text-center text-lg font-bold text-orange-700">או בטבלה:</div>
+              <div className="flex justify-center">
+                <div className="inline-grid gap-2 rounded-xl bg-orange-50 p-4" 
+                     style={{ gridTemplateColumns: `repeat(${b}, minmax(0, 1fr))` }}>
+                  {Array.from({ length: product }).map((_, i) => (
+                    <span key={`grid-${i}`} className="text-2xl">🟡</span>
                   ))}
                 </div>
-                <div className="text-center text-sm font-bold text-purple-600 mt-1">
-                  = {b}
-                </div>
               </div>
-            ))}
-          </div>
-
-          {/* Arrow */}
-          <div className="text-center">
-            <span className="text-4xl">⬇️</span>
-          </div>
-
-          {/* Result */}
-          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-            <div className="mb-2 text-lg font-bold text-green-800">
-              {a} קבוצות × {b} בכל קבוצה = {product}
-            </div>
-            <div className="text-4xl font-bold text-green-700">
-              {a} × {b} = {product}
-            </div>
-          </div>
-
-          {/* Array/Grid visualization */}
-          <div className="mt-4">
-            <div className="mb-2 text-center text-lg font-bold text-orange-700">או בטבלה:</div>
-            <div className="flex justify-center">
-              <div className="inline-grid gap-2 rounded-xl bg-orange-50 p-4" 
-                   style={{ gridTemplateColumns: `repeat(${b}, minmax(0, 1fr))` }}>
-                {Array.from({ length: product }).map((_, i) => (
-                  <span key={`grid-${i}`} className="text-2xl">🟡</span>
-                ))}
+              <div className="text-center mt-2 text-orange-700">
+                {a} שורות × {b} עמודות = {product}
               </div>
             </div>
-            <div className="text-center mt-2 text-orange-700">
-              {a} שורות × {b} עמודות = {product}
-            </div>
           </div>
-        </div>
-      );
+        ),
+        audioText
+      };
     }
   }
   
@@ -293,12 +320,16 @@ function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatc
 }
 
 // ===== GEOMETRY VISUAL =====
-function generateGeometryVisual(question: Question): React.ReactNode {
+function generateGeometryVisual(question: Question): VisualResult | null {
   const { promptHe, answer, subtopic } = question;
   
   // Triangle question
   if (promptHe.includes('משולש')) {
-    return (
+    const sides = typeof answer === 'number' ? answer : 3;
+    const audioText = `בואו נבין מה זה משולש. משולש הוא צורה גיאומטרית עם ${sides} צלעות, ${sides} קודקודים ו-${sides} זוויות. כל משולש תמיד יש לו בדיוק שלוש צלעות.`;
+    
+    return {
+      visual: (
       <div className="space-y-6">
         <div className="text-center">
           <div className="text-xl font-bold text-blue-700 mb-4">משולש</div>
@@ -355,12 +386,18 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </div>
         </div>
       </div>
-    );
+      ),
+      audioText
+    };
   }
 
   // Square question
   if (promptHe.includes('ריבוע')) {
-    return (
+    const sides = typeof answer === 'number' ? answer : 4;
+    const audioText = `בואו נבין מה זה ריבוע. ריבוע הוא צורה גיאומטרית עם ${sides} צלעות שוות, ${sides} קודקודים ו-${sides} זוויות ישרות. כל ריבוע תמיד יש לו בדיוק ארבע צלעות שוות.`;
+    
+    return {
+      visual: (
       <div className="space-y-6">
         <div className="text-center">
           <div className="text-xl font-bold text-purple-700 mb-4">ריבוע</div>
@@ -416,12 +453,17 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </div>
         </div>
       </div>
-    );
+      ),
+      audioText
+    };
   }
 
   // Circle question
   if (promptHe.includes('מעגל') || promptHe.includes('עיגול')) {
-    return (
+    const audioText = `בואו נבין מה זה מעגל. מעגל הוא צורה עגולה וחלקה. למעגל אין צלעות ואין פינות. הוא רק עיגול חלק ועגול.`;
+    
+    return {
+      visual: (
       <div className="space-y-6">
         <div className="text-center">
           <div className="text-xl font-bold text-green-700 mb-4">מעגל / עיגול</div>
@@ -466,12 +508,17 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </div>
         </div>
       </div>
-    );
+      ),
+      audioText
+    };
   }
 
   // Symmetry question
   if (subtopic?.includes('סימטריה') || promptHe.includes('סימטרי')) {
-    return (
+    const audioText = `בואו נבין מה זה סימטריה. צורה סימטרית היא צורה שאם מקפלים אותה על קו הסימטריה, שני הצדדים מתאימים בדיוק אחד לשני. כמו פרפר או לב.`;
+    
+    return {
+      visual: (
       <div className="space-y-6">
         <div className="text-center">
           <div className="text-xl font-bold text-pink-700 mb-4">סימטריה</div>
@@ -506,29 +553,39 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </div>
         </div>
       </div>
-    );
+      ),
+      audioText
+    };
   }
 
   // Generic geometry visual
-  return (
-    <div className="space-y-4 text-center">
-      <div className="text-5xl">📐</div>
-      <div className="text-lg text-slate-600">
-        זכרו: צורות גיאומטריות מוגדרות לפי צלעות, זוויות ותכונות מיוחדות!
+  const audioText = `זכרו: צורות גיאומטריות מוגדרות לפי צלעות, זוויות ותכונות מיוחדות!`;
+  
+  return {
+    visual: (
+      <div className="space-y-4 text-center">
+        <div className="text-5xl">📐</div>
+        <div className="text-lg text-slate-600">
+          זכרו: צורות גיאומטריות מוגדרות לפי צלעות, זוויות ותכונות מיוחדות!
+        </div>
       </div>
-    </div>
-  );
+    ),
+    audioText
+  };
 }
 
 // ===== NUMBERS VISUAL =====
-function generateNumbersVisual(question: Question): React.ReactNode {
+function generateNumbersVisual(question: Question): VisualResult | null {
   const { promptHe, answer, subtopic } = question;
   
   // Counting question
   if (subtopic?.includes('ספירה') || promptHe.includes('ספור') || promptHe.includes('כמה')) {
     const count = typeof answer === 'number' ? answer : 0;
     if (count > 0 && count <= 15) {
-      return (
+      const audioText = `בואו נספור ביחד! אחד, שתיים, שלוש, ארבע, חמש, שש, שבע, שמונה, תשע, עשר. סה״כ יש ${count} פריטים.`;
+      
+      return {
+        visual: (
         <div className="space-y-6">
           <div className="text-center">
             <div className="text-xl font-bold text-blue-700 mb-4">בואו נספור ביחד!</div>
@@ -551,7 +608,9 @@ function generateNumbersVisual(question: Question): React.ReactNode {
             </div>
           </div>
         </div>
-      );
+      ),
+      audioText
+    };
     }
   }
 
@@ -559,7 +618,10 @@ function generateNumbersVisual(question: Question): React.ReactNode {
   if (subtopic?.includes('שכנים') || promptHe.includes('שכן')) {
     const num = parseInt(promptHe.match(/\d+/)?.[0] || '0');
     if (num > 0 && num <= 20) {
-      return (
+      const audioText = `בואו נבין מה זה שכנים על ציר המספרים. המספר ${num} נמצא באמצע. השכן שלו לפני זה ${num - 1}, והשכן שלו אחרי זה ${num + 1}.`;
+      
+      return {
+        visual: (
         <div className="space-y-6">
           <div className="text-center">
             <div className="text-xl font-bold text-purple-700 mb-4">שכנים על ציר המספרים</div>
@@ -593,13 +655,18 @@ function generateNumbersVisual(question: Question): React.ReactNode {
             />
           </div>
         </div>
-      );
+      ),
+      audioText
+    };
     }
   }
 
   // Sequence/Pattern question
   if (subtopic?.includes('דילוגים') || subtopic?.includes('סדרות') || promptHe.includes('השלם')) {
-    return (
+    const audioText = `בואו נבין סדרות ודילוגים. כשמסתכלים על סדרה של מספרים, צריך לחפש את הדפוס. מה ההפרש בין כל שני מספרים? האם הסדרה עולה או יורדת?`;
+    
+    return {
+      visual: (
       <div className="space-y-6">
         <div className="text-center">
           <div className="text-xl font-bold text-indigo-700 mb-4">סדרות ודילוגים</div>
@@ -634,14 +701,16 @@ function generateNumbersVisual(question: Question): React.ReactNode {
           ))}
         </div>
       </div>
-    );
+      ),
+      audioText
+    };
   }
 
   return null;
 }
 
 // ===== EVEN/ODD VISUAL =====
-function generateEvenOddVisual(question: Question): React.ReactNode {
+function generateEvenOddVisual(question: Question): VisualResult | null {
   const { promptHe } = question;
   
   // Extract number from question
@@ -650,8 +719,12 @@ function generateEvenOddVisual(question: Question): React.ReactNode {
 
   if (num !== null && num <= 20) {
     const isEven = num % 2 === 0;
+    const audioText = isEven
+      ? `בואו נבין מה זה מספר זוגי. המספר ${num} הוא מספר זוגי כי אפשר לסדר אותו בזוגות בלי שישאר אחד לבד. כל המספרים הזוגיים הם: אפס, שתיים, ארבע, שש, שמונה, עשר וכן הלאה.`
+      : `בואו נבין מה זה מספר אי-זוגי. המספר ${num} הוא מספר אי-זוגי כי כשמנסים לסדר אותו בזוגות, נשאר אחד לבד. כל המספרים האי-זוגיים הם: אחד, שלוש, חמש, שבע, תשע, אחת עשרה וכן הלאה.`;
     
-    return (
+    return {
+      visual: (
       <div className="space-y-6">
         <div className="text-center">
           <div className="text-xl font-bold text-purple-700 mb-4">
@@ -707,14 +780,16 @@ function generateEvenOddVisual(question: Question): React.ReactNode {
           </ul>
         </div>
       </div>
-    );
+      ),
+      audioText
+    };
   }
 
   return null;
 }
 
 // ===== WORD PROBLEM VISUAL =====
-function generateWordProblemVisual(question: Question, operation: 'addition' | 'subtraction'): React.ReactNode {
+function generateWordProblemVisual(question: Question, operation: 'addition' | 'subtraction'): VisualResult {
   const { promptHe } = question;
   
   // Try to extract context and numbers
@@ -739,7 +814,12 @@ function generateWordProblemVisual(question: Question, operation: 'addition' | '
     }
   }
 
-  return (
+  const audioText = operation === 'addition'
+    ? `זו בעיית חיבור. כשמוסיפים משהו, מחברים את המספרים ביחד.`
+    : `זו בעיית חיסור. כשמורידים משהו או נותנים, מחסרים את המספרים.`;
+
+  return {
+    visual: (
     <div className="space-y-4 text-center">
       <div className="text-5xl">{emoji}</div>
       <div className="rounded-xl bg-blue-50 p-4">
@@ -755,19 +835,26 @@ function generateWordProblemVisual(question: Question, operation: 'addition' | '
         </div>
       </div>
     </div>
-  );
+    ),
+    audioText
+  };
 }
 
 // ===== GENERIC VISUAL =====
-function generateGenericVisual(_question: Question): React.ReactNode {
-  return (
-    <div className="space-y-4 text-center">
-      <div className="text-5xl">💡</div>
-      <div className="text-lg text-slate-600">
-        קראו את השאלה בעיון והשתמשו במה שלמדתם!
+function generateGenericVisual(_question: Question): VisualResult {
+  const audioText = `קראו את השאלה בעיון והשתמשו במה שלמדתם!`;
+  
+  return {
+    visual: (
+      <div className="space-y-4 text-center">
+        <div className="text-5xl">💡</div>
+        <div className="text-lg text-slate-600">
+          קראו את השאלה בעיון והשתמשו במה שלמדתם!
+        </div>
       </div>
-    </div>
-  );
+    ),
+    audioText
+  };
 }
 
 // ===== NUMBER LINE COMPONENT =====
