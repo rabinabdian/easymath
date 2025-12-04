@@ -27,26 +27,43 @@ export function saveProgress(p: StudentProgress): void {
 
 /**
  * Upsert a month badge - either add new or update existing if score is better
+ * Returns a new immutable progress object (does not mutate the original)
  */
 export function upsertMonthBadge(
   progress: StudentProgress,
   month: string,
   scorePercent: number
 ): StudentProgress {
-  const existing = progress.monthBadges.find((b) => b.month === month);
+  const existingIndex = progress.monthBadges.findIndex((b) => b.month === month);
 
-  if (!existing) {
-    // Add new badge
-    progress.monthBadges.push({
-      month,
-      earnedAt: new Date().toISOString(),
-      bestScore: scorePercent,
-    });
-  } else if (scorePercent > existing.bestScore) {
-    // Update existing badge with better score
-    existing.bestScore = scorePercent;
-    existing.earnedAt = new Date().toISOString();
+  if (existingIndex === -1) {
+    // Add new badge - create new array with new badge
+    return {
+      ...progress,
+      monthBadges: [
+        ...progress.monthBadges,
+        {
+          month,
+          earnedAt: new Date().toISOString(),
+          bestScore: scorePercent,
+        },
+      ],
+    };
   }
 
-  return { ...progress, monthBadges: [...progress.monthBadges] };
+  const existing = progress.monthBadges[existingIndex];
+  if (scorePercent > existing.bestScore) {
+    // Update existing badge with better score - create new array with updated badge
+    return {
+      ...progress,
+      monthBadges: progress.monthBadges.map((b, idx) =>
+        idx === existingIndex
+          ? { ...b, bestScore: scorePercent, earnedAt: new Date().toISOString() }
+          : b
+      ),
+    };
+  }
+
+  // No change needed - return original progress
+  return progress;
 }
