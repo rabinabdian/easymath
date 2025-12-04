@@ -87,7 +87,7 @@ function generateAudioTextForQuestion(question: Question): string | null {
     case 'multiplication':
       return generateMultiplicationAudioText(mathMatch);
     case 'geometry':
-      return generateGeometryAudioText(promptHe, answer);
+      return generateGeometryAudioText(promptHe, answer, subtopic);
     case 'numbers':
       return generateNumbersAudioText(promptHe, answer, subtopic);
     case 'evenOdd':
@@ -138,7 +138,7 @@ function generateMultiplicationAudioText(mathMatch: RegExpMatchArray | null): st
   return null;
 }
 
-function generateGeometryAudioText(promptHe: string, answer: number | string | string[]): string | null {
+function generateGeometryAudioText(promptHe: string, answer: number | string | string[], subtopic?: string): string | null {
   if (promptHe.includes('משולש')) {
     return `בואו נלמד על משולש. למשולש יש שלוש צלעות, שלוש פינות שנקראות קודקודים, ושלוש זוויות. זכרו, המספר שלוש מופיע בכל מקום! למשולש יש ${typeof answer === 'number' ? answer : 3} צלעות.`;
   }
@@ -151,7 +151,8 @@ function generateGeometryAudioText(promptHe: string, answer: number | string | s
     return 'בואו נלמד על מעגל. המעגל הוא צורה עגולה וחלקה. אין לו פינות ואין לו צלעות. הוא עגול לגמרי!';
   }
   
-  if (promptHe.includes('סימטרי') || promptHe.includes('סימטריה')) {
+  // Check both subtopic and promptHe for symmetry (matching the visual display logic)
+  if (subtopic?.includes('סימטריה') || promptHe.includes('סימטרי') || promptHe.includes('סימטריה')) {
     return 'סימטריה זה כשצורה נראית אותו דבר משני הצדדים. אם נקפל אותה על קו הסימטריה, שני הצדדים יתאימו בדיוק. כמו פרפר או לב!';
   }
   
