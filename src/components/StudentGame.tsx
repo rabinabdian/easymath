@@ -9,6 +9,7 @@ import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
+import { VersionDisplay } from './VersionDisplay';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -268,7 +269,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     else if (percent >= 50) stars = 2;
 
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 relative">
+        <VersionDisplay className="absolute top-2 left-2 z-10" />
         <div className="mx-auto flex max-w-xl flex-col gap-4 px-4 py-10">
           <div className="rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="mb-2 text-xl font-bold text-slate-900">
@@ -337,7 +339,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     const fullAudioText = `השאלה הייתה: ${questionText}. התשובה הנכונה היא ${answerText}. ${fullExplanation}`;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 relative">
+        <VersionDisplay className="absolute top-2 left-2 z-10" />
         <div className="mx-auto max-w-2xl px-4 py-8">
           {/* Header */}
           <div className="mb-6 text-center">
@@ -426,7 +429,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 relative">
+      <VersionDisplay className="absolute top-2 left-2 z-10" />
       {/* Progressive Hint Display Overlay */}
       {showHint && currentHintText && (
         <HintDisplay

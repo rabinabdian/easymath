@@ -2,6 +2,7 @@
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
+import { VersionDisplay } from './VersionDisplay';
 
 interface IntroScreenProps {
   question: Question;
@@ -26,7 +27,8 @@ export function IntroScreen({ question, onContinue }: IntroScreenProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative">
+      <VersionDisplay className="absolute top-2 left-2 z-10" />
       <div className="mx-auto max-w-2xl px-4 py-8">
         {/* Header */}
         <div className="mb-6 text-center">

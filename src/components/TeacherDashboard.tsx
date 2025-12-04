@@ -23,6 +23,7 @@ import {
 import type { StudentRecord, AvatarType } from '../types/students';
 import { QuestionCard } from './QuestionCard';
 import { avatarEmoji } from '../utils/avatar';
+import { VersionDisplay } from './VersionDisplay';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
   const copy = [...items];
@@ -400,7 +401,8 @@ export default function TeacherDashboard() {
   const activeStudent = students.find((s) => s.profile.id === selectedStudentId);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 relative">
+      <VersionDisplay className="absolute top-2 left-2 z-10" />
       <div className="mx-auto max-w-6xl px-4 py-6 md:py-8">
         <header className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">

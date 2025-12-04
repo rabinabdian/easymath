@@ -1,6 +1,7 @@
 // src/components/YearPlanView.tsx
 import { useNavigate } from 'react-router-dom';
 import type { YearPlan } from '../types/yearPlan';
+import { VersionDisplay } from './VersionDisplay';
 
 interface YearPlanViewProps {
   plan: YearPlan;
@@ -37,7 +38,8 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="min-h-screen bg-slate-50 p-6 relative">
+      <VersionDisplay className="absolute top-2 left-2 z-10" />
       <div className="mx-auto max-w-7xl">
         <header className="mb-6">
           <div className="flex items-center justify-between">

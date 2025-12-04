@@ -15,10 +15,23 @@ import type { SavedExam } from "./utils/examsStorage";
 import StudentGame from "./components/StudentGame";
 import { loadStudentRecords } from "./utils/studentStorage";
 import type { StudentRecord } from "./types/students";
+import { avatarEmoji } from "./utils/avatar";
+import { VersionDisplay } from "./components/VersionDisplay";
+import { useState, useEffect } from "react";
 
 function HomePage() {
   const navigate = useNavigate();
   const { settings } = useChildSettings();
+  const [currentStudent, setCurrentStudent] = useState<StudentRecord | null>(null);
+
+  // Load student data to get avatar/photo
+  useEffect(() => {
+    const students = loadStudentRecords();
+    const student = students.find(
+      (s) => s.profile.name === settings.childName
+    );
+    setCurrentStudent(student || null);
+  }, [settings.childName]);
 
   // Get the currently loaded exam name
   const currentExam = settings.selectedExamId
@@ -28,11 +41,32 @@ function HomePage() {
     ? currentExam.name
     : "ברירת מחדל (ספירה)";
 
+  // Get student image/avatar
+  const studentAvatar = currentStudent?.profile.avatar || 'boy';
+  const studentPhoto = currentStudent?.profile.photoUrl;
+  const avatarEmojiDisplay = avatarEmoji(studentAvatar);
+
   return (
-    <div className="page page-right">
+    <div className="page page-right relative">
+      <VersionDisplay className="absolute top-2 left-2" />
       <h1 className="title">Easymath</h1>
       <p className="subtitle">חשבון פשוט לילדים</p>
-      <p className="subtitle-small">שלום {settings.childName} 😊</p>
+      
+      {/* Student Image/Avatar Display */}
+      <div className="flex flex-col items-center gap-2 mb-4">
+        {studentPhoto ? (
+          <img
+            src={studentPhoto}
+            alt={settings.childName}
+            className="w-24 h-24 rounded-full object-cover border-4 border-blue-300 shadow-lg"
+          />
+        ) : (
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center text-5xl border-4 border-blue-300 shadow-lg">
+            {avatarEmojiDisplay}
+          </div>
+        )}
+        <p className="subtitle-small">שלום {settings.childName} 😊</p>
+      </div>
 
       <div className="buttons">
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -99,7 +133,8 @@ function TutorialExercise({ onDone, onExit }: { onDone: () => void; onExit: () =
   };
 
   return (
-    <div className="page page-right">
+    <div className="page page-right relative">
+      <VersionDisplay className="absolute top-2 left-2" />
       {/* Back to Home Button */}
       <div className="flex items-center gap-3 mb-4">
         <button
@@ -290,7 +325,8 @@ function SessionPage() {
 
   if (feedback === "finished") {
     return (
-      <div className="page page-right">
+      <div className="page page-right relative">
+        <VersionDisplay className="absolute top-2 left-2" />
         <h2 className="title">כל הכבוד {settings.childName}! 🎉</h2>
         <p className="subtitle">
           סיימנו {sessionExercises.length} תרגילים בסשן הזה.
@@ -322,7 +358,8 @@ function SessionPage() {
   };
 
   return (
-    <div className="page page-right">
+    <div className="page page-right relative">
+      <VersionDisplay className="absolute top-2 left-2" />
       {/* Back to Home Button */}
       <div className="flex items-center gap-3 mb-4">
         <button
@@ -467,7 +504,8 @@ function ParentPage() {
   };
 
   return (
-    <div className="page page-right">
+    <div className="page page-right relative">
+      <VersionDisplay className="absolute top-2 left-2" />
       {/* Back to Home Button */}
       <div className="flex items-center gap-3 mb-4">
         <button
