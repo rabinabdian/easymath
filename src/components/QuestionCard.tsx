@@ -34,6 +34,17 @@ export function QuestionCard({
   const assetUrl = getAssetUrl(question.assetId);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
+  // Sequence questions (דילוגים/סדרות) need to show the text even in reading mode
+  // because the student needs to see the sequence pattern
+  const isSequenceQuestion = question.subtopic?.includes('דילוגים') || 
+    question.subtopic?.includes('סדרות') || 
+    getQuestionPrompt(question, locale).includes('השלם');
+  
+  // Show text for sequence questions even in reading mode
+  const shouldShowText = !question.isReadingExercise || isSequenceQuestion;
+  // Show speaker button for reading exercises (and sequence questions get both)
+  const shouldShowSpeaker = question.isReadingExercise;
+
   const handleSpeak = () => {
     if (isSpeaking) return;
     setIsSpeaking(true);
@@ -70,8 +81,8 @@ export function QuestionCard({
 
       {/* Question Text */}
       <div className="flex flex-1 flex-col gap-3">
-        {question.isReadingExercise ? (
-          // Reading Exercise - Show speaker icon instead of text
+        {shouldShowSpeaker && (
+          // Reading Exercise - Show speaker icon
           <div className="flex items-center justify-center gap-3 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
             <button
               type="button"
@@ -86,8 +97,10 @@ export function QuestionCard({
               </span>
             </button>
           </div>
-        ) : (
-          // Regular question - Show text
+        )}
+        
+        {shouldShowText && (
+          // Show question text (always for regular questions, and for sequence questions in reading mode)
           <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
             {getQuestionPrompt(question, locale)}
           </p>
