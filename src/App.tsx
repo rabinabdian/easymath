@@ -103,7 +103,32 @@ function VersionBadge() {
 
 function HomePage() {
   const navigate = useNavigate();
-  const { settings } = useChildSettings();
+  const { settings, setSettings } = useChildSettings();
+
+  // Sync student photo from student records if a student is selected
+  useEffect(() => {
+    if (!settings.studentId) return;
+
+    const students = loadStudentRecords();
+    const currentStudent = students.find(s => s.profile.id === settings.studentId);
+    
+    // If student found and photo URL has changed, update settings
+    if (currentStudent) {
+      const photoChanged = currentStudent.profile.photoUrl !== settings.studentPhotoUrl;
+      const avatarChanged = currentStudent.profile.avatar !== settings.studentAvatar;
+      const colorChanged = currentStudent.profile.color !== settings.studentColor;
+      
+      if (photoChanged || avatarChanged || colorChanged) {
+        setSettings({
+          ...settings,
+          studentPhotoUrl: currentStudent.profile.photoUrl,
+          studentAvatar: currentStudent.profile.avatar,
+          studentColor: currentStudent.profile.color,
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings.studentId, settings.studentPhotoUrl, settings.studentAvatar, settings.studentColor]);
 
   // Get the currently loaded exam name
   const currentExam = settings.selectedExamId
