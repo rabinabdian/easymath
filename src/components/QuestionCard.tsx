@@ -1,11 +1,10 @@
 // src/components/QuestionCard.tsx
-import { useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getAssetUrl } from '../utils/assets';
-import { speak } from '../utils/speech';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
+import { InlineSpeaker, SpeakerButton } from './SpeakerButton';
 
 interface QuestionCardProps {
   question: Question;
@@ -32,21 +31,8 @@ export function QuestionCard({
 }: QuestionCardProps) {
   const { locale } = useI18n();
   const assetUrl = getAssetUrl(question.assetId);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const questionText = getQuestionPrompt(question, locale);
-
-  const handleSpeak = () => {
-    if (isSpeaking) return;
-    setIsSpeaking(true);
-
-    const textToSpeak = getQuestionPrompt(question, locale);
-    speak(textToSpeak);
-
-    // Reset after 3 seconds (approximate speech duration)
-    setTimeout(() => {
-      setIsSpeaking(false);
-    }, 3000);
-  };
+  const speakerLabel = locale === 'he' ? 'הקרא את השאלה' : 'Read the question';
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
@@ -74,27 +60,24 @@ export function QuestionCard({
         {question.isReadingExercise ? (
           // Reading Exercise - Show speaker icon with supporting text
           <div className="flex flex-col items-center gap-4 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
-            <button
-              type="button"
-              onClick={handleSpeak}
-              disabled={isSpeaking}
-              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white shadow-sm hover:shadow-md transition-all disabled:opacity-50"
-              aria-label="הקרא את השאלה"
-            >
-              <span className="text-5xl">🔊</span>
-              <span className="text-sm font-medium text-slate-700">
-                {isSpeaking ? 'מקריא...' : 'לחץ לשמיעה'}
-              </span>
-            </button>
+            <SpeakerButton
+              text={questionText}
+              size="large"
+              variant="primary"
+              label={speakerLabel}
+            />
             <p className="text-lg font-semibold text-slate-900 text-center whitespace-pre-line">
               {questionText}
             </p>
           </div>
         ) : (
           // Regular question - Show text
-          <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
-            {questionText}
-          </p>
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-lg font-semibold text-slate-900 whitespace-pre-line text-right flex-1">
+              {questionText}
+            </p>
+            <InlineSpeaker text={questionText} className="shrink-0" />
+          </div>
         )}
 
         {/* Multiple Choice Options */}
