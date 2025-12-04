@@ -1,6 +1,7 @@
 // src/components/YearPlanView.tsx
 import { useNavigate } from 'react-router-dom';
 import type { YearPlan } from '../types/yearPlan';
+import { APP_VERSION } from '../App';
 
 interface YearPlanViewProps {
   plan: YearPlan;
@@ -110,6 +111,23 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
             </section>
           ))}
         </div>
+      </div>
+
+      {/* Version Badge */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: "16px",
+          left: "16px",
+          fontSize: "0.75rem",
+          color: "#94a3b8",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          padding: "4px 10px",
+          borderRadius: "12px",
+          backdropFilter: "blur(4px)",
+        }}
+      >
+        גרסה {APP_VERSION}
       </div>
     </div>
   );

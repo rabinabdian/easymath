@@ -1,5 +1,6 @@
 // src/context/ChildSettingsContext.tsx
 import { createContext, useContext, useState, useMemo, useCallback, type ReactNode } from "react";
+import type { AvatarType } from "../types/students";
 
 export type ChildSettings = {
   childName: string;
@@ -9,6 +10,11 @@ export type ChildSettings = {
   animationsEnabled: boolean;
   soundsEnabled: boolean;
   selectedExamId?: string; // מזהה מבחן שנבחר ע"י הורה
+  // מידע על התלמיד הנבחר
+  studentId?: string; // מזהה התלמיד
+  studentAvatar?: AvatarType; // סוג האווטר
+  studentColor?: string; // צבע מותאם אישית
+  studentPhotoUrl?: string; // URL לתמונת התלמיד (base64 או URL)
 };
 
 const defaultSettings: ChildSettings = {

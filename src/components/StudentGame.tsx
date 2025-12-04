@@ -9,6 +9,7 @@ import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
+import { APP_VERSION } from '../App';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -303,6 +304,23 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             {t('student.finished.backButton')}
           </button>
         </div>
+
+        {/* Version Badge */}
+        <div
+          style={{
+            position: "fixed",
+            bottom: "16px",
+            left: "16px",
+            fontSize: "0.75rem",
+            color: "#94a3b8",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            padding: "4px 10px",
+            borderRadius: "12px",
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          גרסה {APP_VERSION}
+        </div>
       </div>
     );
   }
@@ -536,6 +554,23 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             question={current}
           />
         </div>
+      </div>
+
+      {/* Version Badge */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: "16px",
+          left: "16px",
+          fontSize: "0.75rem",
+          color: "#94a3b8",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          padding: "4px 10px",
+          borderRadius: "12px",
+          backdropFilter: "blur(4px)",
+        }}
+      >
+        גרסה {APP_VERSION}
       </div>
     </div>
   );
