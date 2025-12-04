@@ -8,6 +8,7 @@ import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
+import { HintDisplay } from './HintDisplay';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -44,8 +45,12 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [showIntro, setShowIntro] = useState(true); // Show intro before each question
   const [attempts, setAttempts] = useState(0); // Track attempts for current question
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
+  const [showHint, setShowHint] = useState<1 | 2 | null>(null); // Show progressive hints (1 or 2)
 
   const current = questions[index];
+  const totalQuestions = questions.length;
+  const progress = totalQuestions > 0 ? (index / totalQuestions) * 100 : 0;
+  
   const questionPrompt = current ? getQuestionPrompt(current, locale) : '';
   const understandingHint = current
     ? buildUnderstandingNarration(current, locale, { includeAnswer: false })
@@ -54,51 +59,64 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     ? buildUnderstandingNarration(current, locale, { includeAnswer: true })
     : '';
 
-  // Initialize timer and reset state for each new question
-  useEffect(() => {
-    if (!current || finished) return;
-    setTimeLeft(TIME_PER_QUESTION);
-    setAttempts(0); // Reset attempts for new question
-    setShowIntro(true); // Show intro for new question
-    setShowAutoSolve(false); // Reset auto-solve
-  }, [index, finished, !!current]);
-
-  // Timer countdown (only when not showing intro or auto-solve)
-  useEffect(() => {
-    if (!current || finished || showIntro || showAutoSolve) return;
-    if (timeLeft <= 0) {
-      // Time's up - count as wrong attempt
-      handleWrong(t('student.timeUp'));
-      return;
+  // Helper function to get hint text based on attempt and locale
+  function getHintText(hintNumber: 1 | 2): string | undefined {
+    if (!current) return undefined;
+    
+    if (hintNumber === 1) {
+      return locale === 'he' ? current.hint1He : current.hint1En;
+    } else {
+      return locale === 'he' ? current.hint2He : current.hint2En;
     }
+  }
 
-    const id = setTimeout(() => {
-      setTimeLeft((t) => t - 1);
-    }, 1000);
-
-    return () => clearTimeout(id);
-  }, [timeLeft, current, finished, showIntro, showAutoSolve]);
-
-  // Call onFinished when game is completed successfully
-  useEffect(() => {
-    if (!finished || !onFinished) return;
-
-    onFinished({
-      score,
-      total: totalQuestions,
-      month: context?.month,
-      weekIndex: context?.weekIndex,
-    });
-  }, [finished, onFinished, score, context]);
-
-  const totalQuestions = questions.length;
-  const progress = totalQuestions > 0 ? (index / totalQuestions) * 100 : 0;
+  // Helper function to generate default hint based on question type
+  function generateDefaultHint(hintNumber: 1 | 2): string {
+    if (!current) return '';
+    
+    const answer = current.answer;
+    const topic = current.topic;
+    
+    if (hintNumber === 1) {
+      // רמז ראשון - עדין ומעודד
+      switch (topic) {
+        case 'numbers':
+          return 'נסה לספור שוב לאט לאט...\nכל אחד בנפרד! 👆';
+        case 'addition':
+          return 'חיבור = לחבר ביחד! ➕\nנסה לספור את כל מה שיש...';
+        case 'subtraction':
+          return 'חיסור = להוציא! ➖\nתחשוב: כמה נשאר אחרי שמוציאים?';
+        case 'multiplication':
+          return 'כפל = קבוצות של אותו דבר! ✖️\nכמה יש בכל קבוצה?';
+        case 'geometry':
+          return 'הסתכל טוב על הצורות...\nספור רק את מה שביקשו! 🔍';
+        default:
+          return 'קרא שוב את השאלה לאט...\nאתה יכול! 💪';
+      }
+    } else {
+      // רמז שני - יותר ישיר
+      switch (topic) {
+        case 'numbers':
+          return `הגענו ל... כמעט שם!\nהתשובה קרובה ל-${Number(answer) - 1} או ${Number(answer) + 1}...`;
+        case 'addition':
+          return `בוא נספור ביחד:\nקודם את הראשון, ואז מוסיפים את השני!`;
+        case 'subtraction':
+          return `התחל מהמספר הגדול...\nואז תסתכל כמה צריך להוריד!`;
+        case 'multiplication':
+          return `תחשוב על זה כך:\nכמה פעמים יש את אותו הדבר?`;
+        case 'geometry':
+          return `תראה כל צורה...\nוספור רק את הצורה הנכונה!`;
+        default:
+          return `התשובה קרובה מאוד!\nתסתכל שוב על מה שרואים... 🔍`;
+      }
+    }
+  }
 
   function handleWrong(customMessage?: string) {
     const newAttempts = attempts + 1;
     setAttempts(newAttempts);
 
-    // Check if reached max attempts - trigger auto-solve
+    // Check if reached max attempts - trigger auto-solve with full explanation
     if (newAttempts >= MAX_ATTEMPTS_PER_QUESTION) {
       setFeedback('אופס! בוא נראה איך פותרים את זה ביחד 🤔');
       setTimeout(() => {
@@ -108,21 +126,41 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
       return;
     }
 
-    // Show encouraging feedback based on attempt number
+    // Show progressive hints based on attempt number
+    if (newAttempts === 1 || newAttempts === 2) {
+      const hintNumber = newAttempts as 1 | 2;
+      const hintText = getHintText(hintNumber);
+      
+      // If there's a custom hint, show the hint display popup
+      if (hintText || current) {
+        setFeedback(customMessage ?? (newAttempts === 1 
+          ? 'לא נכון... הנה רמז! 💡' 
+          : 'עדיין לא... הנה עוד רמז! 🔍'));
+        setTimeout(() => {
+          setFeedback(null);
+          setShowHint(hintNumber);
+        }, 1000);
+        return;
+      }
+    }
+
+    // Fallback: Show encouraging feedback without hint popup
     const encouragement =
       newAttempts === 1 ? 'נסה שוב! אתה יכול! 💪' :
       newAttempts === 2 ? 'כמעט! עוד ניסיון אחד! 🌟' :
       'לא נורא, בוא ננסה שוב';
 
-    setFeedback(
-      customMessage ?? `${encouragement}\nהתשובה הנכונה היא: ${String(current?.answer ?? '')}`
-    );
+    setFeedback(customMessage ?? encouragement);
 
-    // Don't lose a life on wrong attempt - only after auto-solve
     setTimeout(() => {
       setFeedback(null);
       setInput('');
     }, 2000);
+  }
+
+  function handleHintDismiss() {
+    setShowHint(null);
+    setInput('');
   }
 
   function handleCorrect() {
@@ -184,6 +222,44 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     checkAnswer(val);
   };
 
+  // Initialize timer and reset state for each new question
+  useEffect(() => {
+    if (!current || finished) return;
+    setTimeLeft(TIME_PER_QUESTION);
+    setAttempts(0); // Reset attempts for new question
+    setShowIntro(true); // Show intro for new question
+    setShowAutoSolve(false); // Reset auto-solve
+    setShowHint(null); // Reset hint display
+  }, [index, finished, current]);
+
+  // Timer countdown (only when not showing intro, auto-solve, or hints)
+  useEffect(() => {
+    if (!current || finished || showIntro || showAutoSolve || showHint) return;
+    if (timeLeft <= 0) {
+      // Time's up - count as wrong attempt
+      handleWrong(t('student.timeUp'));
+      return;
+    }
+
+    const id = setTimeout(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(id);
+  }, [timeLeft, current, finished, showIntro, showAutoSolve, showHint, t]);
+
+  // Call onFinished when game is completed successfully
+  useEffect(() => {
+    if (!finished || !onFinished) return;
+
+    onFinished({
+      score,
+      total: totalQuestions,
+      month: context?.month,
+      weekIndex: context?.weekIndex,
+    });
+  }, [finished, onFinished, score, totalQuestions, context]);
+
   // Finished successfully screen
   if (finished) {
     const percent = Math.round((score / totalQuestions) * 100);
@@ -240,6 +316,15 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   if (showIntro && (current.introExplanationHe || current.introExampleHe)) {
     return <IntroScreen question={current} onContinue={() => setShowIntro(false)} />;
   }
+
+  // Show progressive hint after failed attempt (1 or 2)
+  const currentHintText = showHint 
+    ? (getHintText(showHint) || generateDefaultHint(showHint))
+    : undefined;
+  
+  const currentHintVisualAid = showHint && current
+    ? (showHint === 1 ? current.hint1VisualAid : current.hint2VisualAid)
+    : undefined;
 
   // Show auto-solve explanation after 3 failed attempts
   if (showAutoSolve) {
@@ -342,6 +427,16 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {/* Progressive Hint Display Overlay */}
+      {showHint && currentHintText && (
+        <HintDisplay
+          hintNumber={showHint}
+          hintText={currentHintText}
+          visualAid={currentHintVisualAid}
+          onDismiss={handleHintDismiss}
+        />
+      )}
+      
       <div className="mx-auto max-w-xl px-4 py-6 md:py-8">
         {/* Top bar: Exit, Hearts, Timer */}
         <div className="mb-4 flex items-center justify-between">

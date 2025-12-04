@@ -37,6 +37,25 @@ export const interactiveExercises: Question[] = [
       }
     ],
 
+    // Progressive hints - רמזים הדרגתיים
+    hint1He: 'נסה לספור כל תפוח בנפרד... 👆\nהצבע על כל תפוח וספור: 1, 2...',
+    hint1En: 'Try counting each apple separately... 👆\nPoint at each apple and count: 1, 2...',
+    hint1VisualAid: {
+      type: 'emoji',
+      value: '👆',
+      count: 1,
+      size: 'large'
+    },
+    
+    hint2He: 'יופי! יש יותר מ-2 תפוחים...\nואין הרבה יותר מ-3!\nספור שוב: 🍎 אחד... 🍎 שניים... 🍎 ...',
+    hint2En: 'Great! There are more than 2 apples...\nAnd not much more than 3!\nCount again: 🍎 one... 🍎 two... 🍎 ...',
+    hint2VisualAid: {
+      type: 'emoji',
+      value: '🍎',
+      count: 3,
+      size: 'large'
+    },
+
     // Auto-solve explanation
     autoSolveExplanationHe: 'בוא נספור ביחד!\n\n🍎 ← זה תפוח אחד (1)\n🍎 ← עוד תפוח אחד (2)\n🍎 ← ועוד תפוח אחד (3)\n\nסך הכל יש לנו 3 תפוחים!',
     autoSolveExplanationEn: "Let's count together!\n\n🍎 ← This is one apple (1)\n🍎 ← Another apple (2)\n🍎 ← And one more apple (3)\n\nIn total we have 3 apples!",
@@ -71,6 +90,25 @@ export const interactiveExercises: Question[] = [
         size: 'large'
       }
     ],
+
+    // Progressive hints
+    hint1He: 'ספור לאט לאט... ⭐\nאל תמהר! כל כוכב שווה 1.',
+    hint1En: 'Count slowly... ⭐\nDon\'t rush! Each star is worth 1.',
+    hint1VisualAid: {
+      type: 'icon',
+      value: 'star',
+      count: 3,
+      size: 'medium'
+    },
+    
+    hint2He: 'יש יותר מ-4 כוכבים! ⭐⭐⭐⭐⭐\nספור שוב מההתחלה:\n1... 2... 3... 4... ועוד אחד!',
+    hint2En: 'There are more than 4 stars! ⭐⭐⭐⭐⭐\nCount again from the start:\n1... 2... 3... 4... and one more!',
+    hint2VisualAid: {
+      type: 'icon',
+      value: 'star',
+      count: 5,
+      size: 'large'
+    },
 
     autoSolveExplanationHe: 'בוא נספור את הכוכבים ביחד!\n\n⭐ = 1\n⭐⭐ = 2\n⭐⭐⭐ = 3\n⭐⭐⭐⭐ = 4\n⭐⭐⭐⭐⭐ = 5\n\nיש לנו 5 כוכבים יפים!',
     autoSolveExplanationEn: "Let's count the stars together!\n\n⭐ = 1\n⭐⭐ = 2\n⭐⭐⭐ = 3\n⭐⭐⭐⭐ = 4\n⭐⭐⭐⭐⭐ = 5\n\nWe have 5 beautiful stars!",
@@ -117,6 +155,25 @@ export const interactiveExercises: Question[] = [
         size: 'large'
       }
     ],
+
+    // Progressive hints
+    hint1He: 'חיבור = לחבר ביחד! ➕\nיש לך 2 פרחים... ואז מוסיפים עוד 1...\nכמה זה ביחד?',
+    hint1En: 'Addition = putting together! ➕\nYou have 2 flowers... then add 1 more...\nHow many is that together?',
+    hint1VisualAid: {
+      type: 'emoji',
+      value: '➕',
+      count: 1,
+      size: 'large'
+    },
+    
+    hint2He: 'בוא נספור ביחד:\n🌸🌸 = 2 פרחים\nמוסיפים עוד 🌸 = עוד 1\n\n2 ועוד 1 זה... יותר מ-2!',
+    hint2En: 'Let\'s count together:\n🌸🌸 = 2 flowers\nAdding 🌸 = 1 more\n\n2 plus 1 is... more than 2!',
+    hint2VisualAid: {
+      type: 'icon',
+      value: 'flower',
+      count: 3,
+      size: 'large'
+    },
 
     autoSolveExplanationHe: 'בוא נבין ביחד!\n\nהיה לי בהתחלה: 🌸🌸 (2 פרחים)\nקיבלתי עוד: 🌸 (1 פרח)\n\nעכשיו יש לי: 🌸🌸🌸 (3 פרחים)\n\n2 + 1 = 3',
     autoSolveExplanationEn: "Let's understand together!\n\nI had at start: 🌸🌸 (2 flowers)\nI got more: 🌸 (1 flower)\n\nNow I have: 🌸🌸🌸 (3 flowers)\n\n2 + 1 = 3",
@@ -199,6 +256,25 @@ export const interactiveExercises: Question[] = [
         size: 'large'
       }
     ],
+
+    // Progressive hints
+    hint1He: 'חיסור = להוציא! ➖\nאם היו לך 4 לבבות... ונתת 1 לחבר...\nכמה נשאר לך?',
+    hint1En: 'Subtraction = taking away! ➖\nIf you had 4 hearts... and gave 1 to a friend...\nHow many do you have left?',
+    hint1VisualAid: {
+      type: 'emoji',
+      value: '➖',
+      count: 1,
+      size: 'large'
+    },
+    
+    hint2He: 'בוא נחשוב:\n❤️❤️❤️❤️ = 4 לבבות\nנתת ❤️ = הלך 1\n\nעכשיו נשארו: ❤️❤️❤️\nספור כמה!',
+    hint2En: 'Let\'s think:\n❤️❤️❤️❤️ = 4 hearts\nYou gave ❤️ = 1 went away\n\nNow left: ❤️❤️❤️\nCount them!',
+    hint2VisualAid: {
+      type: 'icon',
+      value: 'heart',
+      count: 3,
+      size: 'large'
+    },
 
     autoSolveExplanationHe: 'בוא נבין ביחד!\n\nהיו לי בהתחלה: ❤️❤️❤️❤️ (4 לבבות)\nנתתי: ❤️ (1 לב לחבר שלי)\n\nנשארו לי: ❤️❤️❤️ (3 לבבות)\n\n4 - 1 = 3',
     autoSolveExplanationEn: "Let's understand together!\n\nI had at start: ❤️❤️❤️❤️ (4 hearts)\nI gave: ❤️ (1 heart to my friend)\n\nI have left: ❤️❤️❤️ (3 hearts)\n\n4 - 1 = 3",
