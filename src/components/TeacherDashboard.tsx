@@ -370,13 +370,13 @@ export default function TeacherDashboard() {
     const activeStudent = students.find((s) => s.profile.id === selectedStudentId);
 
     const handleFinished = (result: GameResult) => {
-      if (!activeStudent || !result.month) return;
+      if (!selectedStudentId || !result.month) return;
       const percent = Math.round((result.score / result.total) * 100);
 
       // Award badge if score is 60% or higher
       if (percent >= 60) {
         setStudents((prev) =>
-          updateStudentProgress(prev, activeStudent.profile.id, (prevProg) =>
+          updateStudentProgress(prev, selectedStudentId, (prevProg) =>
             upsertMonthBadge(prevProg, result.month!, percent)
           )
         );
@@ -397,7 +397,10 @@ export default function TeacherDashboard() {
     );
   }
 
-  const activeStudent = students.find((s) => s.profile.id === selectedStudentId);
+  const activeStudent = useMemo(
+    () => students.find((s) => s.profile.id === selectedStudentId),
+    [students, selectedStudentId]
+  );
 
   return (
     <div className="min-h-screen bg-slate-50">
