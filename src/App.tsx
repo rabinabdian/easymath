@@ -1,6 +1,6 @@
 // src/App.tsx
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { FormEvent } from "react";
 import { countTo5Exercises } from "./data/countTo5";
 import type { CountExercise } from "./data/countTo5";
@@ -24,11 +24,25 @@ export const APP_VERSION = "1.0.0";
  * StudentAvatar - מציג תמונה או אווטר של התלמיד
  */
 function StudentAvatar({ settings }: { settings: ChildSettings }) {
-  const avatarDisplay = settings.studentAvatar ? avatarEmoji(settings.studentAvatar) : "🙂";
-  const borderColor = settings.studentColor || "#3b82f6";
+  // אם התלמיד מגיע מרשימת המורה – נעדיף את פרטי הפרופיל העדכניים מהאחסון
+  const linkedStudent = useMemo(() => {
+    if (!settings.studentId) return undefined;
+    const records = loadStudentRecords();
+    return records.find((rec) => rec.profile.id === settings.studentId);
+  }, [settings.studentId]);
+
+  const avatarDisplay = linkedStudent
+    ? avatarEmoji(linkedStudent.profile.avatar)
+    : settings.studentAvatar
+    ? avatarEmoji(settings.studentAvatar)
+    : "🙂";
+  const borderColor =
+    linkedStudent?.profile.color || settings.studentColor || "#3b82f6";
+  const photoUrl = linkedStudent?.profile.photoUrl || settings.studentPhotoUrl;
+  const studentName = linkedStudent?.profile.name || settings.childName;
 
   // אם יש תמונה - מציגים אותה
-  if (settings.studentPhotoUrl) {
+  if (photoUrl) {
     return (
       <div
         className="student-avatar-container"
@@ -43,8 +57,8 @@ function StudentAvatar({ settings }: { settings: ChildSettings }) {
         }}
       >
         <img
-          src={settings.studentPhotoUrl}
-          alt={`תמונה של ${settings.childName}`}
+          src={photoUrl}
+          alt={`תמונה של ${studentName}`}
           style={{
             width: "100%",
             height: "100%",
