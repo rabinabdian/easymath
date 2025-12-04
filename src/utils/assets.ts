@@ -9,5 +9,18 @@
  */
 export function getAssetUrl(assetId?: string | null): string | null {
   if (!assetId) return null;
-  return `/assets/${assetId}.png`;
+
+  // Support absolute URLs (e.g. https://example.com/image.png)
+  if (assetId.startsWith('http://') || assetId.startsWith('https://')) {
+    return assetId;
+  }
+
+  // Allow callers to specify an explicit file extension (like ".svg")
+  const hasExtension = /\.[a-zA-Z0-9]+$/.test(assetId);
+  const normalizedPath = hasExtension ? assetId : `${assetId}.png`;
+
+  // Ensure exactly one leading slash
+  return normalizedPath.startsWith('/')
+    ? normalizedPath
+    : `/assets/${normalizedPath}`;
 }

@@ -1,0 +1,26 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Triangle with three sides labeled">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff6e6" />
+      <stop offset="100%" stop-color="#ffe3c9" />
+    </linearGradient>
+    <linearGradient id="triangle" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fcd34d" />
+      <stop offset="100%" stop-color="#f97316" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="320" rx="32" fill="url(#bg)" />
+  <g transform="translate(20,20)">
+    <polygon points="190 20 20 240 340 240" fill="url(#triangle)" stroke="#ea580c" stroke-width="6" stroke-linejoin="round" />
+
+    <circle cx="190" cy="20" r="10" fill="#fff" stroke="#ea580c" stroke-width="4" />
+    <circle cx="20" cy="240" r="10" fill="#fff" stroke="#ea580c" stroke-width="4" />
+    <circle cx="340" cy="240" r="10" fill="#fff" stroke="#ea580c" stroke-width="4" />
+
+    <text x="80" y="180" font-size="28" font-family="Heebo, 'Assistant', Arial" fill="#1f2937" transform="rotate(-55 80 180)">Ê‹‚ 1</text>
+    <text x="270" y="180" font-size="28" font-family="Heebo, 'Assistant', Arial" fill="#1f2937" transform="rotate(55 270 180)">Ê‹‚ 2</text>
+    <text x="150" y="270" font-size="28" font-family="Heebo, 'Assistant', Arial" fill="#1f2937">Ê‹‚ 3</text>
+
+    <text x="190" y="300" text-anchor="middle" font-size="36" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">‹ﬁÈ’‹È ŸÈ 3 Ê‹‚’Í</text>
+  </g>
+</svg>

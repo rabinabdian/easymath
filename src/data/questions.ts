@@ -1189,6 +1189,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה צלעות יש למשולש?',
     promptEn: 'How many צלעות יש למשולש?',
     answer: 3,
+    explanationHe: 'משולש בנוי משלושה קווים ישרים שנפגשים ומסגירים שטח. לכל קו כזה קוראים צלע ולכן יש בדיוק 3 צלעות.',
+    explanationEn: 'A triangle is made from three straight segments that meet and close a shape. Each segment is a side, so there are exactly 3 sides.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/triangle_sides.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'עקוב עם האצבע אחרי צורת המשולש: יוצאים מנקודה אחת, עוברים על צלע ראשונה, ממשיכים לצלע השנייה ואז לצלע השלישית עד שחוזרים להתחלה. לכן יש 3 צלעות.',
+    autoSolveExplanationEn: 'Trace the triangle with your finger: start at one corner, walk along the first side, then the second, and the third brings you back to the start. That means there are 3 sides.',
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/triangle_sides.svg',
+      size: 'large',
+    },
   },
   {
     id: 'geo_shapes_004',
