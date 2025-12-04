@@ -91,10 +91,27 @@ export function QuestionCard({
             </p>
           </div>
         ) : (
-          // Regular question - Show text
-          <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
-            {questionText}
-          </p>
+          // Regular question - Show text with speaker button
+          <div className="flex items-start gap-3 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
+            <p className="flex-1 text-lg font-semibold text-slate-900 whitespace-pre-line">
+              {questionText}
+            </p>
+            <button
+              type="button"
+              onClick={handleSpeak}
+              disabled={isSpeaking}
+              className="flex-shrink-0 flex flex-col items-center gap-1 p-2 rounded-xl bg-white shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+              aria-label="הקרא את השאלה"
+              title={isSpeaking ? 'מקריא...' : 'לחץ לשמיעה'}
+            >
+              <span className={`text-3xl transition-transform ${isSpeaking ? 'animate-bounce' : ''}`}>
+                {isSpeaking ? '🔊' : '🔈'}
+              </span>
+              {isSpeaking && (
+                <span className="text-xs font-medium text-slate-600">מקריא...</span>
+              )}
+            </button>
+          </div>
         )}
 
         {/* Multiple Choice Options */}
