@@ -231,9 +231,13 @@ export default function TeacherDashboard() {
 
     const chosen = getRandomSubset(filtered, count);
 
-    // If reading mode is enabled, mark all questions as reading exercises
+    // If reading mode is enabled, mark questions as reading exercises
+    // EXCEPT for sequence questions (דילוגים/סדרות) which need to show the numbers
     const finalQuestions = isReadingMode
-      ? chosen.map(q => ({ ...q, isReadingExercise: true }))
+      ? chosen.map(q => {
+          const isSequenceQuestion = q.subtopic?.includes('דילוג') || q.subtopic?.includes('סדר');
+          return isSequenceQuestion ? q : { ...q, isReadingExercise: true };
+        })
       : chosen;
 
     setGenerated(finalQuestions);

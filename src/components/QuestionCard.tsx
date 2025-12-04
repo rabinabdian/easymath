@@ -70,8 +70,9 @@ export function QuestionCard({
 
       {/* Question Text */}
       <div className="flex flex-1 flex-col gap-3">
-        {question.isReadingExercise ? (
+        {question.isReadingExercise && !question.subtopic?.includes('דילוג') && !question.subtopic?.includes('סדר') ? (
           // Reading Exercise - Show speaker icon instead of text
+          // BUT: Always show text for sequences (דילוגים/סדרות) because students need to see the numbers
           <div className="flex items-center justify-center gap-3 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
             <button
               type="button"
