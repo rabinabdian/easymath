@@ -1,5 +1,6 @@
 // src/components/ExplanationVisual.tsx
 import type { Question } from '../types/questions';
+import { InlineSpeaker } from './SpeakerButton';
 
 interface ExplanationVisualProps {
   question: Question;
@@ -18,6 +19,7 @@ interface ExplanationVisualProps {
  * - Numbers: Counting helpers
  */
 export function ExplanationVisual({ question, className = '' }: ExplanationVisualProps) {
+  const audioDescription = generateVisualAudioDescription(question);
   const visual = generateVisualForQuestion(question);
   
   if (!visual) {
@@ -26,9 +28,14 @@ export function ExplanationVisual({ question, className = '' }: ExplanationVisua
 
   return (
     <div className={`rounded-3xl bg-gradient-to-br from-yellow-50 to-amber-50 p-6 shadow-lg border-2 border-yellow-200 ${className}`}>
-      <div className="mb-4 flex items-center gap-3">
-        <span className="text-3xl">🎨</span>
-        <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">🎨</span>
+          <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
+        </div>
+        {audioDescription && (
+          <InlineSpeaker text={audioDescription} className="self-start sm:self-auto" />
+        )}
       </div>
       
       <div className="rounded-2xl bg-white p-6 shadow-sm">
@@ -59,6 +66,80 @@ function generateVisualForQuestion(question: Question): React.ReactNode {
       return generateEvenOddVisual(question);
     default:
       return generateGenericVisual(question);
+  }
+}
+
+function generateVisualAudioDescription(question: Question): string {
+  const { topic, promptHe, explanationHe, explanationEn, answer, subtopic } = question;
+  const mathMatch = promptHe.match(/(\d+)\s*([+\-×x*])\s*(\d+)/);
+  const fallback = explanationHe || explanationEn || promptHe;
+
+  switch (topic) {
+    case 'addition':
+      if (mathMatch) {
+        const a = parseInt(mathMatch[1]);
+        const b = parseInt(mathMatch[3]);
+        const sum = a + b;
+        return `בואו נראה יחד את התרגיל ${a} ועוד ${b}. נספור ${a} כדורים כחולים ונוסיף ${b} אדומים, ונגלה שביחד יש ${sum}.`;
+      }
+      return fallback;
+    case 'subtraction':
+      if (mathMatch) {
+        const a = parseInt(mathMatch[1]);
+        const b = parseInt(mathMatch[3]);
+        const result = a - b;
+        return `התחלנו עם ${a} פריטים והורדנו ${b}. אחרי ההורדה נשארו ${result}.`;
+      }
+      return fallback;
+    case 'multiplication':
+      if (mathMatch) {
+        const a = parseInt(mathMatch[1]);
+        const b = parseInt(mathMatch[3]);
+        const product = a * b;
+        return `${a} כפול ${b} אומר שיש לנו ${a} קבוצות של ${b} כוכבים. נספור את כולם ונראה שיש ${product}.`;
+      }
+      return fallback;
+    case 'geometry':
+      if (promptHe.includes('משולש')) {
+        return 'נסתכל על משולש, נראה שלוש צלעות ושלוש פינות, ונזכור שכל הצלעות מתחברות לצורה אחת.';
+      }
+      if (promptHe.includes('ריבוע')) {
+        return 'בריבוע יש ארבע צלעות שוות וארבע פינות ישרות. נעבור עם העיניים על כל צד ונזהה את הקודקודים.';
+      }
+      if (promptHe.includes('מעגל') || promptHe.includes('עיגול')) {
+        return 'במעגל אין פינות ואין צלעות, רק קו עגול וחלק. נעקוב אחרי המסלול ונראה איך הכול מתקפל יפה.';
+      }
+      if (subtopic?.includes('סימטריה') || promptHe.includes('סימטרי')) {
+        return 'נבדוק סימטריה: נקפל את הצורה בדמיון על קו הסימטריה ונראה שהצדדים מתאימים זה לזה כמו מראה.';
+      }
+      return fallback;
+    case 'numbers':
+      if (subtopic?.includes('ספירה') || promptHe.includes('ספור')) {
+        if (typeof answer === 'number') {
+          return `נספור יחד עד ${answer}. כל כוכב קטן עוזר לנו להתקדם מספר אחר מספר.`;
+        }
+        return 'נספור בקול רם את הכוכבים ונבדוק כמה קיבלנו.';
+      }
+      if (subtopic?.includes('שכנים') || promptHe.includes('שכן')) {
+        const num = parseInt(promptHe.match(/\d+/)?.[0] || '0');
+        return `נמצא את השכנים של ${num} על ציר המספרים: מי בא לפניו ומי אחריו.`;
+      }
+      if (subtopic?.includes('דילוגים') || subtopic?.includes('סדרות') || promptHe.includes('השלם')) {
+        return 'נאתר את הדפוס בסדרה: בכמה קופצים כל פעם והאם הסדרה עולה או יורדת.';
+      }
+      return fallback;
+    case 'evenOdd':
+      const numMatch = promptHe.match(/המספר\s+(\d+)/);
+      if (numMatch) {
+        const num = parseInt(numMatch[1]);
+        const isEven = num % 2 === 0;
+        return isEven
+          ? `נחלק את ${num} לזוגות ונראה שאף אחד לא נשאר לבד, לכן זה מספר זוגי.`
+          : `ננסה לחלק את ${num} לזוגות ונגלה שתמיד נשאר אחד בודד, ולכן זה מספר אי-זוגי.`;
+      }
+      return fallback;
+    default:
+      return fallback;
   }
 }
 
