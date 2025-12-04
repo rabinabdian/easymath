@@ -7,6 +7,63 @@ import { getAssetUrl } from '../utils/assets';
 import { speak } from '../utils/speech';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
 
+/**
+ * Parses sequence from prompt text (e.g., "השלם את הסדרה: 2, 4, 6, __, __")
+ * Returns array of numbers and blanks
+ */
+function parseSequence(prompt: string): (number | null)[] {
+  // Find the sequence part - look for pattern like "2, 4, 6, __, __" 
+  // Sequences typically appear after a colon and contain numbers separated by commas
+  // Match pattern: digits, commas, spaces, and underscores (for blanks)
+  const sequencePattern = /[:]\s*([\d\s,__]+)|([\d]+(?:\s*,\s*[\d__]+)+)/;
+  const match = prompt.match(sequencePattern);
+  
+  if (!match) return [];
+  
+  // Use the first capturing group if available, otherwise use the second
+  const sequenceStr = match[1] || match[2] || match[0];
+  if (!sequenceStr) return [];
+  
+  // Split by comma and clean up
+  const parts = sequenceStr.split(',').map(s => s.trim()).filter(s => s.length > 0);
+  
+  if (parts.length === 0) return [];
+  
+  return parts.map(part => {
+    // Check for blank indicators (__ or ___)
+    if (part === '__' || part === '___' || part.trim().startsWith('_')) return null;
+    
+    // Try to extract number (remove spaces)
+    const numStr = part.replace(/\s/g, '');
+    const num = parseInt(numStr, 10);
+    return isNaN(num) ? null : num;
+  });
+}
+
+/**
+ * Component to display sequence visually for jump sequence questions
+ */
+function SequenceDisplay({ sequence }: { sequence: (number | null)[] }) {
+  if (sequence.length === 0) return null;
+  
+  return (
+    <div className="my-4 flex flex-wrap items-center justify-center gap-3">
+      {sequence.map((item, index) => (
+        <div
+          key={index}
+          className={`flex h-16 w-16 items-center justify-center rounded-xl text-2xl font-bold shadow-md transition-all ${
+            item === null
+              ? 'border-2 border-dashed border-slate-400 bg-slate-100 text-slate-500'
+              : 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg'
+          }`}
+        >
+          {item === null ? '?' : item}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 interface QuestionCardProps {
   question: Question;
   showOptions?: boolean;
@@ -33,6 +90,13 @@ export function QuestionCard({
   const { locale } = useI18n();
   const assetUrl = getAssetUrl(question.assetId);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  
+  const promptText = getQuestionPrompt(question, locale);
+  const isSequenceQuestion = question.subtopic?.includes('דילוגים') || 
+                             question.subtopic?.includes('סדרות') || 
+                             promptText.includes('השלם') ||
+                             promptText.includes('סדרה');
+  const sequence = isSequenceQuestion ? parseSequence(promptText) : [];
 
   const handleSpeak = () => {
     if (isSpeaking) return;
@@ -88,9 +152,15 @@ export function QuestionCard({
           </div>
         ) : (
           // Regular question - Show text
-          <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
-            {getQuestionPrompt(question, locale)}
-          </p>
+          <div>
+            <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
+              {promptText}
+            </p>
+            {/* Display sequence visually for jump sequence questions */}
+            {isSequenceQuestion && sequence.length > 0 && (
+              <SequenceDisplay sequence={sequence} />
+            )}
+          </div>
         )}
 
         {/* Multiple Choice Options */}
