@@ -46,19 +46,44 @@ export function VisualAidsDisplay({ visualAids, className = '' }: VisualAidsDisp
       case 'shape':
         return (
           <div key={index} className="flex flex-wrap items-center justify-center gap-3">
-            {Array.from({ length: count }).map((_, i) => (
-              <div
-                key={i}
-                className="transition-transform hover:scale-110"
-                style={{
-                  width: aid.size === 'large' ? '80px' : aid.size === 'small' ? '40px' : '60px',
-                  height: aid.size === 'large' ? '80px' : aid.size === 'small' ? '40px' : '60px',
+            {Array.from({ length: count }).map((_, i) => {
+              const size = aid.size === 'large' ? '80px' : aid.size === 'small' ? '40px' : '60px';
+              const getShapeStyle = () => {
+                const baseStyle = {
+                  width: size,
+                  height: size,
                   backgroundColor: aid.color || '#3b82f6',
-                  borderRadius: aid.value === 'circle' ? '50%' : aid.value === 'triangle' ? '0' : '8px',
-                  clipPath: aid.value === 'triangle' ? 'polygon(50% 0%, 0% 100%, 100% 100%)' : undefined,
-                }}
-              />
-            ))}
+                };
+                
+                switch (aid.value) {
+                  case 'circle':
+                    return { ...baseStyle, borderRadius: '50%' };
+                  case 'triangle':
+                    return {
+                      ...baseStyle,
+                      borderRadius: '0',
+                      clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+                    };
+                  case 'hexagon':
+                    return {
+                      ...baseStyle,
+                      borderRadius: '0',
+                      clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
+                    };
+                  case 'square':
+                  default:
+                    return { ...baseStyle, borderRadius: '8px' };
+                }
+              };
+              
+              return (
+                <div
+                  key={i}
+                  className="transition-transform hover:scale-110"
+                  style={getShapeStyle()}
+                />
+              );
+            })}
           </div>
         );
 

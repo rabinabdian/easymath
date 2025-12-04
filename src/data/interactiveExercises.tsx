@@ -138,10 +138,10 @@ export const interactiveExercises: Question[] = [
     promptEn: 'How many blue circles are there?',
     answer: 4,
 
-    introExplanationHe: 'עיגול זה צורה עגולה ⭕\nהוא לא קצה ולא פינות - הוא חלק ועגול!',
-    introExplanationEn: 'A circle is a round shape ⭕\nIt has no edges or corners - it is smooth and round!',
-    introExampleHe: 'דוגמא: הכדור שלנו הוא עיגול ⚽\nהשמש היא עיגול ☀️',
-    introExampleEn: 'Example: Our ball is a circle ⚽\nThe sun is a circle ☀️',
+    introExplanationHe: 'עיגול זה צורה עגולה ⭕\nהוא לא קצה ולא פינות - הוא חלק ועגול!\n\nבציור תראו עיגולים כחולים - כל עיגול הוא צורה עגולה וחלקה.',
+    introExplanationEn: 'A circle is a round shape ⭕\nIt has no edges or corners - it is smooth and round!\n\nIn the drawing you will see blue circles - each circle is a round and smooth shape.',
+    introExampleHe: 'דוגמא: הכדור שלנו הוא עיגול ⚽\nהשמש היא עיגול ☀️\n\nעיגול נראה כמו גלגל או כדור - עגול מכל הכיוונים!',
+    introExampleEn: 'Example: Our ball is a circle ⚽\nThe sun is a circle ☀️\n\nA circle looks like a wheel or a ball - round from all directions!',
 
     visualAids: [
       {
@@ -153,8 +153,8 @@ export const interactiveExercises: Question[] = [
       }
     ],
 
-    autoSolveExplanationHe: 'בוא נספור את העיגולים הכחולים!\n\n🔵 = 1\n🔵🔵 = 2\n🔵🔵🔵 = 3\n🔵🔵🔵🔵 = 4\n\nיש 4 עיגולים כחולים יפים!',
-    autoSolveExplanationEn: "Let's count the blue circles!\n\n🔵 = 1\n🔵🔵 = 2\n🔵🔵🔵 = 3\n🔵🔵🔵🔵 = 4\n\nThere are 4 beautiful blue circles!",
+    autoSolveExplanationHe: 'בוא נספור את העיגולים הכחולים!\n\n🔵 = 1 עיגול\n🔵🔵 = 2 עיגולים\n🔵🔵🔵 = 3 עיגולים\n🔵🔵🔵🔵 = 4 עיגולים\n\nיש 4 עיגולים כחולים יפים!\n\nכל עיגול הוא צורה עגולה וחלקה - אין לו פינות או קווים ישרים, הוא עגול לחלוטין מכל הכיוונים.',
+    autoSolveExplanationEn: "Let's count the blue circles!\n\n🔵 = 1 circle\n🔵🔵 = 2 circles\n🔵🔵🔵 = 3 circles\n🔵🔵🔵🔵 = 4 circles\n\nThere are 4 beautiful blue circles!\n\nEach circle is a round and smooth shape - it has no corners or straight lines, it is completely round from all directions.",
     autoSolveVisualAid: {
       type: 'shape',
       value: 'circle',
