@@ -33,6 +33,7 @@ export function QuestionCard({
   const { locale } = useI18n();
   const assetUrl = getAssetUrl(question.assetId);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const questionText = getQuestionPrompt(question, locale);
 
   const handleSpeak = () => {
     if (isSpeaking) return;
@@ -71,8 +72,8 @@ export function QuestionCard({
       {/* Question Text */}
       <div className="flex flex-1 flex-col gap-3">
         {question.isReadingExercise ? (
-          // Reading Exercise - Show speaker icon instead of text
-          <div className="flex items-center justify-center gap-3 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
+          // Reading Exercise - Show speaker icon with supporting text
+          <div className="flex flex-col items-center gap-4 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
             <button
               type="button"
               onClick={handleSpeak}
@@ -85,11 +86,14 @@ export function QuestionCard({
                 {isSpeaking ? 'מקריא...' : 'לחץ לשמיעה'}
               </span>
             </button>
+            <p className="text-lg font-semibold text-slate-900 text-center whitespace-pre-line">
+              {questionText}
+            </p>
           </div>
         ) : (
           // Regular question - Show text
           <p className="text-lg font-semibold text-slate-900 whitespace-pre-line">
-            {getQuestionPrompt(question, locale)}
+            {questionText}
           </p>
         )}
 
