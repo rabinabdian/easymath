@@ -437,6 +437,8 @@ function generateGeometryVisual(question: Question): React.ReactNode {
   
   // Triangle question
   if (promptHe.includes('משולש')) {
+    const trianglePropertiesText = 'למשולש יש 3 צלעות, 3 קודקודים שזה אומר 3 פינות, ו-3 זוויות. המספר 3 חוזר בכל מקום!';
+    
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -468,9 +470,12 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </div>
         </div>
 
-        {/* Properties */}
+        {/* Properties with Speaker */}
         <div className="rounded-2xl bg-blue-50 p-4">
-          <div className="text-lg font-bold text-blue-800 mb-2">תכונות המשולש:</div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-lg font-bold text-blue-800">תכונות המשולש:</div>
+            <InlineSpeaker text={trianglePropertiesText} />
+          </div>
           <ul className="space-y-2 text-blue-700 text-right">
             <li className="flex items-center gap-2 justify-end">
               <span>צלעות</span>
@@ -499,6 +504,8 @@ function generateGeometryVisual(question: Question): React.ReactNode {
 
   // Square question
   if (promptHe.includes('ריבוע')) {
+    const squarePropertiesText = 'לריבוע יש 4 צלעות שוות, 4 קודקודים שזה אומר 4 פינות, ו-4 זוויות ישרות. כל הצלעות שוות באורכן!';
+    
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -529,9 +536,12 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </div>
         </div>
 
-        {/* Properties */}
+        {/* Properties with Speaker */}
         <div className="rounded-2xl bg-purple-50 p-4">
-          <div className="text-lg font-bold text-purple-800 mb-2">תכונות הריבוע:</div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-lg font-bold text-purple-800">תכונות הריבוע:</div>
+            <InlineSpeaker text={squarePropertiesText} />
+          </div>
           <ul className="space-y-2 text-purple-700 text-right">
             <li className="flex items-center gap-2 justify-end">
               <span>צלעות (כולן שוות)</span>
@@ -560,6 +570,8 @@ function generateGeometryVisual(question: Question): React.ReactNode {
 
   // Circle question
   if (promptHe.includes('מעגל') || promptHe.includes('עיגול')) {
+    const circlePropertiesText = 'למעגל אין צלעות ואין פינות. הוא צורה עגולה וחלקה לגמרי!';
+    
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -579,9 +591,12 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </div>
         </div>
 
-        {/* Properties */}
+        {/* Properties with Speaker */}
         <div className="rounded-2xl bg-green-50 p-4">
-          <div className="text-lg font-bold text-green-800 mb-2">תכונות המעגל:</div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-lg font-bold text-green-800">תכונות המעגל:</div>
+            <InlineSpeaker text={circlePropertiesText} />
+          </div>
           <ul className="space-y-2 text-green-700 text-right">
             <li className="flex items-center gap-2 justify-end">
               <span>צלעות</span>
@@ -610,6 +625,9 @@ function generateGeometryVisual(question: Question): React.ReactNode {
 
   // Symmetry question
   if (subtopic?.includes('סימטריה') || promptHe.includes('סימטרי')) {
+    const symmetryExplanationText = 'צורה סימטרית היא צורה שאם מקפלים אותה על קו הסימטריה, שני הצדדים מתאימים בדיוק אחד לשני!';
+    const examplesText = 'דוגמאות: לב הוא סימטרי. חץ הוא לא סימטרי.';
+    
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -624,24 +642,32 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           <div className="mt-2 text-pink-600 font-bold">קו סימטריה</div>
         </div>
 
-        {/* Explanation */}
+        {/* Explanation with Speaker */}
         <div className="rounded-2xl bg-pink-50 p-4">
-          <div className="text-lg font-bold text-pink-800 mb-2">מה זה סימטריה?</div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-lg font-bold text-pink-800">מה זה סימטריה?</div>
+            <InlineSpeaker text={symmetryExplanationText} />
+          </div>
           <p className="text-pink-700 text-right">
-            צורה סימטרית היא צורה שאם מקפלים אותה על קו הסימטריה, 
-            שני הצדדים מתאימים בדיוק אחד לשני!
+            {symmetryExplanationText}
           </p>
         </div>
 
-        {/* Examples */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-xl bg-green-50 p-3 text-center">
-            <div className="text-3xl mb-2">❤️</div>
-            <div className="text-green-700 font-bold text-sm">סימטרי ✅</div>
+        {/* Examples with Speaker */}
+        <div className="rounded-2xl bg-purple-50 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-lg font-bold text-purple-800">דוגמאות</div>
+            <InlineSpeaker text={examplesText} />
           </div>
-          <div className="rounded-xl bg-red-50 p-3 text-center">
-            <div className="text-3xl mb-2">➡️</div>
-            <div className="text-red-700 font-bold text-sm">לא סימטרי ❌</div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-xl bg-green-50 p-3 text-center">
+              <div className="text-3xl mb-2">❤️</div>
+              <div className="text-green-700 font-bold text-sm">סימטרי ✅</div>
+            </div>
+            <div className="rounded-xl bg-red-50 p-3 text-center">
+              <div className="text-3xl mb-2">➡️</div>
+              <div className="text-red-700 font-bold text-sm">לא סימטרי ❌</div>
+            </div>
           </div>
         </div>
       </div>
@@ -667,10 +693,15 @@ function generateNumbersVisual(question: Question): React.ReactNode {
   if (subtopic?.includes('ספירה') || promptHe.includes('ספור') || promptHe.includes('כמה')) {
     const count = typeof answer === 'number' ? answer : 0;
     if (count > 0 && count <= 15) {
+      const countingText = `בואו נספור ביחד! אחת, שתיים, שלוש... עד ${count}. יש לנו בסך הכל ${count} פריטים.`;
+      
       return (
         <div className="space-y-6">
           <div className="text-center">
-            <div className="text-xl font-bold text-blue-700 mb-4">בואו נספור ביחד!</div>
+            <div className="mb-3 flex items-center justify-center gap-3">
+              <div className="text-xl font-bold text-blue-700">בואו נספור ביחד!</div>
+              <InlineSpeaker text={countingText} />
+            </div>
           </div>
 
           {/* Counting visualization with numbers */}
@@ -698,10 +729,15 @@ function generateNumbersVisual(question: Question): React.ReactNode {
   if (subtopic?.includes('שכנים') || promptHe.includes('שכן')) {
     const num = parseInt(promptHe.match(/\d+/)?.[0] || '0');
     if (num > 0 && num <= 20) {
+      const neighborsExplanationText = `השכנים של ${num} הם: לפני יש ${num - 1}, ואחרי יש ${num + 1}. על ציר המספרים, ${num} נמצא בין ${num - 1} לבין ${num + 1}.`;
+      
       return (
         <div className="space-y-6">
           <div className="text-center">
-            <div className="text-xl font-bold text-purple-700 mb-4">שכנים על ציר המספרים</div>
+            <div className="mb-3 flex items-center justify-center gap-3">
+              <div className="text-xl font-bold text-purple-700">שכנים על ציר המספרים</div>
+              <InlineSpeaker text={neighborsExplanationText} />
+            </div>
           </div>
 
           {/* Number line with neighbors */}
@@ -738,10 +774,15 @@ function generateNumbersVisual(question: Question): React.ReactNode {
 
   // Sequence/Pattern question
   if (subtopic?.includes('דילוגים') || subtopic?.includes('סדרות') || promptHe.includes('השלם')) {
+    const sequenceExplanationText = 'כדי לפתור סדרה, מחפשים את הדפוס. מה ההפרש בין כל שני מספרים? האם הסדרה עולה או יורדת? מצאו את הכלל וממשיכו!';
+    
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <div className="text-xl font-bold text-indigo-700 mb-4">סדרות ודילוגים</div>
+          <div className="mb-3 flex items-center justify-center gap-3">
+            <div className="text-xl font-bold text-indigo-700">סדרות ודילוגים</div>
+            <InlineSpeaker text={sequenceExplanationText} />
+          </div>
         </div>
 
         {/* Pattern visualization */}
@@ -789,12 +830,19 @@ function generateEvenOddVisual(question: Question): React.ReactNode {
 
   if (num !== null && num <= 20) {
     const isEven = num % 2 === 0;
+    const evenOddExplanationText = isEven 
+      ? `בואו נבדוק אם ${num} זוגי או אי-זוגי. ננסה לסדר את ${num} בזוגות. כולם מסודרים בזוגות! אף אחד לא נשאר לבד. לכן ${num} הוא מספר זוגי.`
+      : `בואו נבדוק אם ${num} זוגי או אי-זוגי. ננסה לסדר את ${num} בזוגות. אחד נשאר לבד! לכן ${num} הוא מספר אי-זוגי.`;
+    const ruleText = 'מספרים זוגיים: 0, 2, 4, 6, 8, 10. מספרים אי-זוגיים: 1, 3, 5, 7, 9, 11. טיפ: הספרה האחרונה קובעת!';
     
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <div className="text-xl font-bold text-purple-700 mb-4">
-            האם {num} זוגי או אי-זוגי?
+          <div className="mb-3 flex items-center justify-center gap-3">
+            <div className="text-xl font-bold text-purple-700">
+              האם {num} זוגי או אי-זוגי?
+            </div>
+            <InlineSpeaker text={evenOddExplanationText} />
           </div>
         </div>
 
@@ -836,9 +884,12 @@ function generateEvenOddVisual(question: Question): React.ReactNode {
           )}
         </div>
 
-        {/* Rule */}
+        {/* Rule with Speaker */}
         <div className="rounded-2xl bg-purple-50 p-4">
-          <div className="text-lg font-bold text-purple-800 mb-2">כלל:</div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-lg font-bold text-purple-800">כלל:</div>
+            <InlineSpeaker text={ruleText} />
+          </div>
           <ul className="space-y-1 text-purple-700 text-right">
             <li>• מספרים זוגיים: 0, 2, 4, 6, 8, 10...</li>
             <li>• מספרים אי-זוגיים: 1, 3, 5, 7, 9, 11...</li>
