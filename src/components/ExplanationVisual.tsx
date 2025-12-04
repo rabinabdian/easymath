@@ -1,6 +1,6 @@
 // src/components/ExplanationVisual.tsx
 import type { Question } from '../types/questions';
-import { InlineSpeaker } from './SpeakerButton';
+import { SpeakerButton } from './SpeakerButton';
 
 interface ExplanationVisualProps {
   question: Question;
@@ -33,9 +33,12 @@ export function ExplanationVisual({ question, className = '' }: ExplanationVisua
           <span className="text-3xl">🎨</span>
           <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
         </div>
-        {audioText && (
-          <InlineSpeaker text={audioText} />
-        )}
+        <SpeakerButton
+          text={audioText}
+          size="small"
+          variant="accent"
+          label="הסבר קולי"
+        />
       </div>
       
       <div className="rounded-2xl bg-white p-6 shadow-sm">
@@ -69,32 +72,70 @@ function generateVisualForQuestion(question: Question): React.ReactNode {
   }
 }
 
+const DEFAULT_AUDIO_MESSAGE =
+  'בואו נקשיב להסבר המאויר כדי להבין את התרגיל שלפנינו צעד אחר צעד.';
+
+function sanitizeAudioText(text: string): string {
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+function extractQuestionNarrative(question: Question): string | null {
+  const candidates = [
+    question.autoSolveExplanationHe,
+    question.explanationHe,
+    question.introExplanationHe,
+  ];
+
+  for (const candidate of candidates) {
+    if (candidate && candidate.trim().length > 0) {
+      return candidate;
+    }
+  }
+
+  return null;
+}
+
 /**
  * Generate audio text for text-to-speech based on question type
  * Returns a Hebrew explanation suitable for children
  */
-function generateAudioTextForQuestion(question: Question): string | null {
+function generateAudioTextForQuestion(question: Question): string {
+  const narrative = extractQuestionNarrative(question);
+  if (narrative) {
+    return sanitizeAudioText(narrative);
+  }
+
   const { topic, promptHe, answer, subtopic } = question;
   
   // Parse the math expression from the prompt
   const mathMatch = promptHe.match(/(\d+)\s*([+\-×x*])\s*(\d+)/);
+
+  let generated: string | null = null;
   
   switch (topic) {
     case 'addition':
-      return generateAdditionAudioText(mathMatch);
+      generated = generateAdditionAudioText(mathMatch);
+      break;
     case 'subtraction':
-      return generateSubtractionAudioText(mathMatch);
+      generated = generateSubtractionAudioText(mathMatch);
+      break;
     case 'multiplication':
-      return generateMultiplicationAudioText(mathMatch);
+      generated = generateMultiplicationAudioText(mathMatch);
+      break;
     case 'geometry':
-      return generateGeometryAudioText(promptHe, answer, subtopic);
+      generated = generateGeometryAudioText(promptHe, answer, subtopic);
+      break;
     case 'numbers':
-      return generateNumbersAudioText(promptHe, answer, subtopic);
+      generated = generateNumbersAudioText(promptHe, answer, subtopic);
+      break;
     case 'evenOdd':
-      return generateEvenOddAudioText(promptHe);
+      generated = generateEvenOddAudioText(promptHe);
+      break;
     default:
-      return 'קראו את השאלה בעיון והשתמשו במה שלמדתם!';
+      generated = null;
   }
+
+  return sanitizeAudioText(generated ?? DEFAULT_AUDIO_MESSAGE);
 }
 
 // ===== AUDIO TEXT GENERATORS =====
