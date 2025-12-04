@@ -208,20 +208,76 @@
     "downloadUrl": "https://cdn.pixabay.com/photo/2013/07/12/17/47/pattern-152509_1280.png"
   },
   {
-    "assetId": "geometry/basic_shapes",
+    "assetId": "geometry/basic_shapes.svg",
     "topic": "geometry",
     "description": "אוסף צורות: ריבוע, עיגול, משולש, מלבן",
     "pageHint": "פרקי צורות בסיסיות",
-    "sourcePageUrl": "https://pixabay.com/illustrations/shapes-geometric-figures-basic-148647/",
-    "downloadUrl": "https://cdn.pixabay.com/photo/2012/04/16/12/38/shapes-35586_1280.png"
+    "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Basic_geometric_shapes.svg",
+    "downloadUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Basic_geometric_shapes.svg"
   },
   {
-    "assetId": "geometry/shape_patterns",
+    "assetId": "geometry/shape_patterns.svg",
     "topic": "geometry",
     "description": "רצף צורות – להשלמת דפוס",
     "pageHint": "דפוסים גאומטריים",
-    "sourcePageUrl": "https://pixabay.com/illustrations/search/shape%20pattern/",
-    "downloadUrl": "https://cdn.pixabay.com/photo/2017/01/31/16/25/shapes-2026612_1280.png"
+    "sourcePageUrl": "https://github.com/twitter/twemoji",
+    "downloadUrl": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f535.svg"
+  },
+  {
+    "assetId": "geometry/mix_shapes_1.svg",
+    "topic": "geometry",
+    "description": "קולאז׳ עם ריבוע, משולש ועיגול",
+    "pageHint": "זיהוי צורות בסיסיות",
+    "sourcePageUrl": "https://github.com/twitter/twemoji",
+    "downloadUrl": "https://github.com/twitter/twemoji"
+  },
+  {
+    "assetId": "geometry/triangles_4.svg",
+    "topic": "geometry",
+    "description": "ארבעה משולשים צבעוניים",
+    "pageHint": "תרגילי ספירת משולשים",
+    "sourcePageUrl": "https://github.com/twitter/twemoji",
+    "downloadUrl": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f53a.svg"
+  },
+  {
+    "assetId": "geometry/heart_midline.svg",
+    "topic": "geometry",
+    "description": "לב עם קו סימטריה אנכי",
+    "pageHint": "בדיקת סימטריה",
+    "sourcePageUrl": "https://github.com/twitter/twemoji",
+    "downloadUrl": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/2764.svg"
+  },
+  {
+    "assetId": "geometry/arrow_right.svg",
+    "topic": "geometry",
+    "description": "חץ שפונה ימינה",
+    "pageHint": "דוגמא לצורה לא סימטרית",
+    "sourcePageUrl": "https://github.com/twitter/twemoji",
+    "downloadUrl": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/27a1.svg"
+  },
+  {
+    "assetId": "geometry/half_star.svg",
+    "topic": "geometry",
+    "description": "חצי כוכב להשלמת שיקוף",
+    "pageHint": "שיקוף וקווי סימטריה",
+    "sourcePageUrl": "https://github.com/twitter/twemoji",
+    "downloadUrl": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/2b50.svg"
+  },
+  {
+    "assetId": "geometry/symmetry_choices.svg",
+    "topic": "geometry",
+    "description": "בחירת צורות סימטריות/לא סימטריות",
+    "pageHint": "זיהוי סימטריה",
+    "sourcePageUrl": "https://github.com/twitter/twemoji",
+    "downloadUrl": "https://github.com/twitter/twemoji"
+  },
+  {
+    "assetId": "geometry/half_menorah.svg",
+    "topic": "geometry",
+    "description": "חצי חנוכייה להשלמה במראה",
+    "pageHint": "סימטריה סביבון/חנוכה",
+    "sourcePageUrl": "https://github.com/twitter/twemoji",
+    "downloadUrl": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f54e.svg"
   },
   {
     "assetId": "symmetry/heart_half",

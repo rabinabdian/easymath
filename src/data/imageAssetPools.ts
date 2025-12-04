@@ -84,19 +84,19 @@ export const ASSET_POOLS = {
 
   // Geometry - basic shapes
   geometry_shapes: [
-    'geometry/mix_shapes_1',
-    'geometry/triangles_4',
-    'geometry/basic_shapes',
-    'geometry/shape_patterns',
+    'geometry/mix_shapes_1.svg',
+    'geometry/triangles_4.svg',
+    'geometry/basic_shapes.svg',
+    'geometry/shape_patterns.svg',
   ],
 
   // Geometry - symmetry
   geometry_symmetry: [
-    'geometry/heart_midline',
-    'geometry/arrow_right',
-    'geometry/half_star',
-    'geometry/symmetry_choices',
-    'geometry/half_menorah',
+    'geometry/heart_midline.svg',
+    'geometry/arrow_right.svg',
+    'geometry/half_star.svg',
+    'geometry/symmetry_choices.svg',
+    'geometry/half_menorah.svg',
   ],
 
   // Holiday - Hanukkah

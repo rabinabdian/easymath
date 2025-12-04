@@ -1,0 +1,24 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four colorful triangles">
+  <defs>
+    <linearGradient id="tri-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ecfccb" />
+      <stop offset="100%" stop-color="#fef9c3" />
+    </linearGradient>
+    <filter id="tri-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.2" />
+    </filter>
+  </defs>
+  <rect width="420" height="320" rx="28" fill="url(#tri-bg)" />
+  <g transform="translate(40 50) scale(5.6)" filter="url(#tri-shadow)">
+    <path fill="#f87171" d="M19.146 7.639c-.63-.901-1.637-.884-2.236.038L6.09 24.323C5.491 25.245 5.9 26 7 26h23c1.1 0 1.483-.737.854-1.639L19.146 7.639z" />
+  </g>
+  <g transform="translate(220 60) scale(4.6) rotate(5)" filter="url(#tri-shadow)">
+    <path fill="#fb7185" d="M19.146 7.639c-.63-.901-1.637-.884-2.236.038L6.09 24.323C5.491 25.245 5.9 26 7 26h23c1.1 0 1.483-.737.854-1.639L19.146 7.639z" />
+  </g>
+  <g transform="translate(90 170) scale(4.8) rotate(-10)" filter="url(#tri-shadow)">
+    <path fill="#f97316" d="M19.146 7.639c-.63-.901-1.637-.884-2.236.038L6.09 24.323C5.491 25.245 5.9 26 7 26h23c1.1 0 1.483-.737.854-1.639L19.146 7.639z" />
+  </g>
+  <g transform="translate(240 190) scale(5.2)" filter="url(#tri-shadow)">
+    <path fill="#facc15" d="M19.146 7.639c-.63-.901-1.637-.884-2.236.038L6.09 24.323C5.491 25.245 5.9 26 7 26h23c1.1 0 1.483-.737.854-1.639L19.146 7.639z" />
+  </g>
+</svg>

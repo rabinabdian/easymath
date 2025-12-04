@@ -18,7 +18,7 @@ To add an image for a question:
 
 1. Save the image file in the appropriate subdirectory
 2. Name it according to the `assetId` in the question
-3. Use PNG format (`.png`)
+3. Prefer SVG or PNG format (`.svg` / `.png`)
 
 ### Examples
 
@@ -26,12 +26,12 @@ For a question with `assetId: 'numbers/apples_5'`:
 - File path: `public/assets/numbers/apples_5.png`
 - The image will automatically display in both teacher and student modes
 
-For a question with `assetId: 'geometry/half_star'`:
-- File path: `public/assets/geometry/half_star.png`
+For a question with `assetId: 'geometry/half_star.svg'`:
+- File path: `public/assets/geometry/half_star.svg`
 
 ## Image Guidelines
 
-- **Format**: PNG preferred (supports transparency)
+- **Format**: SVG recommended for crisp scaling (PNG also supported)
 - **Size**: Keep images under 500KB for fast loading
 - **Dimensions**: Recommended max width: 800px
 - **Quality**: Clear and child-friendly visuals
@@ -66,13 +66,13 @@ You can create simple placeholder images using:
 - `subtraction/tenframe_6_minus_2.png` - Ten frame showing subtraction
 
 ### Geometry
-- `geometry/mix_shapes_1.png` - Mixed geometric shapes
-- `geometry/triangles_4.png` - 4 triangles
-- `geometry/heart_midline.png` - Heart with symmetry line
-- `geometry/arrow_right.png` - Arrow pointing right
-- `geometry/half_star.png` - Half of a star for symmetry exercise
-- `geometry/symmetry_choices.png` - Various shapes for comparison
-- `geometry/half_menorah.png` - Half of a menorah for symmetry
+- `geometry/mix_shapes_1.svg` - Mixed geometric shapes
+- `geometry/triangles_4.svg` - 4 triangles
+- `geometry/heart_midline.svg` - Heart with symmetry line
+- `geometry/arrow_right.svg` - Arrow pointing right
+- `geometry/half_star.svg` - Half of a star for symmetry exercise
+- `geometry/symmetry_choices.svg` - Various shapes for comparison
+- `geometry/half_menorah.svg` - Half of a menorah for symmetry
 
 ## Notes
 
