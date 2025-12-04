@@ -1,0 +1,36 @@
+<svg width="420" height="420" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Square with 4 symmetry lines">
+  <defs>
+    <linearGradient id="bg-sq-sym" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    <linearGradient id="sq-sym-fill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="420" rx="32" fill="url(#bg-sq-sym)" />
+  
+  <g transform="translate(210,210)">
+    <!-- Square -->
+    <rect x="-100" y="-100" width="200" height="200" fill="url(#sq-sym-fill)" stroke="#0284c7" stroke-width="5" rx="8" />
+    
+    <!-- Vertical symmetry line -->
+    <line x1="0" y1="-120" x2="0" y2="120" stroke="#16a34a" stroke-width="4" stroke-dasharray="8,8" />
+    <text x="15" y="-105" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#16a34a">че 1</text>
+    
+    <!-- Horizontal symmetry line -->
+    <line x1="-120" y1="0" x2="120" y2="0" stroke="#dc2626" stroke-width="4" stroke-dasharray="8,8" />
+    <text x="85" y="-10" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#dc2626">че 2</text>
+    
+    <!-- Diagonal symmetry line (top-left to bottom-right) -->
+    <line x1="-120" y1="-120" x2="120" y2="120" stroke="#f59e0b" stroke-width="4" stroke-dasharray="8,8" />
+    <text x="-95" y="-95" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#f59e0b">че 3</text>
+    
+    <!-- Diagonal symmetry line (bottom-left to top-right) -->
+    <line x1="-120" y1="120" x2="120" y2="-120" stroke="#8b5cf6" stroke-width="4" stroke-dasharray="8,8" />
+    <text x="-95" y="110" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#8b5cf6">че 4</text>
+  </g>
+  
+  <text x="210" y="395" text-anchor="middle" font-size="26" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">мшйбет 4 цйшй сйоишйд!</text>
+</svg>

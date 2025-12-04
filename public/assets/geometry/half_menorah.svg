@@ -1,0 +1,63 @@
+<svg width="420" height="380" viewBox="0 0 420 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Half menorah">
+  <defs>
+    <linearGradient id="bg-menorah" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="380" rx="32" fill="url(#bg-menorah)" />
+  
+  <!-- Symmetry line -->
+  <line x1="210" y1="30" x2="210" y2="350" stroke="#0f172a" stroke-width="4" stroke-dasharray="8,8" />
+  
+  <!-- Left half of menorah -->
+  <g transform="translate(210,200)">
+    <!-- Base -->
+    <rect x="-40" y="100" width="40" height="30" rx="4" fill="#d97706" stroke="#92400e" stroke-width="2" />
+    
+    <!-- Central stem -->
+    <rect x="-8" y="40" width="16" height="60" rx="3" fill="#d97706" stroke="#92400e" stroke-width="2" />
+    
+    <!-- Shamash (central candle - taller) -->
+    <rect x="-6" y="5" width="12" height="35" rx="2" fill="#3b82f6" stroke="#1e40af" stroke-width="2" />
+    <ellipse cx="0" cy="5" rx="8" ry="4" fill="#fbbf24" />
+    <path d="M -3,0 Q 0,-8 3,0" fill="#fb923c" />
+    
+    <!-- Left branches and candles -->
+    <!-- Branch 1 (closest to center) -->
+    <path d="M -8,70 Q -25,70 -25,50" stroke="#d97706" stroke-width="4" fill="none" />
+    <rect x="-31" y="15" width="12" height="35" rx="2" fill="#3b82f6" stroke="#1e40af" stroke-width="2" />
+    <ellipse cx="-25" cy="15" rx="8" ry="4" fill="#fbbf24" />
+    <path d="M -28,10 Q -25,2 -22,10" fill="#fb923c" />
+    
+    <!-- Branch 2 -->
+    <path d="M -8,80 Q -45,80 -45,50" stroke="#d97706" stroke-width="4" fill="none" />
+    <rect x="-51" y="15" width="12" height="35" rx="2" fill="#3b82f6" stroke="#1e40af" stroke-width="2" />
+    <ellipse cx="-45" cy="15" rx="8" ry="4" fill="#fbbf24" />
+    <path d="M -48,10 Q -45,2 -42,10" fill="#fb923c" />
+    
+    <!-- Branch 3 -->
+    <path d="M -8,90 Q -65,90 -65,50" stroke="#d97706" stroke-width="4" fill="none" />
+    <rect x="-71" y="15" width="12" height="35" rx="2" fill="#3b82f6" stroke="#1e40af" stroke-width="2" />
+    <ellipse cx="-65" cy="15" rx="8" ry="4" fill="#fbbf24" />
+    <path d="M -68,10 Q -65,2 -62,10" fill="#fb923c" />
+    
+    <!-- Branch 4 (furthest) -->
+    <path d="M -8,95 Q -85,95 -85,50" stroke="#d97706" stroke-width="4" fill="none" />
+    <rect x="-91" y="15" width="12" height="35" rx="2" fill="#3b82f6" stroke="#1e40af" stroke-width="2" />
+    <ellipse cx="-85" cy="15" rx="8" ry="4" fill="#fbbf24" />
+    <path d="M -88,10 Q -85,2 -82,10" fill="#fb923c" />
+  </g>
+  
+  <!-- Dotted outline for missing half -->
+  <g transform="translate(210,200)">
+    <path d="M 8,70 Q 25,70 25,50" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4,4" fill="none" />
+    <path d="M 8,80 Q 45,80 45,50" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4,4" fill="none" />
+    <path d="M 8,90 Q 65,90 65,50" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4,4" fill="none" />
+    <path d="M 8,95 Q 85,95 85,50" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4,4" fill="none" />
+  </g>
+  
+  <text x="105" y="345" text-anchor="middle" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">4 аи’к + йёй</text>
+  <text x="315" y="345" text-anchor="middle" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#64748b">? аи’к</text>
+  <text x="210" y="30" text-anchor="middle" font-size="24" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">з’ йўз’г</text>
+</svg>

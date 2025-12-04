@@ -1,0 +1,27 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Circle with no corners">
+  <defs>
+    <linearGradient id="bg-circle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+    <linearGradient id="circle-fill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="320" rx="32" fill="url(#bg-circle)" />
+  <g transform="translate(210,160)">
+    <circle cx="0" cy="0" r="100" fill="url(#circle-fill)" stroke="#d97706" stroke-width="6" />
+    
+    <!-- Arrow showing smooth curve -->
+    <path d="M 70,-70 A 100,100 0 0,1 0,-100" stroke="#dc2626" stroke-width="4" fill="none" marker-end="url(#arrowhead)" />
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+        <polygon points="0 0, 10 5, 0 10" fill="#dc2626" />
+      </marker>
+    </defs>
+    
+    <text x="0" y="-130" text-anchor="middle" font-size="32" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">твем езмч</text>
+    <text x="0" y="145" text-anchor="middle" font-size="28" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">айп фйреъ!</text>
+  </g>
+</svg>

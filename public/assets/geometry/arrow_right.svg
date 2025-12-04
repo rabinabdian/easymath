@@ -1,0 +1,29 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Arrow pointing right - not symmetric">
+  <defs>
+    <linearGradient id="bg-arrow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ddd6fe" />
+      <stop offset="100%" stop-color="#c4b5fd" />
+    </linearGradient>
+    <linearGradient id="arrow-fill" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="320" rx="32" fill="url(#bg-arrow)" />
+  <g transform="translate(60,160)">
+    <!-- Arrow shape -->
+    <path d="M 0,-40 L 200,-40 L 200,-70 L 280,0 L 200,70 L 200,40 L 0,40 Z" 
+          fill="url(#arrow-fill)" stroke="#6d28d9" stroke-width="4" />
+    
+    <!-- Potential symmetry line (showing it doesn't work) -->
+    <line x1="140" y1="-90" x2="140" y2="110" stroke="#dc2626" stroke-width="3" stroke-dasharray="8,8" />
+    
+    <!-- X marks showing asymmetry -->
+    <g transform="translate(140, -60)">
+      <line x1="-12" y1="-12" x2="12" y2="12" stroke="#dc2626" stroke-width="4" />
+      <line x1="-12" y1="12" x2="12" y2="-12" stroke="#dc2626" stroke-width="4" />
+    </g>
+    
+    <text x="140" y="135" text-anchor="middle" font-size="28" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">‹– ·ŸﬁÿËŸ!</text>
+  </g>
+</svg>

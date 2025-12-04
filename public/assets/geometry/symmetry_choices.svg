@@ -1,0 +1,39 @@
+<svg width="420" height="420" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three shapes - which is not symmetric">
+  <defs>
+    <linearGradient id="bg-choices" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4" />
+      <stop offset="100%" stop-color="#dcfce7" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="420" rx="32" fill="url(#bg-choices)" />
+  
+  <!-- Square with symmetry line -->
+  <g transform="translate(105,80)">
+    <rect x="-40" y="-40" width="80" height="80" fill="#3b82f6" stroke="#1e40af" stroke-width="3" rx="4" />
+    <line x1="0" y1="-50" x2="0" y2="50" stroke="#16a34a" stroke-width="3" stroke-dasharray="6,6" />
+    <text x="0" y="65" text-anchor="middle" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">шйбет</text>
+    <circle cx="50" cy="-50" r="12" fill="#16a34a" stroke="#fff" stroke-width="2" />
+    <text x="50" y="-44" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial" fill="#fff"></text>
+  </g>
+  
+  <!-- Isosceles triangle with symmetry line -->
+  <g transform="translate(315,80)">
+    <polygon points="0,-50 -50,40 50,40" fill="#f59e0b" stroke="#d97706" stroke-width="3" />
+    <line x1="0" y1="-55" x2="0" y2="48" stroke="#16a34a" stroke-width="3" stroke-dasharray="6,6" />
+    <text x="0" y="65" text-anchor="middle" font-size="18" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">ощемщ щ"щ</text>
+    <circle cx="60" cy="-50" r="12" fill="#16a34a" stroke="#fff" stroke-width="2" />
+    <text x="60" y="-44" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial" fill="#fff"></text>
+  </g>
+  
+  <!-- One-sided arrow (not symmetric) with X -->
+  <g transform="translate(150,260)">
+    <path d="M -60,-20 L 30,-20 L 30,-40 L 80,0 L 30,40 L 30,20 L -60,20 Z" 
+          fill="#ef4444" stroke="#991b1b" stroke-width="3" />
+    <line x1="0" y1="-50" x2="0" y2="55" stroke="#dc2626" stroke-width="3" stroke-dasharray="6,6" />
+    <text x="0" y="75" text-anchor="middle" font-size="18" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">зх зг-цггй</text>
+    <circle cx="90" cy="-50" r="12" fill="#dc2626" stroke="#fff" stroke-width="2" />
+    <text x="90" y="-44" text-anchor="middle" font-size="18" font-weight="700" font-family="Arial" fill="#fff"></text>
+  </g>
+  
+  <text x="210" y="380" text-anchor="middle" font-size="24" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">айже цешд ма сйоишйъ?</text>
+</svg>

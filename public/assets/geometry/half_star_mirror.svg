@@ -1,0 +1,37 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Half star with mirror reflection">
+  <defs>
+    <linearGradient id="bg-mirror" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    <linearGradient id="star-left" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="star-right" x1="100%" y1="0%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="320" rx="32" fill="url(#bg-mirror)" />
+  
+  <!-- Mirror line -->
+  <line x1="210" y1="30" x2="210" y2="290" stroke="#0f172a" stroke-width="5" />
+  <rect x="207" y="30" width="6" height="260" fill="#94a3b8" opacity="0.3" />
+  
+  <!-- Half star (left side) -->
+  <g transform="translate(210,160)">
+    <path d="M 0,-70 L -20,-20 L -70,-20 L -30,10 L -45,60 L 0,30 Z" 
+          fill="url(#star-left)" stroke="#d97706" stroke-width="3" />
+  </g>
+  
+  <!-- Mirror reflection (right side) -->
+  <g transform="translate(210,160)">
+    <path d="M 0,-70 L 20,-20 L 70,-20 L 30,10 L 45,60 L 0,30 Z" 
+          fill="url(#star-right)" stroke="#d97706" stroke-width="3" />
+  </g>
+  
+  <text x="105" y="290" text-anchor="middle" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">очеш</text>
+  <text x="315" y="290" text-anchor="middle" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">ъоеръ шай</text>
+  <text x="210" y="25" text-anchor="middle" font-size="22" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">ошад</text>
+</svg>

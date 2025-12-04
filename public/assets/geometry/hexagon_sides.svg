@@ -1,0 +1,37 @@
+<svg width="420" height="380" viewBox="0 0 420 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hexagon with six sides labeled">
+  <defs>
+    <linearGradient id="bg-hex" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ddd6fe" />
+      <stop offset="100%" stop-color="#c4b5fd" />
+    </linearGradient>
+    <linearGradient id="hex-fill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="380" rx="32" fill="url(#bg-hex)" />
+  
+  <g transform="translate(210,180)">
+    <!-- Regular hexagon -->
+    <polygon points="0,-100 86.6,-50 86.6,50 0,100 -86.6,50 -86.6,-50" 
+             fill="url(#hex-fill)" stroke="#6d28d9" stroke-width="5" />
+    
+    <!-- Corner markers -->
+    <circle cx="0" cy="-100" r="8" fill="#fff" stroke="#6d28d9" stroke-width="3" />
+    <circle cx="86.6" cy="-50" r="8" fill="#fff" stroke="#6d28d9" stroke-width="3" />
+    <circle cx="86.6" cy="50" r="8" fill="#fff" stroke="#6d28d9" stroke-width="3" />
+    <circle cx="0" cy="100" r="8" fill="#fff" stroke="#6d28d9" stroke-width="3" />
+    <circle cx="-86.6" cy="50" r="8" fill="#fff" stroke="#6d28d9" stroke-width="3" />
+    <circle cx="-86.6" cy="-50" r="8" fill="#fff" stroke="#6d28d9" stroke-width="3" />
+    
+    <!-- Side labels -->
+    <text x="0" y="-115" text-anchor="middle" font-size="26" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">Ê‹‚ 1</text>
+    <text x="100" y="-20" font-size="26" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">Ê‹‚ 2</text>
+    <text x="100" y="60" font-size="26" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">Ê‹‚ 3</text>
+    <text x="0" y="130" text-anchor="middle" font-size="26" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">Ê‹‚ 4</text>
+    <text x="-120" y="60" font-size="26" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">Ê‹‚ 5</text>
+    <text x="-120" y="-20" font-size="26" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">Ê‹‚ 6</text>
+  </g>
+  
+  <text x="210" y="360" text-anchor="middle" font-size="28" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">ﬁÈ’È‘ ŸÈ 6 Ê‹‚’Í</text>
+</svg>

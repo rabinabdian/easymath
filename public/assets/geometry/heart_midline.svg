@@ -1,0 +1,26 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Heart with symmetry line">
+  <defs>
+    <linearGradient id="bg-heart" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fce7f3" />
+      <stop offset="100%" stop-color="#fbcfe8" />
+    </linearGradient>
+    <linearGradient id="heart-fill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="320" rx="32" fill="url(#bg-heart)" />
+  <g transform="translate(210,100)">
+    <!-- Heart shape -->
+    <path d="M 0,40 C -20,0 -60,-20 -80,0 C -100,20 -100,60 -60,100 L 0,150 L 60,100 C 100,60 100,20 80,0 C 60,-20 20,0 0,40 Z" 
+          fill="url(#heart-fill)" stroke="#be185d" stroke-width="4" />
+    
+    <!-- Symmetry line -->
+    <line x1="0" y1="-30" x2="0" y2="170" stroke="#0f172a" stroke-width="4" stroke-dasharray="8,8" />
+    
+    <!-- Labels -->
+    <text x="-50" y="70" font-size="24" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">щоам</text>
+    <text x="20" y="70" font-size="24" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">йойп</text>
+    <text x="0" y="190" text-anchor="middle" font-size="28" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">че сйоишйд</text>
+  </g>
+</svg>

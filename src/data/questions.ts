@@ -1170,6 +1170,15 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'Mark את כל הריבועים בציור.',
     answer: 'כל הריבועים',
     assetId: 'geometry/mix_shapes_1',
+    explanationHe: 'ריבוע הוא צורה עם 4 צלעות שוות ו-4 זוויות ישרות. בציור יש מספר צורות שונות - חפש את אלו שיש להן 4 צלעות באותו אורך.',
+    explanationEn: 'A square is a shape with 4 equal sides and 4 right angles. In the drawing there are several different shapes - look for the ones that have 4 sides of the same length.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/mix_shapes_1.svg',
+        size: 'large',
+      },
+    ],
   },
   {
     id: 'geo_shapes_002',
@@ -1180,6 +1189,15 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'How many משולשים יש בתמונה?',
     answer: 4,
     assetId: 'geometry/triangles_4',
+    explanationHe: 'משולש הוא צורה עם 3 צלעות ו-3 קודקודים. ספור אחד אחד את כל המשולשים בציור - כל צורה משולשת נחשבת.',
+    explanationEn: 'A triangle is a shape with 3 sides and 3 vertices. Count one by one all the triangles in the drawing - every triangular shape counts.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/triangles_4.svg',
+        size: 'large',
+      },
+    ],
   },
   {
     id: 'geo_shapes_003',
@@ -1214,6 +1232,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה צלעות יש לריבוע?',
     promptEn: 'How many צלעות יש לריבוע?',
     answer: 4,
+    explanationHe: 'ריבוע בנוי מארבעה קווים ישרים שווים שנפגשים ומסגירים שטח. כל קו כזה נקרא צלע ולכן יש בדיוק 4 צלעות.',
+    explanationEn: 'A square is made from four equal straight lines that meet and enclose a space. Each line is called a side, so there are exactly 4 sides.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/square_sides.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'עקוב עם האצבע אחרי צורת הריבוע: מתחילים מפינה אחת, עוברים על צלע ראשונה, פונים לצלע השנייה, אז לצלע השלישית, ולבסוף הצלע הרביעית חוזרת להתחלה. לכן יש 4 צלעות.',
+    autoSolveExplanationEn: 'Trace the square with your finger: start at one corner, walk along the first side, turn to the second side, then the third side, and finally the fourth side returns to the start. Therefore there are 4 sides.',
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/square_sides.svg',
+      size: 'large',
+    },
   },
   {
     id: 'geo_shapes_005',
@@ -1223,6 +1257,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'האם למעגל יש פינות?',
     promptEn: 'Is למעגל יש פינות?',
     answer: 'לא',
+    explanationHe: 'מעגל הוא צורה עגולה לחלוטין, בלי שום קווים ישרים. פינה נוצרת כאשר שני קווים ישרים נפגשים. אבל מעגל עשוי מקו מעוגל אחד רציף, אז אין לו פינות.',
+    explanationEn: 'A circle is a completely round shape with no straight lines. A corner is created when two straight lines meet. But a circle is made from one continuous curved line, so it has no corners.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/circle_no_corners.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'העבר את האצבע סביב המעגל - היא נעה בצורה חלקה ועגולה, בלי להיתקע באף פינה חדה. זה בדיוק מה שעושה את המעגל מיוחד - הוא עגול לגמרי ובלי פינות.',
+    autoSolveExplanationEn: 'Move your finger around the circle - it moves smoothly and roundly, without getting stuck at any sharp corner. That is exactly what makes a circle special - it is completely round with no corners.',
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/circle_no_corners.svg',
+      size: 'large',
+    },
   },
 
   // ---- סימטריה בסיסית ----
@@ -1236,6 +1286,15 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'Is לב הוא צורה סימטרית ביחס לקו באמצע?',
     answer: 'כן',
     assetId: 'geometry/heart_midline',
+    explanationHe: 'סימטריה משמעותה שאם נקפל את הצורה לאורך הקו, שני הצדדים ייפגשו בדיוק זה על זה. בלב, הצד השמאלי והצד הימני זהים - כמו תמונת ראי.',
+    explanationEn: 'Symmetry means that if we fold the shape along the line, both sides will meet exactly on top of each other. In a heart, the left side and right side are identical - like a mirror image.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/heart_midline.svg',
+        size: 'large',
+      },
+    ],
   },
   {
     id: 'geo_symmetry_007',
@@ -1246,6 +1305,15 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'Is חץ שפונה רק ימינה הוא סימטרי ביחס לקו באמצע?',
     answer: 'לא',
     assetId: 'geometry/arrow_right',
+    explanationHe: 'חץ שפונה ימינה אינו סימטרי כי הצד השמאלי והצד הימני שונים זה מזה. החלק הימני של החץ מחודד, והחלק השמאלי שטוח. לכן אי אפשר לקפל אותו כך ששני הצדדים יתאימו.',
+    explanationEn: 'An arrow pointing right is not symmetric because the left side and right side are different from each other. The right part of the arrow is pointed, and the left part is flat. Therefore it cannot be folded so both sides match.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/arrow_right.svg',
+        size: 'large',
+      },
+    ],
   },
   {
     id: 'geo_symmetry_008',
@@ -1255,6 +1323,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'האם לב הוא צורה סימטרית ביחס לקו באמצע?',
     promptEn: 'Is לב הוא צורה סימטרית ביחס לקו באמצע?',
     answer: 'כן',
+    explanationHe: 'כן! לב הוא צורה סימטרית מושלמת. אם נשרטט קו אנכי (למעלה-למטה) באמצע הלב, נראה שהצד השמאלי והצד הימני זהים לחלוטין.',
+    explanationEn: 'Yes! A heart is a perfectly symmetric shape. If we draw a vertical line (up-down) through the middle of the heart, we will see that the left side and right side are completely identical.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/heart_midline.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'דמיינו שאתם מקפלים את הלב בדיוק באמצע - שני החלקים יכסו זה את זה בדיוק. זו הדרך לבדוק סימטריה - אם הצדדים זהים לחלוטין, הצורה סימטרית!',
+    autoSolveExplanationEn: 'Imagine you are folding the heart exactly in the middle - both parts will cover each other exactly. This is how to check symmetry - if the sides are completely identical, the shape is symmetric!',
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/heart_midline.svg',
+      size: 'large',
+    },
   },
 
   // ---- סימטריה / שיקוף – בינוני ----
@@ -1268,6 +1352,15 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'חצי כוכב מצויר בצד שמאל של קו שיקוף. Complete בצד ימין כדי שיהיה כוכב שלם.',
     answer: 'כוכב סימטרי',
     assetId: 'geometry/half_star',
+    explanationHe: 'כשאנחנו משלימים צורה מצד אחד של קו שיקוף, אנחנו צריכים לצייר תמונת ראי מדויקת של הצד השני. בכוכב, כל קודקוד וכל שקע בצד שמאל צריך להופיע במקום מדויק בצד ימין.',
+    explanationEn: 'When we complete a shape from one side of a reflection line, we need to draw an exact mirror image of the other side. In a star, every point and every indent on the left side should appear in an exact location on the right side.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/half_star.svg',
+        size: 'large',
+      },
+    ],
   },
   {
     id: 'geo_symmetry_021',
@@ -1279,6 +1372,15 @@ const MANUAL_QUESTIONS: Question[] = [
     options: ['ריבוע', 'משולש שווה-שוקיים', 'חץ חד-צדדי'],
     answer: 'חץ חד-צדדי',
     assetId: 'geometry/symmetry_choices',
+    explanationHe: 'ריבוע ומשולש שווה-שוקיים הם סימטריים - אפשר לקפל אותם באמצע והצדדים יתאימו. אבל חץ חד-צדדי (שמצביע רק לכיוון אחד) אינו סימטרי כי צד אחד מחודד והצד השני לא.',
+    explanationEn: 'A square and isosceles triangle are symmetric - you can fold them in the middle and the sides will match. But a one-sided arrow (pointing in only one direction) is not symmetric because one side is pointed and the other side is not.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/symmetry_choices.svg',
+        size: 'large',
+      },
+    ],
   },
   {
     id: 'geo_symmetry_022',
@@ -1288,8 +1390,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'חצי כוכב מצויר בצד שמאל של קו שיקוף. מה יופיע בצד ימין?',
     promptEn: 'חצי כוכב מצויר בצד שמאל של קו שיקוף. מה יופיע בצד ימין?',
     answer: 'חצי כוכב מראה',
-    explanationHe: 'בשיקוף מופיע תמונת ראי של הצורה.',
-    explanationEn: 'בשיקוף מופיע תמונת ראי של הצורה.',
+    explanationHe: 'בשיקוף מופיע תמונת ראי של הצורה. כל מה שנמצא בצד שמאל יופיע גם בצד ימין, אבל הפוך - כמו כשאתם מסתכלים במראה.',
+    explanationEn: 'In reflection, a mirror image of the shape appears. Everything on the left side will also appear on the right side, but reversed - like when you look in a mirror.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/half_star_mirror.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'דמיינו שקו השיקוף הוא מראה. מה שנמצא בצד שמאל משתקף בדיוק בצד ימין, אבל הפוך. אם יש קודקוד למעלה משמאל, יהיה קודקוד למעלה גם מימין, באותו המרחק מקו השיקוף.',
+    autoSolveExplanationEn: 'Imagine the reflection line is a mirror. What is on the left side is reflected exactly on the right side, but reversed. If there is a point at the top left, there will be a point at the top right too, at the same distance from the reflection line.',
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/half_star_mirror.svg',
+      size: 'large',
+    },
   },
   {
     id: 'geo_symmetry_023',
@@ -1300,6 +1416,15 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'Choose: איזו מהצורות אינה סימטרית?',
     options: ['ריבוע', 'משולש שווה-שוקיים', 'חץ חד-צדדי'],
     answer: 'חץ חד-צדדי',
+    explanationHe: 'כדי לבדוק אם צורה סימטרית, נדמיין קו שמחלק אותה לשניים. ריבוע ומשולש שווה-שוקיים ניתן לחלק כך ששני הצדדים זהים. חץ חד-צדדי יש לו צד אחד מחודד וצד אחד שטוח, לכן הוא לא סימטרי.',
+    explanationEn: 'To check if a shape is symmetric, imagine a line dividing it in two. A square and isosceles triangle can be divided so both sides are identical. A one-sided arrow has one pointed side and one flat side, so it is not symmetric.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/symmetry_choices.svg',
+        size: 'large',
+      },
+    ],
   },
   {
     id: 'geo_shapes_024',
@@ -1309,6 +1434,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה צלעות יש למשושה?',
     promptEn: 'How many צלעות יש למשושה?',
     answer: 6,
+    explanationHe: 'משושה הוא צורה עם 6 צלעות. כל צלע היא קו ישר, וכולן מתחברות ויוצרות צורה סגורה. אם נספור את כל הקווים מסביב למשושה, נגיע למספר 6.',
+    explanationEn: 'A hexagon is a shape with 6 sides. Each side is a straight line, and they all connect to form a closed shape. If we count all the lines around the hexagon, we will reach the number 6.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/hexagon_sides.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'עקבו עם האצבע סביב המשושה: צלע 1, צלע 2, צלע 3, צלע 4, צלע 5, צלע 6, וחזרנו להתחלה! למשושה יש 6 צלעות.',
+    autoSolveExplanationEn: 'Trace your finger around the hexagon: side 1, side 2, side 3, side 4, side 5, side 6, and we are back at the start! A hexagon has 6 sides.',
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/hexagon_sides.svg',
+      size: 'large',
+    },
   },
   {
     id: 'geo_symmetry_025',
@@ -1318,6 +1459,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'חצי פרפר מצויר. כמה כנפיים יהיו לפרפר השלם?',
     promptEn: 'חצי פרפר מצויר. How many כנפיים יהיו לפרפר Complete?',
     answer: 4,
+    explanationHe: 'בחצי הפרפר יש 2 כנפיים. כשנשלים את החצי השני, יהיו עוד 2 כנפיים זהות מהצד השני. סך הכל: 2 + 2 = 4 כנפיים.',
+    explanationEn: 'In half the butterfly there are 2 wings. When we complete the second half, there will be 2 more identical wings on the other side. In total: 2 + 2 = 4 wings.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/half_butterfly.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'פרפר הוא צורה סימטרית - מה שיש בצד אחד קיים גם בצד השני. אם אנחנו רואים 2 כנפיים בצד אחד, יהיו 2 כנפיים גם בצד השני. לכן בסך הכל 4 כנפיים.',
+    autoSolveExplanationEn: 'A butterfly is a symmetric shape - what is on one side also exists on the other side. If we see 2 wings on one side, there will be 2 wings on the other side too. Therefore a total of 4 wings.',
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/full_butterfly.svg',
+      size: 'large',
+    },
   },
 
   // ---- קשה: יותר קווי סימטריה / השלמת צורות חג ----
@@ -1330,6 +1487,15 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'בסביבון מצויר קו שיקוף אחד. צייר סביבון אחר שיש לו שני קווי שיקוף.',
     promptEn: 'בסביבון מצויר קו שיקוף אחד. צייר סביבון אחר שיש לו שני קווי שיקוף.',
     answer: 'למשל סביבון עגול עם ציור סימטרי בשני כיוונים',
+    explanationHe: 'צורה עם שני קווי שיקוף היא סימטרית בשני כיוונים שונים. למשל, ריבוע או מעויין יכולים להיות סימטריים אנכית ואופקית. הסביבון צריך להיות זהה משני הצדדים של כל קו שיקוף.',
+    explanationEn: 'A shape with two reflection lines is symmetric in two different directions. For example, a square or diamond can be symmetric vertically and horizontally. The dreidel should be identical on both sides of each reflection line.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/dreidel_two_lines.svg',
+        size: 'large',
+      },
+    ],
   },
   {
     id: 'geo_symmetry_041',
@@ -1340,6 +1506,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'חצי חנוכייה מצויר מצד אחד של קו שיקוף. Complete את הצד השני כך שהחנוכייה תהיה סימטרית.',
     answer: 'חנוכייה עם מספר נרות שווה בשני הצדדים',
     assetId: 'geometry/half_menorah',
+    explanationHe: 'חנוכייה היא צורה סימטרית. יש לה נר אמצעי (השמש) ואז מספר שווה של נרות משני הצדדים. בחנוכייה מלאה יש 9 נרות: 4 נרות משמאל, נר השמש באמצע, ו-4 נרות מימין.',
+    explanationEn: 'A menorah is a symmetric shape. It has a middle candle (the shamash) and then an equal number of candles on both sides. A full menorah has 9 candles: 4 candles on the left, the shamash in the middle, and 4 candles on the right.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/half_menorah.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'כדי להשלים חנוכייה סימטרית, צריך לשים לב לכל פרט בחצי הראשון: כל נר, הגובה שלו, והמרחק שלו מהמרכז. ואז לצייר בדיוק את אותו הדבר בצד השני, כמו תמונת ראי.',
+    autoSolveExplanationEn: 'To complete a symmetric menorah, you need to pay attention to every detail in the first half: each candle, its height, and its distance from the center. Then draw exactly the same thing on the other side, like a mirror image.',
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/full_menorah.svg',
+      size: 'large',
+    },
   },
   {
     id: 'geo_symmetry_042',
@@ -1349,8 +1531,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'כמה צירי סימטריה יש לריבוע?',
     promptEn: 'How many צירי סימטריה יש לריבוע?',
     answer: 4,
-    explanationHe: 'לריבוע יש 4 צירי סימטריה: 2 אלכסונים ו-2 קווים המחברים אמצעי צלעות.',
-    explanationEn: 'לריבוע יש 4 צירי סימטריה: 2 אלכסונים ו-2 קווים המחברים אמצעי צלעות.',
+    explanationHe: 'לריבוע יש 4 צירי סימטריה: 2 אלכסונים (קווים מפינה לפינה) ו-2 קווים שמחברים את אמצע הצלעות (אנכי ואופקי). בכל אחד מהקווים האלה, אם נקפל את הריבוע, שני הצדדים יתאימו בדיוק.',
+    explanationEn: 'A square has 4 axes of symmetry: 2 diagonals (lines from corner to corner) and 2 lines connecting the midpoints of sides (vertical and horizontal). On each of these lines, if we fold the square, both sides will match exactly.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/square_symmetry_lines.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'דמיינו ריבוע. אפשר לקפל אותו בדיוק באמצע מלמעלה למטה (קו אנכי), מצד לצד (קו אופקי), ומפינה לפינה (שני אלכסונים). בכל אחת מהדרכים האלה הריבוע מתקפל בצורה מושלמת - זה אומר שיש 4 צירי סימטריה!',
+    autoSolveExplanationEn: 'Imagine a square. You can fold it exactly in the middle from top to bottom (vertical line), from side to side (horizontal line), and from corner to corner (two diagonals). In each of these ways the square folds perfectly - that means there are 4 axes of symmetry!',
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/square_symmetry_lines.svg',
+      size: 'large',
+    },
   },
   {
     id: 'geo_shapes_043',
@@ -1360,6 +1556,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'איזו צורה יש לה אינסוף צירי סימטריה?',
     promptEn: 'איזו צורה יש לה אינסוף צירי סימטריה?',
     answer: 'מעגל',
+    explanationHe: 'מעגל הוא הצורה היחידה עם אינסוף צירי סימטריה. אפשר לשרטט קו דרך המרכז של המעגל בכל כיוון שרוצים, והמעגל תמיד יהיה סימטרי לאורך הקו הזה. זה בגלל שהמעגל עגול לחלוטין ושווה מכל הצדדים.',
+    explanationEn: 'A circle is the only shape with infinite axes of symmetry. You can draw a line through the center of the circle in any direction you want, and the circle will always be symmetric along that line. This is because the circle is completely round and equal on all sides.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/circle_infinite_symmetry.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'חשבו על פיצה עגולה. אפשר לחתוך אותה לשני חלקים שווים בכל כיוון שרוצים - מלמעלה למטה, מצד לצד, באלכסון, בכל זווית! כל חיתוך דרך המרכז ייתן שני חלקים זהים. זה בדיוק מה שאומר אינסוף צירי סימטריה.',
+    autoSolveExplanationEn: 'Think about a round pizza. You can cut it into two equal parts in any direction you want - from top to bottom, from side to side, diagonally, at any angle! Every cut through the center will give two identical parts. That is exactly what infinite axes of symmetry means.',
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/circle_infinite_symmetry.svg',
+      size: 'large',
+    },
   },
   {
     id: 'geo_symmetry_044',
@@ -1369,8 +1581,22 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'האם כל המשולשים סימטריים?',
     promptEn: 'Is כל המשולשים סימטריים?',
     answer: 'לא',
-    explanationHe: 'רק משולשים שווי-שוקיים ושווי-צלעות הם סימטריים.',
-    explanationEn: 'רק משולשים שווי-שוקיים ושווי-צלעות הם סימטריים.',
+    explanationHe: 'לא, לא כל המשולשים סימטריים. רק משולשים שווי-שוקיים (שיש להם שתי צלעות שוות) ומשולשים שווי-צלעות (שיש להם שלוש צלעות שוות) הם סימטריים. משולש שכל הצלעות שלו שונות (משולש כלשהו) אינו סימטרי.',
+    explanationEn: 'No, not all triangles are symmetric. Only isosceles triangles (that have two equal sides) and equilateral triangles (that have three equal sides) are symmetric. A triangle with all different sides (scalene triangle) is not symmetric.',
+    visualAids: [
+      {
+        type: 'image',
+        value: '/assets/geometry/triangles_symmetry.svg',
+        size: 'large',
+      },
+    ],
+    autoSolveExplanationHe: 'בואו נבדוק שלושה סוגי משולשים: 1) משולש שווה-צלעות - סימטרי! יש לו 3 צירי סימטריה. 2) משולש שווה-שוקיים - סימטרי! יש לו קו סימטריה אחד באמצע. 3) משולש כלשהו (כל הצלעות שונות) - לא סימטרי, אי אפשר לקפל אותו כך ששני הצדדים יתאימו.',
+    autoSolveExplanationEn: "Let's check three types of triangles: 1) Equilateral triangle - symmetric! It has 3 axes of symmetry. 2) Isosceles triangle - symmetric! It has one line of symmetry in the middle. 3) Scalene triangle (all sides different) - not symmetric, it cannot be folded so both sides match.",
+    autoSolveVisualAid: {
+      type: 'image',
+      value: '/assets/geometry/triangles_symmetry.svg',
+      size: 'large',
+    },
   },
 ];
 

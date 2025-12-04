@@ -1,0 +1,23 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four triangles">
+  <defs>
+    <linearGradient id="bg-tri" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fde68a" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="320" rx="32" fill="url(#bg-tri)" />
+  
+  <!-- Triangle 1 -->
+  <polygon points="80,40 40,110 120,110" fill="#f97316" stroke="#c2410c" stroke-width="3" />
+  
+  <!-- Triangle 2 -->
+  <polygon points="210,50 170,100 250,100" fill="#f59e0b" stroke="#b45309" stroke-width="3" />
+  
+  <!-- Triangle 3 -->
+  <polygon points="340,60 310,120 370,120" fill="#fb923c" stroke="#c2410c" stroke-width="3" />
+  
+  <!-- Triangle 4 -->
+  <polygon points="160,200 100,260 220,260" fill="#fdba74" stroke="#c2410c" stroke-width="3" />
+  
+  <text x="210" y="290" text-anchor="middle" font-size="26" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">лод ощемщйн? 4!</text>
+</svg>

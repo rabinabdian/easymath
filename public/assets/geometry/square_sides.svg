@@ -1,0 +1,26 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Square with four sides labeled">
+  <defs>
+    <linearGradient id="bg-square" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    <linearGradient id="square-fill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="320" rx="32" fill="url(#bg-square)" />
+  <g transform="translate(60,40)">
+    <rect x="50" y="30" width="180" height="180" fill="url(#square-fill)" stroke="#0284c7" stroke-width="6" rx="4" />
+
+    <circle cx="50" cy="30" r="10" fill="#fff" stroke="#0284c7" stroke-width="4" />
+    <circle cx="230" cy="30" r="10" fill="#fff" stroke="#0284c7" stroke-width="4" />
+    <circle cx="230" cy="210" r="10" fill="#fff" stroke="#0284c7" stroke-width="4" />
+    <circle cx="50" cy="210" r="10" fill="#fff" stroke="#0284c7" stroke-width="4" />
+
+    <text x="140" y="15" text-anchor="middle" font-size="28" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">Ê‹‚ 1</text>
+    <text x="250" y="125" font-size="28" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">Ê‹‚ 2</text>
+    <text x="140" y="245" text-anchor="middle" font-size="28" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">Ê‹‚ 3</text>
+    <text x="15" y="125" font-size="28" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">Ê‹‚ 4</text>
+  </g>
+</svg>

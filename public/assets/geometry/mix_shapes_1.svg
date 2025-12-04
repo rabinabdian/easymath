@@ -1,0 +1,29 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mixed shapes - find the squares">
+  <defs>
+    <linearGradient id="bg-mix" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4" />
+      <stop offset="100%" stop-color="#dcfce7" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="320" rx="32" fill="url(#bg-mix)" />
+  
+  <!-- Square 1 -->
+  <rect x="40" y="40" width="80" height="80" fill="#3b82f6" stroke="#1e40af" stroke-width="3" rx="4" />
+  
+  <!-- Triangle -->
+  <polygon points="200,40 160,120 240,120" fill="#ef4444" stroke="#991b1b" stroke-width="3" />
+  
+  <!-- Circle -->
+  <circle cx="340" cy="80" r="40" fill="#eab308" stroke="#854d0e" stroke-width="3" />
+  
+  <!-- Square 2 -->
+  <rect x="40" y="180" width="70" height="70" fill="#3b82f6" stroke="#1e40af" stroke-width="3" rx="4" />
+  
+  <!-- Rectangle (not square) -->
+  <rect x="160" y="180" width="100" height="60" fill="#8b5cf6" stroke="#6d28d9" stroke-width="3" rx="4" />
+  
+  <!-- Square 3 -->
+  <rect x="310" y="180" width="75" height="75" fill="#3b82f6" stroke="#1e40af" stroke-width="3" rx="4" />
+  
+  <text x="210" y="280" text-anchor="middle" font-size="24" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">ﬁÊ– –Í ‘ËŸ—’‚Ÿ›!</text>
+</svg>

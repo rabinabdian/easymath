@@ -1,0 +1,44 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Full butterfly - 4 wings">
+  <defs>
+    <linearGradient id="bg-full-butterfly" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fce7f3" />
+      <stop offset="100%" stop-color="#fbcfe8" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="420" height="320" rx="32" fill="url(#bg-full-butterfly)" />
+  
+  <!-- Symmetry line -->
+  <line x1="210" y1="30" x2="210" y2="290" stroke="#16a34a" stroke-width="4" stroke-dasharray="8,8" />
+  
+  <!-- Full butterfly -->
+  <g transform="translate(210,160)">
+    <!-- Body -->
+    <ellipse cx="0" cy="0" rx="8" ry="40" fill="#1f2937" />
+    
+    <!-- Upper left wing -->
+    <ellipse cx="-45" cy="-30" rx="40" ry="35" fill="#f472b6" stroke="#be185d" stroke-width="2" />
+    <ellipse cx="-35" cy="-25" rx="15" ry="15" fill="#fce7f3" />
+    
+    <!-- Lower left wing -->
+    <ellipse cx="-40" cy="30" rx="35" ry="30" fill="#ec4899" stroke="#be185d" stroke-width="2" />
+    <ellipse cx="-32" cy="28" rx="12" ry="12" fill="#fce7f3" />
+    
+    <!-- Upper right wing -->
+    <ellipse cx="45" cy="-30" rx="40" ry="35" fill="#f472b6" stroke="#be185d" stroke-width="2" />
+    <ellipse cx="35" cy="-25" rx="15" ry="15" fill="#fce7f3" />
+    
+    <!-- Lower right wing -->
+    <ellipse cx="40" cy="30" rx="35" ry="30" fill="#ec4899" stroke="#be185d" stroke-width="2" />
+    <ellipse cx="32" cy="28" rx="12" ry="12" fill="#fce7f3" />
+    
+    <!-- Antennae -->
+    <path d="M -3,-40 Q -15,-55 -20,-65" stroke="#1f2937" stroke-width="3" fill="none" />
+    <circle cx="-20" cy="-65" r="4" fill="#1f2937" />
+    <path d="M 3,-40 Q 15,-55 20,-65" stroke="#1f2937" stroke-width="3" fill="none" />
+    <circle cx="20" cy="-65" r="4" fill="#1f2937" />
+  </g>
+  
+  <text x="105" y="290" text-anchor="middle" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">2 €‡‰ŸŸ›</text>
+  <text x="315" y="290" text-anchor="middle" font-size="20" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#0f172a">2 €‡‰ŸŸ›</text>
+  <text x="210" y="310" text-anchor="middle" font-size="24" font-weight="700" font-family="Heebo, 'Assistant', Arial" fill="#16a34a">·‘Ù€ 4 €‡‰ŸŸ›!</text>
+</svg>
