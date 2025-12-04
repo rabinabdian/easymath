@@ -13,12 +13,21 @@ import { generateYearPlan } from "./utils/yearPlanGenerator";
 import { loadExams, getExamById } from "./utils/examsStorage";
 import type { SavedExam } from "./utils/examsStorage";
 import StudentGame from "./components/StudentGame";
+import VersionBadge from "./components/VersionBadge";
 import { loadStudentRecords } from "./utils/studentStorage";
-import type { StudentRecord } from "./types/students";
+import type { StudentRecord, AvatarType } from "./types/students";
+import { avatarEmoji } from "./utils/avatar";
+
+type StudentVisualProfile = {
+  avatar: AvatarType;
+  color: string;
+  photoUrl?: string;
+};
 
 function HomePage() {
   const navigate = useNavigate();
   const { settings } = useChildSettings();
+  const [studentVisual, setStudentVisual] = useState<StudentVisualProfile | null>(null);
 
   // Get the currently loaded exam name
   const currentExam = settings.selectedExamId
@@ -27,12 +36,53 @@ function HomePage() {
   const examIndicator = currentExam
     ? currentExam.name
     : "ברירת מחדל (ספירה)";
+  const displayProfile: StudentVisualProfile = studentVisual || {
+    avatar: "star",
+    color: "#c7d2fe",
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const studentRecords = loadStudentRecords();
+    const matched = studentRecords.find(
+      (record) => record.profile.name === settings.childName
+    );
+
+    if (matched) {
+      setStudentVisual({
+        avatar: matched.profile.avatar,
+        color: matched.profile.color,
+        photoUrl: matched.profile.photoUrl,
+      });
+    } else {
+      setStudentVisual(null);
+    }
+  }, [settings.childName]);
 
   return (
     <div className="page page-right">
       <h1 className="title">Easymath</h1>
       <p className="subtitle">חשבון פשוט לילדים</p>
       <p className="subtitle-small">שלום {settings.childName} 😊</p>
+      <VersionBadge variant="inline" />
+
+      <div className="student-profile-card" style={{ borderColor: displayProfile.color }}>
+        <div className="student-photo-frame">
+          {displayProfile.photoUrl ? (
+            <img
+              src={displayProfile.photoUrl}
+              alt={`תמונת ${settings.childName}`}
+              className="student-photo"
+            />
+          ) : (
+            <span className="student-avatar">{avatarEmoji(displayProfile.avatar)}</span>
+          )}
+        </div>
+        <div className="student-profile-meta">
+          <span className="student-profile-label">התלמיד/ה שלי</span>
+          <span className="student-profile-name">{settings.childName}</span>
+        </div>
+      </div>
 
       <div className="buttons">
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -590,12 +640,15 @@ function ParentPage() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/session" element={<SessionPage />} />
-      <Route path="/parent" element={<ParentPage />} />
-      <Route path="/teacher" element={<TeacherDashboard />} />
-      <Route path="/year-plan" element={<YearPlanPage />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/session" element={<SessionPage />} />
+        <Route path="/parent" element={<ParentPage />} />
+        <Route path="/teacher" element={<TeacherDashboard />} />
+        <Route path="/year-plan" element={<YearPlanPage />} />
+      </Routes>
+      <VersionBadge />
+    </>
   );
 }
