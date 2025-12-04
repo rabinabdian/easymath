@@ -348,6 +348,15 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </ul>
         </div>
 
+        {/* Explanation about the drawing */}
+        <div className="rounded-2xl bg-yellow-50 p-4">
+          <div className="text-lg font-bold text-yellow-800 mb-2">הסבר על הציור:</div>
+          <p className="text-yellow-700 text-right">
+            בציור רואים משולש - צורה עם 3 צלעות. כל צלע מסומנת במספר (1, 2, 3) וכל קודקוד מסומן בעיגול אדום. 
+            עקבו עם האצבע על המשולש: התחילו מקודקוד אחד ועברו על כל הצלעות עד שתחזרו להתחלה - תגלו שיש בדיוק 3 צלעות.
+          </p>
+        </div>
+
         {/* Result */}
         <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
           <div className="text-2xl font-bold text-green-700">
@@ -409,10 +418,85 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </ul>
         </div>
 
+        {/* Explanation about the drawing */}
+        <div className="rounded-2xl bg-yellow-50 p-4">
+          <div className="text-lg font-bold text-yellow-800 mb-2">הסבר על הציור:</div>
+          <p className="text-yellow-700 text-right">
+            בציור רואים ריבוע - צורה עם 4 צלעות שוות. כל צלע מסומנת במילה "צלע" וכל קודקוד מסומן בעיגול אדום. 
+            עקבו עם האצבע על הריבוע: התחילו מקודקוד אחד ועברו על כל הצלעות עד שתחזרו להתחלה - תגלו שיש בדיוק 4 צלעות שוות.
+          </p>
+        </div>
+
         {/* Result */}
         <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
           <div className="text-2xl font-bold text-green-700">
             לריבוע יש {typeof answer === 'number' ? answer : 4} צלעות! ✅
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Circle question with infinite symmetry axes
+  if ((promptHe.includes('מעגל') || promptHe.includes('עיגול')) && promptHe.includes('צירי סימטריה')) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <div className="text-xl font-bold text-green-700 mb-4">מעגל עם אינסוף צירי סימטריה</div>
+          
+          {/* Circle SVG with multiple symmetry axes */}
+          <div className="flex justify-center">
+            <svg width="250" height="250" viewBox="0 0 250 250">
+              <circle 
+                cx="125" cy="125" r="90" 
+                fill="#86efac" 
+                stroke="#16a34a" 
+                strokeWidth="4"
+              />
+              {/* Center point */}
+              <circle cx="125" cy="125" r="4" fill="#ef4444" />
+              {/* Multiple symmetry axes */}
+              <line x1="125" y1="35" x2="125" y2="215" stroke="#f59e0b" strokeWidth="2" strokeDasharray="5,5" />
+              <line x1="35" y1="125" x2="215" y2="125" stroke="#f59e0b" strokeWidth="2" strokeDasharray="5,5" />
+              <line x1="50" y1="50" x2="200" y2="200" stroke="#f59e0b" strokeWidth="2" strokeDasharray="5,5" />
+              <line x1="200" y1="50" x2="50" y2="200" stroke="#f59e0b" strokeWidth="2" strokeDasharray="5,5" />
+              <line x1="80" y1="50" x2="170" y2="200" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3,3" opacity="0.6" />
+              <line x1="170" y1="50" x2="80" y2="200" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3,3" opacity="0.6" />
+              <text x="130" y="20" fill="#f59e0b" fontSize="14" fontWeight="bold">צירי סימטריה</text>
+              <text x="130" y="240" fill="#16a34a" fontSize="14" fontWeight="bold">אינסוף צירי סימטריה!</text>
+            </svg>
+          </div>
+        </div>
+
+        {/* Properties */}
+        <div className="rounded-2xl bg-green-50 p-4">
+          <div className="text-lg font-bold text-green-800 mb-2">תכונות המעגל:</div>
+          <ul className="space-y-2 text-green-700 text-right">
+            <li className="flex items-center gap-2 justify-end">
+              <span>צירי סימטריה</span>
+              <span className="text-2xl">∞</span>
+            </li>
+            <li className="flex items-center gap-2 justify-end">
+              <span>כל קו דרך המרכז הוא ציר סימטריה</span>
+              <span className="text-2xl">✅</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Explanation about the drawing */}
+        <div className="rounded-2xl bg-yellow-50 p-4">
+          <div className="text-lg font-bold text-yellow-800 mb-2">הסבר על הציור:</div>
+          <p className="text-yellow-700 text-right">
+            בציור רואים מעגל עם כמה קווים העוברים דרך המרכז (הנקודה האדומה). כל קו כזה הוא ציר סימטריה - 
+            אפשר לקפל את המעגל על כל קו כזה ולקבל שני חצאים זהים. יש אינסוף קווים כאלה העוברים דרך המרכז, 
+            ולכן למעגל יש אינסוף צירי סימטריה!
+          </p>
+        </div>
+
+        {/* Result */}
+        <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
+          <div className="text-2xl font-bold text-green-700">
+            למעגל יש אינסוף צירי סימטריה! ✅
           </div>
         </div>
       </div>
@@ -459,6 +543,15 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </ul>
         </div>
 
+        {/* Explanation about the drawing */}
+        <div className="rounded-2xl bg-yellow-50 p-4">
+          <div className="text-lg font-bold text-yellow-800 mb-2">הסבר על הציור:</div>
+          <p className="text-yellow-700 text-right">
+            בציור רואים מעגל - צורה עגולה וחלקה. עקבו עם האצבע על המעגל: תגלו שהוא חלק ועגול מכל הכיוונים ללא עצירות, 
+            ללא פינות חדות וללא צלעות ישרות. המעגל הוא עגול מכל הכיוונים ולכן אין לו פינות.
+          </p>
+        </div>
+
         {/* Result */}
         <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
           <div className="text-2xl font-bold text-green-700">
@@ -494,6 +587,15 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           </p>
         </div>
 
+        {/* Explanation about the drawing */}
+        <div className="rounded-2xl bg-yellow-50 p-4">
+          <div className="text-lg font-bold text-yellow-800 mb-2">הסבר על הציור:</div>
+          <p className="text-yellow-700 text-right">
+            בציור רואים פרפר עם קו סימטריה באמצע. שני הצדדים של הפרפר זהים בדיוק - זה מה שקורה בצורה סימטרית. 
+            אם נקפל את הפרפר על קו הסימטריה, שני הצדדים יתאימו בדיוק אחד לשני.
+          </p>
+        </div>
+
         {/* Examples */}
         <div className="grid grid-cols-2 gap-4">
           <div className="rounded-xl bg-green-50 p-3 text-center">
@@ -503,6 +605,79 @@ function generateGeometryVisual(question: Question): React.ReactNode {
           <div className="rounded-xl bg-red-50 p-3 text-center">
             <div className="text-3xl mb-2">➡️</div>
             <div className="text-red-700 font-bold text-sm">לא סימטרי ❌</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Hexagon question
+  if (promptHe.includes('משושה')) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <div className="text-xl font-bold text-orange-700 mb-4">משושה</div>
+          
+          {/* Hexagon SVG with labels */}
+          <div className="flex justify-center">
+            <svg width="220" height="200" viewBox="0 0 220 200">
+              {/* Hexagon */}
+              <polygon 
+                points="110,20 180,60 180,140 110,180 40,140 40,60" 
+                fill="#fbbf24" 
+                stroke="#f59e0b" 
+                strokeWidth="4"
+              />
+              {/* Side labels */}
+              <text x="60" y="45" fill="#f59e0b" fontSize="16" fontWeight="bold">צלע 1</text>
+              <text x="155" y="45" fill="#f59e0b" fontSize="16" fontWeight="bold">צלע 2</text>
+              <text x="195" y="100" fill="#f59e0b" fontSize="16" fontWeight="bold">צלע 3</text>
+              <text x="155" y="155" fill="#f59e0b" fontSize="16" fontWeight="bold">צלע 4</text>
+              <text x="60" y="155" fill="#f59e0b" fontSize="16" fontWeight="bold">צלע 5</text>
+              <text x="5" y="100" fill="#f59e0b" fontSize="16" fontWeight="bold">צלע 6</text>
+              {/* Vertices */}
+              <circle cx="110" cy="20" r="6" fill="#ef4444" />
+              <circle cx="180" cy="60" r="6" fill="#ef4444" />
+              <circle cx="180" cy="140" r="6" fill="#ef4444" />
+              <circle cx="110" cy="180" r="6" fill="#ef4444" />
+              <circle cx="40" cy="140" r="6" fill="#ef4444" />
+              <circle cx="40" cy="60" r="6" fill="#ef4444" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Properties */}
+        <div className="rounded-2xl bg-orange-50 p-4">
+          <div className="text-lg font-bold text-orange-800 mb-2">תכונות המשושה:</div>
+          <ul className="space-y-2 text-orange-700 text-right">
+            <li className="flex items-center gap-2 justify-end">
+              <span>צלעות (כולן שוות)</span>
+              <span className="text-2xl">6️⃣</span>
+            </li>
+            <li className="flex items-center gap-2 justify-end">
+              <span>קודקודים (פינות)</span>
+              <span className="text-2xl">6️⃣</span>
+            </li>
+            <li className="flex items-center gap-2 justify-end">
+              <span>זוויות</span>
+              <span className="text-2xl">6️⃣</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Explanation about the drawing */}
+        <div className="rounded-2xl bg-blue-50 p-4">
+          <div className="text-lg font-bold text-blue-800 mb-2">הסבר על הציור:</div>
+          <p className="text-blue-700 text-right">
+            בציור רואים משושה - צורה עם 6 צלעות שוות. כל צלע מסומנת במספר (1 עד 6) וכל קודקוד מסומן בעיגול אדום. 
+            עקבו עם האצבע על המשושה: התחילו מקודקוד אחד ועברו על כל הצלעות עד שתחזרו להתחלה - תגלו שיש בדיוק 6 צלעות.
+          </p>
+        </div>
+
+        {/* Result */}
+        <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
+          <div className="text-2xl font-bold text-green-700">
+            למשושה יש {typeof answer === 'number' ? answer : 6} צלעות! ✅
           </div>
         </div>
       </div>
