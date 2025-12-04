@@ -1,6 +1,6 @@
 // src/App.tsx
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { FormEvent } from "react";
 import { countTo5Exercises } from "./data/countTo5";
 import type { CountExercise } from "./data/countTo5";
@@ -105,6 +105,26 @@ function HomePage() {
   const navigate = useNavigate();
   const { settings } = useChildSettings();
 
+  // Get the latest student data from storage if a student is selected
+  // This ensures that if the teacher updated the student's photo, it shows on the home screen
+  const effectiveSettings = useMemo(() => {
+    if (settings.studentId) {
+      const students = loadStudentRecords();
+      const currentStudent = students.find(s => s.profile.id === settings.studentId);
+      
+      if (currentStudent) {
+        return {
+          ...settings,
+          studentPhotoUrl: currentStudent.profile.photoUrl,
+          studentAvatar: currentStudent.profile.avatar,
+          studentColor: currentStudent.profile.color,
+          childName: currentStudent.profile.name,
+        };
+      }
+    }
+    return settings;
+  }, [settings]);
+
   // Get the currently loaded exam name
   const currentExam = settings.selectedExamId
     ? getExamById(settings.selectedExamId)
@@ -119,9 +139,9 @@ function HomePage() {
       <p className="subtitle">חשבון פשוט לילדים</p>
 
       {/* תמונת/אווטר התלמיד */}
-      <StudentAvatar settings={settings} />
+      <StudentAvatar settings={effectiveSettings} />
 
-      <p className="subtitle-small">שלום {settings.childName} 😊</p>
+      <p className="subtitle-small">שלום {effectiveSettings.childName} 😊</p>
 
       <div className="buttons">
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
