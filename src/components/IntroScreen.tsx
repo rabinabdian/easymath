@@ -45,7 +45,7 @@ export function IntroScreen({ question, onContinue }: IntroScreenProps) {
               </div>
               <InlineSpeaker text={explanation} />
             </div>
-            <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
+            <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line ltr-numbers">
               {explanation}
             </p>
           </div>
@@ -62,7 +62,7 @@ export function IntroScreen({ question, onContinue }: IntroScreenProps) {
               <InlineSpeaker text={example} />
             </div>
             <div className="rounded-2xl bg-white p-6 shadow-sm">
-              <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
+              <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line ltr-numbers">
                 {example}
               </p>
             </div>

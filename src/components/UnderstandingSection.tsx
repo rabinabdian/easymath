@@ -62,13 +62,13 @@ export function UnderstandingSection({
 
       {showPrompt && prompt && (
         <div className="mb-4 rounded-xl bg-white p-4 shadow-sm">
-          <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line">
+          <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line ltr-numbers">
             {prompt}
           </p>
         </div>
       )}
 
-      <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line mb-4">
+      <p className="text-lg leading-relaxed text-slate-700 whitespace-pre-line mb-4 ltr-numbers">
         {explanation}
       </p>
 
