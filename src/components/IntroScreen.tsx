@@ -4,6 +4,7 @@ import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonContent';
+import { LessonAnimation } from './LessonAnimation';
 
 interface IntroScreenProps {
   question: Question;
@@ -59,6 +60,15 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
           <h2 className="text-3xl font-bold text-slate-800">{headerTitle}</h2>
           <p className="mt-2 text-lg text-slate-600">{headerSubtitle}</p>
         </div>
+
+        <LessonAnimation
+          question={question}
+          locale={locale}
+          explanation={explanation}
+          example={example}
+          questionText={questionText}
+          emoji={lessonEmoji}
+        />
 
         {/* Explanation Card with Speaker */}
         {explanation && (
