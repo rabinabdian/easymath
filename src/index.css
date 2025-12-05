@@ -243,3 +243,16 @@ select {
 .hint-glow {
   box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
 }
+
+/* Force LTR direction for numbers - prevents numbers from displaying RTL in Hebrew */
+.ltr-numbers {
+  direction: ltr;
+  display: inline-block;
+  unicode-bidi: embed;
+}
+
+/* Global number styling to ensure proper display */
+input[type="number"] {
+  direction: ltr;
+  text-align: center;
+}

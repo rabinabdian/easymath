@@ -44,9 +44,9 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-slate-900">
-                תכנית שנתית – כיתה {plan.grade}
+                תכנית שנתית – כיתה <span className="ltr-numbers">{plan.grade}</span>
               </h1>
-              <p className="text-sm text-slate-600">שנת לימודים: {plan.yearLabel}</p>
+              <p className="text-sm text-slate-600 ltr-numbers">שנת לימודים: {plan.yearLabel}</p>
             </div>
             <button
               type="button"
@@ -76,7 +76,7 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
                   >
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-sm font-medium text-slate-700">
-                        שבוע {week.weekOfMonth}
+                        שבוע <span className="ltr-numbers">{week.weekOfMonth}</span>
                       </span>
                       <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
                         {TOPIC_LABELS[week.topic] || week.topic}
@@ -126,6 +126,7 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
           borderRadius: "12px",
           backdropFilter: "blur(4px)",
         }}
+        className="ltr-numbers"
       >
         גרסה {APP_VERSION}
       </div>

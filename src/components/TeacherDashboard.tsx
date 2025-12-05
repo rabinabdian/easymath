@@ -795,8 +795,8 @@ export default function TeacherDashboard() {
                     {selectedTopics.size > 0 && (
                       <p className="text-xs text-blue-600">
                         {locale === 'he'
-                          ? `נבחרו ${selectedTopics.size} נושאים`
-                          : `${selectedTopics.size} topic(s) selected`}
+                          ? <>נבחרו <span className="ltr-numbers">{selectedTopics.size}</span> נושאים</>
+                          : <><span className="ltr-numbers">{selectedTopics.size}</span> topic(s) selected</>}
                       </p>
                     )}
                   </div>
@@ -843,7 +843,7 @@ export default function TeacherDashboard() {
                   onChange={(e) =>
                     setCount(Math.max(1, Number(e.target.value) || 1))
                   }
-                  className="w-20 rounded-lg border border-slate-300 p-1 text-center"
+                  className="w-20 rounded-lg border border-slate-300 p-1 text-center ltr-numbers"
                 />
               </label>
 
@@ -971,7 +971,7 @@ export default function TeacherDashboard() {
                       <span>🏅</span>
                       <div>
                         <div className="font-medium">{b.month}</div>
-                        <div className="text-[0.7rem] text-slate-600">
+                        <div className="text-[0.7rem] text-slate-600 ltr-numbers">
                           {t('teacher.badges.best', { score: b.bestScore })}
                         </div>
                       </div>
@@ -1064,7 +1064,7 @@ export default function TeacherDashboard() {
                   {jsonImportError}
                 </p>
               )}
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-xs text-slate-500 ltr-numbers">
                 {t('teacher.questions.generated', { count: generated.length })}
               </p>
             </section>
@@ -1086,7 +1086,7 @@ export default function TeacherDashboard() {
                       className="rounded-xl border border-slate-200 bg-slate-50 p-3"
                     >
                       <div className="mb-2 flex justify-between">
-                        <span className="font-medium text-slate-700">
+                        <span className="font-medium text-slate-700 ltr-numbers">
                           #{idx + 1}
                         </span>
                         <span className="text-xs text-slate-500">
@@ -1122,7 +1122,7 @@ export default function TeacherDashboard() {
                     >
                       <div>
                         <div className="font-medium">{exam.name}</div>
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-slate-500 ltr-numbers">
                           {exam.questions.length} תרגילים ·{' '}
                           {new Date(exam.createdAt).toLocaleString('he-IL')}
                         </div>
@@ -1172,6 +1172,7 @@ export default function TeacherDashboard() {
           borderRadius: "12px",
           backdropFilter: "blur(4px)",
         }}
+        className="ltr-numbers"
       >
         גרסה {APP_VERSION}
       </div>
