@@ -116,6 +116,11 @@ export function generateSubtractionQuestions(t: SubTemplate): Question[] {
         promptHe: `פתור: ${wrapLTR(mathExpr)}`,
         promptEn: `Solve: ${mathExpr}`,
         answer: result,
+        // Intro explanation and example for animation
+        introExplanationHe: 'חיסור זה כשאנחנו מוציאים דברים!\nאם היה לנו משהו, והוצאנו ממנו - זה חיסור!',
+        introExplanationEn: 'Subtraction is when we take things away!\nIf we had something and took some away - that is subtraction!',
+        introExampleHe: `דוגמא: ${start - take === 0 ? 'היו לי 3 עוגיות 🍪🍪🍪\nאכלתי 3 עוגיות 🍪🍪🍪\nלא נשארו לי עוגיות!' : `היו לי 3 עוגיות 🍪🍪🍪\nאכלתי 1 עוגיה 🍪\nנשארו לי 2 עוגיות! 🍪🍪`}`,
+        introExampleEn: `Example: ${start - take === 0 ? 'I had 3 cookies 🍪🍪🍪\nI ate 3 cookies 🍪🍪🍪\nI have no cookies left!' : `I had 3 cookies 🍪🍪🍪\nI ate 1 cookie 🍪\nI have 2 cookies left! 🍪🍪`}`,
       });
 
       counter++;
