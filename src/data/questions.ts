@@ -145,6 +145,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'ספור את הapples בציור וWrite How many יש.',
     answer: 5,
     assetId: 'numbers/apples_5', // public/assets/numbers/apples_5.png
+    introExplanationHe: 'ספירה זה לספור אחד-אחד! 👆\nנקרא לכל פריט בשם ונראה כמה יש בסך הכל.',
+    introExplanationEn: 'Counting is counting one by one! 👆\nWe name each item and see how many there are in total.',
+    introExampleHe: 'דוגמא: נספור בלונים 🎈\n1, 2, 3, 4, 5...\nיש 5 בלונים! 🎈🎈🎈🎈🎈',
+    introExampleEn: 'Example: Let\'s count balloons 🎈\n1, 2, 3, 4, 5...\nThere are 5 balloons! 🎈🎈🎈🎈🎈',
   },
   {
     id: 'numbers_count_002',
@@ -196,6 +200,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'לכל צלחת עוגיות Choose את המספר המתאים: 3, 4 או 6 עוגיות בכל צלחת.',
     answer: 'תלוי בצלחת',
     assetId: 'numbers/cookies_plates',
+    introExplanationHe: 'התאמת מספר לכמות זה לספור כמה יש ולמצוא את המספר הנכון! 🔢\nכל כמות מתאימה למספר מסוים.',
+    introExplanationEn: 'Matching number to quantity is counting how many there are and finding the right number! 🔢\nEach quantity matches a specific number.',
+    introExampleHe: 'דוגמא: יש 3 כוכבים ⭐⭐⭐\nהמספר המתאים הוא 3! 🔢\nיש 5 כוכבים ⭐⭐⭐⭐⭐\nהמספר המתאים הוא 5! 🔢',
+    introExampleEn: 'Example: There are 3 stars ⭐⭐⭐\nThe matching number is 3! 🔢\nThere are 5 stars ⭐⭐⭐⭐⭐\nThe matching number is 5! 🔢',
   },
   {
     id: 'numbers_match_007',
@@ -227,6 +235,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'Write את המספר שמתאים למילה: "שבע".',
     answer: 7,
     options: [5, 7, 9],
+    introExplanationHe: 'כל מילה מספר מתאימה לספרה! ✍️\n"אחד" = 1, "שתיים" = 2, "שלוש" = 3, וכך הלאה.',
+    introExplanationEn: 'Each number word matches a digit! ✍️\n"One" = 1, "Two" = 2, "Three" = 3, and so on.',
+    introExampleHe: 'דוגמא: "ארבע" = 4 🔢\n"חמש" = 5 🔢\n"שש" = 6 🔢\n"שבע" = 7 🔢',
+    introExampleEn: 'Example: "Four" = 4 🔢\n"Five" = 5 🔢\n"Six" = 6 🔢\n"Seven" = 7 🔢',
   },
   {
     id: 'numbers_write_010',
@@ -268,6 +280,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'מה השכן לפני ואחרי המספר 6?',
     promptEn: 'מה השכן לפני ואחרי המספר 6?',
     answer: '5 ו-7',
+    introExplanationHe: 'שכנים של מספר הם המספרים שקרובים אליו! 🏠\nהשכן לפני הוא קטן ב-1, השכן אחרי הוא גדול ב-1.',
+    introExplanationEn: 'Neighbors of a number are the numbers close to it! 🏠\nThe neighbor before is 1 less, the neighbor after is 1 more.',
+    introExampleHe: 'דוגמא: השכנים של 5 הם:\nהשכן לפני: 4 (5 - 1)\nהשכן אחרי: 6 (5 + 1)',
+    introExampleEn: 'Example: The neighbors of 5 are:\nNeighbor before: 4 (5 - 1)\nNeighbor after: 6 (5 + 1)',
   },
   {
     id: 'numbers_neighbors_014',
@@ -505,6 +521,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('3 + 2 =')}`,
     promptEn: 'Solve: 3 + 2 = ?',
     answer: 5,
+    introExplanationHe: 'חיבור זה לחבר מספרים ביחד! ➕\nכשמחברים, מוסיפים מספר אחד למספר אחר ומקבלים סכום גדול יותר.',
+    introExplanationEn: 'Addition is combining numbers together! ➕\nWhen adding, we combine one number with another to get a larger sum.',
+    introExampleHe: 'דוגמא: 2 + 3 = 5\nיש לנו 2 תפוחים 🍎🍎\nמוסיפים עוד 3 תפוחים 🍎🍎🍎\nסה"כ: 5 תפוחים! 🍎🍎🍎🍎🍎',
+    introExampleEn: 'Example: 2 + 3 = 5\nWe have 2 apples 🍎🍎\nAdd 3 more apples 🍎🍎🍎\nTotal: 5 apples! 🍎🍎🍎🍎🍎',
   },
   {
     id: 'add_basic_002',
@@ -532,6 +552,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'בסל יש 2 תפוחים ועוד 3 תפוזים. כמה פירות בסך הכל?',
     promptEn: 'בסל יש 2 apples ועוד 3 תפוזים. How many פירות in total?',
     answer: 5,
+    introExplanationHe: 'כששואלים "כמה בסך הכל" זה אומר שצריך לחבר! ➕\nנספור את כל הפריטים ביחד.',
+    introExplanationEn: 'When asking "how many in total" it means we need to add! ➕\nWe count all items together.',
+    introExampleHe: 'דוגמא: יש 2 בלונים אדומים 🎈🎈\nועוד 3 בלונים כחולים 🎈🎈🎈\nסה"כ: 2 + 3 = 5 בלונים! 🎈🎈🎈🎈🎈',
+    introExampleEn: 'Example: There are 2 red balloons 🎈🎈\nand 3 blue balloons 🎈🎈🎈\nTotal: 2 + 3 = 5 balloons! 🎈🎈🎈🎈🎈',
   },
   {
     id: 'add_basic_005',
@@ -598,6 +622,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `השלם ל-10: ${wrapLTR('4 + __ = 10')}`,
     promptEn: 'Complete ל-10: 4 + __ = 10',
     answer: 6,
+    introExplanationHe: 'השלמה ל-10 זה למצוא איזה מספר צריך להוסיף כדי להגיע ל-10! 🎯\n10 הוא מספר מיוחד - קל לזכור אותו!',
+    introExplanationEn: 'Completing to 10 means finding which number to add to reach 10! 🎯\n10 is a special number - easy to remember!',
+    introExampleHe: 'דוגמא: 7 + ? = 10\nיש לנו 7 🟢🟢🟢🟢🟢🟢🟢\nכמה צריך להוסיף? 3! 🟢🟢🟢\n7 + 3 = 10 ✅',
+    introExampleEn: 'Example: 7 + ? = 10\nWe have 7 🟢🟢🟢🟢🟢🟢🟢\nHow many to add? 3! 🟢🟢🟢\n7 + 3 = 10 ✅',
   },
   {
     id: 'add_ten_021',
@@ -684,6 +712,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'בכיתה יש 7 ילדים. נכנסו עוד 6 ילדים. כמה ילדים יש עכשיו בכיתה?',
     promptEn: 'בכיתה יש 7 children. נכנסו עוד 6 children. How many children יש עכשיו בכיתה?',
     answer: 13,
+    introExplanationHe: 'שאלות מילוליות מספרות סיפור! 📖\nצריך למצוא את המספרים בסיפור ולחבר אותם ביחד.',
+    introExplanationEn: 'Word problems tell a story! 📖\nWe need to find the numbers in the story and add them together.',
+    introExampleHe: 'דוגמא: "יש 5 ספרים על השולחן. הוספתי עוד 4 ספרים."\n5 + 4 = 9 ספרים בסך הכל! 📚📚📚📚📚📚📚📚📚',
+    introExampleEn: 'Example: "There are 5 books on the table. I added 4 more books."\n5 + 4 = 9 books in total! 📚📚📚📚📚📚📚📚📚',
   },
   {
     id: 'add_word_030',
@@ -808,6 +840,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('5 - 2 =')}`,
     promptEn: 'Solve: 5 - 2 = ?',
     answer: 3,
+    introExplanationHe: 'חיסור זה להוציא או להסיר! ➖\nכשמחסרים, לוקחים מספר אחד מהמספר השני ומקבלים מספר קטן יותר.',
+    introExplanationEn: 'Subtraction is taking away or removing! ➖\nWhen subtracting, we take one number from another and get a smaller number.',
+    introExampleHe: 'דוגמא: 5 - 2 = 3\nיש לנו 5 ממתקים 🍬🍬🍬🍬🍬\nאוכלים 2 ממתקים 🍬🍬\nנשארו 3 ממתקים! 🍬🍬🍬',
+    introExampleEn: 'Example: 5 - 2 = 3\nWe have 5 candies 🍬🍬🍬🍬🍬\nEat 2 candies 🍬🍬\n3 candies left! 🍬🍬🍬',
   },
   {
     id: 'sub_basic_002',
@@ -826,6 +862,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'על העץ יש 6 ציפורים. 2 עפות. כמה נשארות על העץ?',
     promptEn: 'על העץ יש 6 birds. 2 עפות. How many נשארות על העץ?',
     answer: 4,
+    introExplanationHe: 'כששואלים "כמה נשאר" זה אומר שצריך לחסר! ➖\nמתחילים מהמספר הגדול ומורידים את מה שהלך.',
+    introExplanationEn: 'When asking "how many left" it means we need to subtract! ➖\nStart with the big number and take away what went.',
+    introExampleHe: 'דוגמא: יש 8 בלונים 🎈🎈🎈🎈🎈🎈🎈🎈\n3 התפוצצו 💥💥💥\nנשארו: 8 - 3 = 5 בלונים! 🎈🎈🎈🎈🎈',
+    introExampleEn: 'Example: There are 8 balloons 🎈🎈🎈🎈🎈🎈🎈🎈\n3 popped 💥💥💥\nLeft: 8 - 3 = 5 balloons! 🎈🎈🎈🎈🎈',
   },
   {
     id: 'sub_basic_004',
@@ -883,6 +923,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'לנועה היו 8 מסטיקים. היא נתנה 3 לחבר. כמה מסטיקים נשארו לה?',
     promptEn: 'לנועה היו 8 מסטיקים. היא נתנה 3 לחבר. How many מסטיקים נשארו לה?',
     answer: 5,
+    introExplanationHe: 'בשאלות מילוליות של חיסור, משהו הולך או נמסר! 📖\nצריך למצוא כמה היה, כמה הלך, וכמה נשאר.',
+    introExplanationEn: 'In subtraction word problems, something goes away or is given! 📖\nWe need to find how many there were, how many went, and how many are left.',
+    introExampleHe: 'דוגמא: "היו 10 עוגיות. אכלו 4 עוגיות."\n10 - 4 = 6 עוגיות נשארו! 🍪🍪🍪🍪🍪🍪',
+    introExampleEn: 'Example: "There were 10 cookies. 4 cookies were eaten."\n10 - 4 = 6 cookies left! 🍪🍪🍪🍪🍪🍪',
   },
   {
     id: 'sub_word_021',
@@ -1023,6 +1067,10 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: 'האם המספר 6 הוא זוגי או אי-זוגי?',
     promptEn: 'Is המספר 6 הוא זוגי או אי-זוגי?',
     answer: 'זוגי',
+    introExplanationHe: 'מספר זוגי אפשר לחלק לזוגות בלי שיישאר מספר בודד! ⚖️\nמספר אי-זוגי תמיד נשאר בו מספר בודד.',
+    introExplanationEn: 'An even number can be divided into pairs without a single number left! ⚖️\nAn odd number always has one left over.',
+    introExampleHe: 'דוגמא: 4 הוא זוגי 👥👥 (2 זוגות)\n5 הוא אי-זוגי 👥👥👤 (2 זוגות + 1 בודד)',
+    introExampleEn: 'Example: 4 is even 👥👥 (2 pairs)\n5 is odd 👥👥👤 (2 pairs + 1 single)',
   },
   {
     id: 'even_odd_002',
@@ -1597,6 +1645,162 @@ const MANUAL_QUESTIONS: Question[] = [
 // שילוב כל התרגילים
 // ========================================
 
+/**
+ * Adds intro lessons to questions that don't have them, based on topic/subtopic
+ */
+function enrichQuestionsWithIntroLessons(questions: Question[]): Question[] {
+  return questions.map((q) => {
+    // Skip if question already has intro content
+    if (q.introExplanationHe || q.introExampleHe) {
+      return q;
+    }
+
+    // Add intro content based on topic and subtopic
+    const introContent = getIntroContentForTopic(q.topic, q.subtopic, q.difficulty);
+    
+    if (introContent) {
+      return {
+        ...q,
+        introExplanationHe: introContent.explanationHe,
+        introExplanationEn: introContent.explanationEn,
+        introExampleHe: introContent.exampleHe,
+        introExampleEn: introContent.exampleEn,
+      };
+    }
+
+    return q;
+  });
+}
+
+/**
+ * Returns intro lesson content based on topic, subtopic, and difficulty
+ */
+function getIntroContentForTopic(
+  topic: string,
+  subtopic?: string,
+  difficulty?: string
+): {
+  explanationHe: string;
+  explanationEn: string;
+  exampleHe: string;
+  exampleEn: string;
+} | null {
+  // Addition
+  if (topic === 'addition') {
+    if (subtopic?.includes('עד 10') || subtopic === 'חיבור עד 10') {
+      return {
+        explanationHe: 'חיבור זה לחבר מספרים ביחד! ➕\nכשמחברים, מוסיפים מספר אחד למספר אחר ומקבלים סכום גדול יותר.',
+        explanationEn: 'Addition is combining numbers together! ➕\nWhen adding, we combine one number with another to get a larger sum.',
+        exampleHe: 'דוגמא: 3 + 2 = 5\nיש לנו 3 בלונים 🎈🎈🎈\nמוסיפים עוד 2 בלונים 🎈🎈\nסה"כ: 5 בלונים! 🎈🎈🎈🎈🎈',
+        exampleEn: 'Example: 3 + 2 = 5\nWe have 3 balloons 🎈🎈🎈\nAdd 2 more balloons 🎈🎈\nTotal: 5 balloons! 🎈🎈🎈🎈🎈',
+      };
+    }
+    if (subtopic?.includes('עד 20') || subtopic === 'חיבור עד 20') {
+      return {
+        explanationHe: 'חיבור עד 20 זה לחבר מספרים גדולים יותר! ➕\nאפשר לספור על האצבעות או לחשוב על קבוצות של 10.',
+        explanationEn: 'Addition up to 20 is adding larger numbers! ➕\nYou can count on fingers or think about groups of 10.',
+        exampleHe: 'דוגמא: 8 + 5 = 13\nיש לנו 8 🟢🟢🟢🟢🟢🟢🟢🟢\nמוסיפים 5 🟢🟢🟢🟢🟢\nסה"כ: 13!',
+        exampleEn: 'Example: 8 + 5 = 13\nWe have 8 🟢🟢🟢🟢🟢🟢🟢🟢\nAdd 5 🟢🟢🟢🟢🟢\nTotal: 13!',
+      };
+    }
+    if (subtopic?.includes('השלמה ל-10') || subtopic === 'השלמה ל-10') {
+      return {
+        explanationHe: 'השלמה ל-10 זה למצוא איזה מספר צריך להוסיף כדי להגיע ל-10! 🎯\n10 הוא מספר מיוחד - קל לזכור אותו!',
+        explanationEn: 'Completing to 10 means finding which number to add to reach 10! 🎯\n10 is a special number - easy to remember!',
+        exampleHe: 'דוגמא: 7 + ? = 10\nיש לנו 7 🟢🟢🟢🟢🟢🟢🟢\nכמה צריך להוסיף? 3! 🟢🟢🟢\n7 + 3 = 10 ✅',
+        exampleEn: 'Example: 7 + ? = 10\nWe have 7 🟢🟢🟢🟢🟢🟢🟢\nHow many to add? 3! 🟢🟢🟢\n7 + 3 = 10 ✅',
+      };
+    }
+    if (subtopic?.includes('מילולי') || subtopic === 'חיבור מילולי') {
+      return {
+        explanationHe: 'שאלות מילוליות מספרות סיפור! 📖\nצריך למצוא את המספרים בסיפור ולחבר אותם ביחד.',
+        explanationEn: 'Word problems tell a story! 📖\nWe need to find the numbers in the story and add them together.',
+        exampleHe: 'דוגמא: "יש 5 ספרים על השולחן. הוספתי עוד 4 ספרים."\n5 + 4 = 9 ספרים בסך הכל! 📚📚📚📚📚📚📚📚📚',
+        exampleEn: 'Example: "There are 5 books on the table. I added 4 more books."\n5 + 4 = 9 books in total! 📚📚📚📚📚📚📚📚📚',
+      };
+    }
+    // Default addition intro
+    return {
+      explanationHe: 'חיבור זה לחבר מספרים ביחד! ➕\nכשמחברים, מוסיפים מספר אחד למספר אחר.',
+      explanationEn: 'Addition is combining numbers together! ➕\nWhen adding, we combine one number with another.',
+      exampleHe: 'דוגמא: 4 + 3 = 7\nמוסיפים 3 ל-4 ומקבלים 7!',
+      exampleEn: 'Example: 4 + 3 = 7\nAdd 3 to 4 and get 7!',
+    };
+  }
+
+  // Subtraction
+  if (topic === 'subtraction') {
+    if (subtopic?.includes('עד 10') || subtopic === 'חיסור עד 10') {
+      return {
+        explanationHe: 'חיסור זה להוציא או להסיר! ➖\nכשמחסרים, לוקחים מספר אחד מהמספר השני ומקבלים מספר קטן יותר.',
+        explanationEn: 'Subtraction is taking away or removing! ➖\nWhen subtracting, we take one number from another and get a smaller number.',
+        exampleHe: 'דוגמא: 5 - 2 = 3\nיש לנו 5 ממתקים 🍬🍬🍬🍬🍬\nאוכלים 2 ממתקים 🍬🍬\nנשארו 3 ממתקים! 🍬🍬🍬',
+        exampleEn: 'Example: 5 - 2 = 3\nWe have 5 candies 🍬🍬🍬🍬🍬\nEat 2 candies 🍬🍬\n3 candies left! 🍬🍬🍬',
+      };
+    }
+    if (subtopic?.includes('עד 20') || subtopic === 'חיסור עד 20') {
+      return {
+        explanationHe: 'חיסור עד 20 זה לחסר מספרים גדולים יותר! ➖\nמתחילים מהמספר הגדול ומורידים את מה שהלך.',
+        explanationEn: 'Subtraction up to 20 is subtracting larger numbers! ➖\nStart with the big number and take away what went.',
+        exampleHe: 'דוגמא: 15 - 7 = 8\nיש לנו 15 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢\nלוקחים 7 🟢🟢🟢🟢🟢🟢🟢\nנשארו 8!',
+        exampleEn: 'Example: 15 - 7 = 8\nWe have 15 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢\nTake away 7 🟢🟢🟢🟢🟢🟢🟢\n8 left!',
+      };
+    }
+    if (subtopic?.includes('מילולי') || subtopic === 'חיסור מילולי') {
+      return {
+        explanationHe: 'בשאלות מילוליות של חיסור, משהו הולך או נמסר! 📖\nצריך למצוא כמה היה, כמה הלך, וכמה נשאר.',
+        explanationEn: 'In subtraction word problems, something goes away or is given! 📖\nWe need to find how many there were, how many went, and how many are left.',
+        exampleHe: 'דוגמא: "היו 10 עוגיות. אכלו 4 עוגיות."\n10 - 4 = 6 עוגיות נשארו! 🍪🍪🍪🍪🍪🍪',
+        exampleEn: 'Example: "There were 10 cookies. 4 cookies were eaten."\n10 - 4 = 6 cookies left! 🍪🍪🍪🍪🍪🍪',
+      };
+    }
+    // Default subtraction intro
+    return {
+      explanationHe: 'חיסור זה להוציא או להסיר! ➖\nכשמחסרים, לוקחים מספר אחד מהמספר השני.',
+      explanationEn: 'Subtraction is taking away or removing! ➖\nWhen subtracting, we take one number from another.',
+      exampleHe: 'דוגמא: 8 - 3 = 5\nלוקחים 3 מ-8 ומקבלים 5!',
+      exampleEn: 'Example: 8 - 3 = 5\nTake 3 from 8 and get 5!',
+    };
+  }
+
+  // Multiplication
+  if (topic === 'multiplication') {
+    if (subtopic?.includes('עד 5') || subtopic === 'לוח הכפל עד 5') {
+      return {
+        explanationHe: 'כפל זה לקחת מספר כמה פעמים! ✖️\nכפל זה כמו חיבור חוזר - אותו מספר כמה פעמים.',
+        explanationEn: 'Multiplication is taking a number several times! ✖️\nMultiplication is like repeated addition - the same number several times.',
+        exampleHe: 'דוגמא: 3 × 2 = 6\nזה כמו 2 + 2 + 2 = 6\nיש לנו 3 קבוצות של 2! 🟢🟢 🟢🟢 🟢🟢',
+        exampleEn: 'Example: 3 × 2 = 6\nIt\'s like 2 + 2 + 2 = 6\nWe have 3 groups of 2! 🟢🟢 🟢🟢 🟢🟢',
+      };
+    }
+    if (subtopic?.includes('עד 10') || subtopic === 'לוח הכפל עד 10') {
+      return {
+        explanationHe: 'כפל זה לקחת מספר כמה פעמים! ✖️\nלוח הכפל עוזר לנו לזכור את התוצאות.',
+        explanationEn: 'Multiplication is taking a number several times! ✖️\nThe multiplication table helps us remember the results.',
+        exampleHe: 'דוגמא: 4 × 3 = 12\nזה כמו 3 + 3 + 3 + 3 = 12\n4 קבוצות של 3!',
+        exampleEn: 'Example: 4 × 3 = 12\nIt\'s like 3 + 3 + 3 + 3 = 12\n4 groups of 3!',
+      };
+    }
+    if (subtopic?.includes('עד 12') || subtopic === 'לוח הכפל עד 12') {
+      return {
+        explanationHe: 'כפל זה לקחת מספר כמה פעמים! ✖️\nלוח הכפל עד 12 כולל מספרים גדולים יותר.',
+        explanationEn: 'Multiplication is taking a number several times! ✖️\nThe multiplication table up to 12 includes larger numbers.',
+        exampleHe: 'דוגמא: 6 × 4 = 24\nזה כמו 4 + 4 + 4 + 4 + 4 + 4 = 24\n6 קבוצות של 4!',
+        exampleEn: 'Example: 6 × 4 = 24\nIt\'s like 4 + 4 + 4 + 4 + 4 + 4 = 24\n6 groups of 4!',
+      };
+    }
+    // Default multiplication intro
+    return {
+      explanationHe: 'כפל זה לקחת מספר כמה פעמים! ✖️\nכפל זה כמו חיבור חוזר.',
+      explanationEn: 'Multiplication is taking a number several times! ✖️\nMultiplication is like repeated addition.',
+      exampleHe: 'דוגמא: 3 × 4 = 12\nזה כמו 4 + 4 + 4 = 12',
+      exampleEn: 'Example: 3 × 4 = 12\nIt\'s like 4 + 4 + 4 = 12',
+    };
+  }
+
+  return null;
+}
+
 // Base questions before asset assignment
 const BASE_QUESTIONS: Question[] = [
   ...MANUAL_QUESTIONS,
@@ -1614,12 +1818,16 @@ const BASE_QUESTIONS: Question[] = [
 ];
 
 /**
- * Final questions array with automatically assigned assetIds.
+ * Final questions array with automatically assigned assetIds and intro lessons.
  *
  * Questions with manually assigned assetIds (in MANUAL_QUESTIONS) are preserved.
  * Questions without assetIds are automatically assigned one based on topic/subtopic
  * from the appropriate pool in imageAssetPools.ts.
  *
- * The assignment is deterministic - the same question ID always gets the same asset.
+ * Questions without intro lessons get them automatically based on topic/subtopic.
+ *
+ * The assignment is deterministic - the same question ID always gets the same asset and intro.
  */
-export const QUESTIONS: Question[] = assignAssetsToQuestions(BASE_QUESTIONS);
+export const QUESTIONS: Question[] = enrichQuestionsWithIntroLessons(
+  assignAssetsToQuestions(BASE_QUESTIONS)
+);
