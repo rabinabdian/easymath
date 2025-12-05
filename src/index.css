@@ -243,3 +243,33 @@ select {
 .hint-glow {
   box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
 }
+
+/* Number display - always left-to-right */
+.number-ltr {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  display: inline-block;
+  text-align: center;
+}
+
+/* Option buttons with numbers should always be LTR */
+.option-button {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+}
+
+/* Numbers in buttons should always be LTR */
+button.number-ltr,
+button.option-button {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+}
+
+/* Score, timer, and other numeric displays */
+[class*="score"] .number-ltr,
+[class*="timer"] .number-ltr,
+[class*="progress"] .number-ltr {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  display: inline-block;
+}

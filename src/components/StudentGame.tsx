@@ -98,7 +98,9 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
       // רמז שני - יותר ישיר
       switch (topic) {
         case 'numbers':
-          return `הגענו ל... כמעט שם!\nהתשובה קרובה ל-${Number(answer) - 1} או ${Number(answer) + 1}...`;
+          const answerMinus1 = Number(answer) - 1;
+          const answerPlus1 = Number(answer) + 1;
+          return `הגענו ל... כמעט שם!\nהתשובה קרובה ל-${answerMinus1} או ${answerPlus1}...`;
         case 'addition':
           return `בוא נספור ביחד:\nקודם את הראשון, ואז מוסיפים את השני!`;
         case 'subtraction':
@@ -277,9 +279,9 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </h2>
             <p className="mb-3 text-slate-700">
               {t('student.finished.score')}{' '}
-              <span className="font-semibold">{score}</span> {t('student.of')}{' '}
-              <span className="font-semibold">{totalQuestions}</span> (
-              {percent}%)
+              <span className="font-semibold number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>{score}</span> {t('student.of')}{' '}
+              <span className="font-semibold number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>{totalQuestions}</span> (
+              <span className="number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>{percent}</span>%)
             </p>
 
             <div className="mb-2 flex items-center gap-1 text-2xl">
@@ -396,7 +398,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
               <InlineSpeaker text={`התשובה הנכונה היא ${answerText}`} />
             </div>
             <div className="rounded-2xl bg-white p-6 shadow-sm">
-              <p className="text-4xl font-bold text-center text-green-600">
+              <p className="text-4xl font-bold text-center text-green-600 number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>
                 {current.answer}
               </p>
             </div>
@@ -470,22 +472,21 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             <div className="flex items-center gap-2">
               <span>{t('student.timer')}</span>
               <span
-                className={
-                  timeLeft <= 5 ? 'font-bold text-rose-600' : 'font-medium'
-                }
+                className={`number-ltr ${timeLeft <= 5 ? 'font-bold text-rose-600' : 'font-medium'}`}
+                style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}
               >
                 {timeLeft}s
               </span>
             </div>
             <div>
               {t('student.score')}{' '}
-              <span className="font-semibold text-emerald-600">{Math.round(score)}</span>
+              <span className="font-semibold text-emerald-600 number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>{Math.round(score)}</span>
             </div>
             {/* Attempts indicator */}
             {attempts > 0 && (
               <div className="flex items-center gap-1 text-amber-600">
                 <span>ניסיונות:</span>
-                <span className="font-bold">{attempts}/3</span>
+                <span className="font-bold number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>{attempts}/3</span>
               </div>
             )}
           </div>
@@ -495,7 +496,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         <div className="mb-4">
           <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
             <span>
-              {t('student.question')} {index + 1} {t('student.of')} {totalQuestions}
+              {t('student.question')} <span className="number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>{index + 1}</span> {t('student.of')} <span className="number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>{totalQuestions}</span>
             </span>
           </div>
           <div className="h-2 w-full rounded-full bg-slate-200">

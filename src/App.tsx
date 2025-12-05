@@ -263,9 +263,10 @@ function TutorialExercise({ onDone, onExit }: { onDone: () => void; onExit: () =
           <button
             key={option}
             onClick={() => handleAnswer(option)}
-            className={`option-button ${
+            className={`option-button number-ltr ${
               feedback === "wrong" ? "option-button-wrong" : ""
             }`}
+            style={{ direction: 'ltr', unicodeBidi: 'isolate' }}
           >
             {option}
           </button>
@@ -428,7 +429,7 @@ function SessionPage() {
       <div className="page page-right">
         <h2 className="title">כל הכבוד {settings.childName}! 🎉</h2>
         <p className="subtitle">
-          סיימנו {sessionExercises.length} תרגילים בסשן הזה.
+          סיימנו <span className="number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>{sessionExercises.length}</span> תרגילים בסשן הזה.
         </p>
         <div className="buttons">
           <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
@@ -484,7 +485,7 @@ function SessionPage() {
       </div>
 
       <div className="subtitle-small">
-        תרגיל {currentIndex + 1} מתוך {sessionExercises.length}
+        תרגיל <span className="number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>{currentIndex + 1}</span> מתוך <span className="number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>{sessionExercises.length}</span>
       </div>
 
       <div className="icons-row">
@@ -503,9 +504,10 @@ function SessionPage() {
           <button
             key={option}
             onClick={() => handleAnswer(option)}
-            className={`option-button ${
+            className={`option-button number-ltr ${
               feedback === "wrong" ? "option-button-wrong" : ""
             }`}
+            style={{ direction: 'ltr', unicodeBidi: 'isolate' }}
           >
             {option}
           </button>

@@ -88,7 +88,8 @@ export function QuestionCard({
                 key={opt.toString()}
                 type="button"
                 onClick={() => onOptionClick?.(String(opt))}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center text-base font-medium hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center text-base font-medium hover:border-blue-500 hover:bg-blue-50 transition-colors number-ltr"
+                style={{ direction: 'ltr', unicodeBidi: 'isolate' }}
               >
                 {opt}
               </button>

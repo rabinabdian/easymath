@@ -83,7 +83,7 @@ export function HintDisplay({ hintNumber, hintText, visualAid, onDismiss }: Hint
               />
             ))}
           </div>
-          <span className="text-slate-600">מתוך 3</span>
+          <span className="text-slate-600">מתוך <span className="number-ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', display: 'inline-block' }}>3</span></span>
         </div>
 
         {/* Encouragement Message */}
