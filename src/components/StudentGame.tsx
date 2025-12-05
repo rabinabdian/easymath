@@ -10,6 +10,7 @@ import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
+import { getLessonContent } from '../utils/lessonContent';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -59,6 +60,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const understandingSolution = current
     ? buildUnderstandingNarration(current, locale, { includeAnswer: true })
     : '';
+  const lessonContent = current ? getLessonContent(current, locale) : undefined;
 
   // Helper function to get hint text based on attempt and locale
   function getHintText(hintNumber: 1 | 2): string | undefined {
@@ -331,8 +333,14 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   }
 
   // Show intro screen before each question (if has intro content)
-  if (showIntro && (current.introExplanationHe || current.introExampleHe)) {
-    return <IntroScreen question={current} onContinue={() => setShowIntro(false)} />;
+  if (showIntro) {
+    return (
+      <IntroScreen
+        question={current}
+        lesson={lessonContent}
+        onContinue={() => setShowIntro(false)}
+      />
+    );
   }
 
   // Show progressive hint after failed attempt (1 or 2)
