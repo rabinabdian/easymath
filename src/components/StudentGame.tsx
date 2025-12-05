@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
-import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
+import { buildUnderstandingNarration, getQuestionPrompt, generateDefaultIntroLesson } from '../utils/questionText';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
@@ -330,9 +330,26 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     return null;
   }
 
-  // Show intro screen before each question (if has intro content)
-  if (showIntro && (current.introExplanationHe || current.introExampleHe)) {
-    return <IntroScreen question={current} onContinue={() => setShowIntro(false)} />;
+  // Show intro screen before each question - always show a lesson!
+  if (showIntro) {
+    // If question doesn't have custom intro content, generate default lesson based on topic
+    const hasCustomIntro = current.introExplanationHe || current.introExampleHe;
+    let introQuestion = current;
+    
+    if (!hasCustomIntro) {
+      // Generate lesson for both languages
+      const defaultLessonHe = generateDefaultIntroLesson(current, 'he');
+      const defaultLessonEn = generateDefaultIntroLesson(current, 'en');
+      introQuestion = {
+        ...current,
+        introExplanationHe: defaultLessonHe.explanation,
+        introExplanationEn: defaultLessonEn.explanation,
+        introExampleHe: defaultLessonHe.example,
+        introExampleEn: defaultLessonEn.example,
+      };
+    }
+    
+    return <IntroScreen question={introQuestion} onContinue={() => setShowIntro(false)} />;
   }
 
   // Show progressive hint after failed attempt (1 or 2)
