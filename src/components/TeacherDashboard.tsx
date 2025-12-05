@@ -1087,7 +1087,7 @@ export default function TeacherDashboard() {
                     >
                       <div className="mb-2 flex justify-between">
                         <span className="font-medium text-slate-700">
-                          #{idx + 1}
+                          #<span className="number-ltr">{idx + 1}</span>
                         </span>
                         <span className="text-xs text-slate-500">
                           {q.difficulty === 'easy'
@@ -1123,7 +1123,7 @@ export default function TeacherDashboard() {
                       <div>
                         <div className="font-medium">{exam.name}</div>
                         <div className="text-xs text-slate-500">
-                          {exam.questions.length} תרגילים ·{' '}
+                          <span className="number-ltr">{exam.questions.length}</span> תרגילים ·{' '}
                           {new Date(exam.createdAt).toLocaleString('he-IL')}
                         </div>
                       </div>
@@ -1173,7 +1173,7 @@ export default function TeacherDashboard() {
           backdropFilter: "blur(4px)",
         }}
       >
-        גרסה {APP_VERSION}
+        גרסה <span className="number-ltr">{APP_VERSION}</span>
       </div>
     </div>
   );

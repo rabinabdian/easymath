@@ -256,7 +256,7 @@ function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray 
         <div className="space-y-6">
           {/* Step 1: First number */}
           <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-blue-700">קבוצה ראשונה: {a}</div>
+            <div className="mb-2 text-lg font-bold text-blue-700">קבוצה ראשונה: <span className="number-ltr">{a}</span></div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: a }).map((_, i) => (
                 <span key={`a-${i}`} className="text-4xl animate-bounce" style={{ animationDelay: `${i * 0.1}s` }}>
@@ -273,7 +273,7 @@ function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray 
 
           {/* Step 2: Second number */}
           <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-red-700">קבוצה שנייה: {b}</div>
+            <div className="mb-2 text-lg font-bold text-red-700">קבוצה שנייה: <span className="number-ltr">{b}</span></div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: b }).map((_, i) => (
                 <span key={`b-${i}`} className="text-4xl animate-bounce" style={{ animationDelay: `${i * 0.1}s` }}>
@@ -290,7 +290,7 @@ function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray 
 
           {/* Result: Combined */}
           <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-            <div className="mb-2 text-lg font-bold text-green-800">ביחד: {sum}</div>
+            <div className="mb-2 text-lg font-bold text-green-800">ביחד: <span className="number-ltr">{sum}</span></div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: a }).map((_, i) => (
                 <span key={`sum-a-${i}`} className="text-3xl">🔵</span>
@@ -300,7 +300,7 @@ function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray 
               ))}
             </div>
             <div className="mt-3 text-3xl font-bold text-green-700">
-              {a} + {b} = {sum}
+              <span className="number-ltr">{a}</span> + <span className="number-ltr">{b}</span> = <span className="number-ltr">{sum}</span>
             </div>
           </div>
 
@@ -330,7 +330,7 @@ function generateSubtractionVisual(question: Question, mathMatch: RegExpMatchArr
         <div className="space-y-6">
           {/* Step 1: Start with all items */}
           <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-blue-700">התחלנו עם: {a}</div>
+            <div className="mb-2 text-lg font-bold text-blue-700">התחלנו עם: <span className="number-ltr">{a}</span></div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: a }).map((_, i) => (
                 <span 
@@ -350,7 +350,7 @@ function generateSubtractionVisual(question: Question, mathMatch: RegExpMatchArr
 
           {/* Step 2: Items being removed */}
           <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-red-700">הורדנו: {b}</div>
+            <div className="mb-2 text-lg font-bold text-red-700">הורדנו: <span className="number-ltr">{b}</span></div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: b }).map((_, i) => (
                 <div key={`remove-${i}`} className="relative">
@@ -368,7 +368,7 @@ function generateSubtractionVisual(question: Question, mathMatch: RegExpMatchArr
 
           {/* Result */}
           <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-            <div className="mb-2 text-lg font-bold text-green-800">נשאר: {result}</div>
+            <div className="mb-2 text-lg font-bold text-green-800">נשאר: <span className="number-ltr">{result}</span></div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: result }).map((_, i) => (
                 <span key={`result-${i}`} className="text-4xl">🍎</span>
@@ -376,7 +376,7 @@ function generateSubtractionVisual(question: Question, mathMatch: RegExpMatchArr
               {result === 0 && <span className="text-2xl text-gray-500">כלום לא נשאר</span>}
             </div>
             <div className="mt-3 text-3xl font-bold text-green-700">
-              {a} − {b} = {result}
+              <span className="number-ltr">{a}</span> − <span className="number-ltr">{b}</span> = <span className="number-ltr">{result}</span>
             </div>
           </div>
 
@@ -419,7 +419,7 @@ function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatc
                 className="rounded-2xl border-4 border-dashed border-purple-300 bg-purple-50 p-3"
               >
                 <div className="text-center text-sm font-bold text-purple-600 mb-2">
-                  קבוצה {groupIndex + 1}
+                  קבוצה <span className="number-ltr">{groupIndex + 1}</span>
                 </div>
                 <div className="flex flex-wrap justify-center gap-1">
                   {Array.from({ length: b }).map((_, itemIndex) => (
@@ -429,7 +429,7 @@ function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatc
                   ))}
                 </div>
                 <div className="text-center text-sm font-bold text-purple-600 mt-1">
-                  = {b}
+                  = <span className="number-ltr">{b}</span>
                 </div>
               </div>
             ))}
@@ -443,10 +443,10 @@ function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatc
           {/* Result */}
           <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
             <div className="mb-2 text-lg font-bold text-green-800">
-              {a} קבוצות × {b} בכל קבוצה = {product}
+              <span className="number-ltr">{a}</span> קבוצות × <span className="number-ltr">{b}</span> בכל קבוצה = <span className="number-ltr">{product}</span>
             </div>
             <div className="text-4xl font-bold text-green-700">
-              {a} × {b} = {product}
+              <span className="number-ltr">{a}</span> × <span className="number-ltr">{b}</span> = <span className="number-ltr">{product}</span>
             </div>
           </div>
 
@@ -462,7 +462,7 @@ function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatc
               </div>
             </div>
             <div className="text-center mt-2 text-orange-700">
-              {a} שורות × {b} עמודות = {product}
+              <span className="number-ltr">{a}</span> שורות × <span className="number-ltr">{b}</span> עמודות = <span className="number-ltr">{product}</span>
             </div>
           </div>
         </div>
@@ -532,7 +532,7 @@ function generateGeometryVisual(question: Question): React.ReactNode {
         {/* Result */}
         <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
           <div className="text-2xl font-bold text-green-700">
-            למשולש יש {typeof answer === 'number' ? answer : 3} צלעות! ✅
+            למשולש יש <span className="number-ltr">{typeof answer === 'number' ? answer : 3}</span> צלעות! ✅
           </div>
         </div>
       </div>
@@ -593,7 +593,7 @@ function generateGeometryVisual(question: Question): React.ReactNode {
         {/* Result */}
         <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
           <div className="text-2xl font-bold text-green-700">
-            לריבוע יש {typeof answer === 'number' ? answer : 4} צלעות! ✅
+            לריבוע יש <span className="number-ltr">{typeof answer === 'number' ? answer : 4}</span> צלעות! ✅
           </div>
         </div>
       </div>
@@ -720,7 +720,7 @@ function generateNumbersVisual(question: Question): React.ReactNode {
             {Array.from({ length: count }).map((_, i) => (
               <div key={i} className="flex flex-col items-center">
                 <span className="text-4xl">🌟</span>
-                <span className="text-lg font-bold text-blue-600">{i + 1}</span>
+                <span className="text-lg font-bold text-blue-600 number-ltr">{i + 1}</span>
               </div>
             ))}
           </div>
@@ -728,7 +728,7 @@ function generateNumbersVisual(question: Question): React.ReactNode {
           {/* Result */}
           <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
             <div className="text-2xl font-bold text-green-700">
-              סה״כ: {count} ⭐
+              סה״כ: <span className="number-ltr">{count}</span> ⭐
             </div>
           </div>
         </div>
@@ -749,17 +749,17 @@ function generateNumbersVisual(question: Question): React.ReactNode {
           {/* Number line with neighbors */}
           <div className="flex justify-center items-center gap-2">
             <div className="flex flex-col items-center px-4 py-2 bg-blue-100 rounded-xl">
-              <span className="text-3xl font-bold text-blue-700">{num - 1}</span>
+              <span className="text-3xl font-bold text-blue-700 number-ltr">{num - 1}</span>
               <span className="text-sm text-blue-600">שכן לפני</span>
             </div>
             <span className="text-2xl">←</span>
             <div className="flex flex-col items-center px-4 py-2 bg-yellow-200 rounded-xl border-4 border-yellow-400">
-              <span className="text-4xl font-bold text-yellow-700">{num}</span>
+              <span className="text-4xl font-bold text-yellow-700 number-ltr">{num}</span>
               <span className="text-sm text-yellow-600">המספר</span>
             </div>
             <span className="text-2xl">→</span>
             <div className="flex flex-col items-center px-4 py-2 bg-red-100 rounded-xl">
-              <span className="text-3xl font-bold text-red-700">{num + 1}</span>
+              <span className="text-3xl font-bold text-red-700 number-ltr">{num + 1}</span>
               <span className="text-sm text-red-600">שכן אחרי</span>
             </div>
           </div>
@@ -836,14 +836,14 @@ function generateEvenOddVisual(question: Question): React.ReactNode {
       <div className="space-y-6">
         <div className="text-center">
           <div className="text-xl font-bold text-purple-700 mb-4">
-            האם {num} זוגי או אי-זוגי?
+            האם <span className="number-ltr">{num}</span> זוגי או אי-זוגי?
           </div>
         </div>
 
         {/* Pairing visualization */}
         <div className="text-center">
           <div className="text-lg font-bold text-blue-700 mb-3">
-            בואו ננסה לסדר {num} בזוגות:
+            בואו ננסה לסדר <span className="number-ltr">{num}</span> בזוגות:
           </div>
           <div className="flex flex-wrap justify-center gap-4">
             {Array.from({ length: Math.floor(num / 2) }).map((_, i) => (
@@ -869,11 +869,11 @@ function generateEvenOddVisual(question: Question): React.ReactNode {
         <div className={`rounded-2xl p-4 text-center ${isEven ? 'bg-green-100' : 'bg-orange-100'}`}>
           {isEven ? (
             <div className="text-xl font-bold text-green-700">
-              ✅ כולם בזוגות! {num} הוא מספר זוגי
+              ✅ כולם בזוגות! <span className="number-ltr">{num}</span> הוא מספר זוגי
             </div>
           ) : (
             <div className="text-xl font-bold text-orange-700">
-              ❌ נשאר אחד לבד! {num} הוא מספר אי-זוגי
+              ❌ נשאר אחד לבד! <span className="number-ltr">{num}</span> הוא מספר אי-זוגי
             </div>
           )}
         </div>

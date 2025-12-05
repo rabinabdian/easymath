@@ -243,3 +243,17 @@ select {
 .hint-glow {
   box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
 }
+
+/* Number display - always left-to-right */
+.number-ltr {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+/* Ensure numbers in option buttons display LTR */
+.option-button {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: center;
+}

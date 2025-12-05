@@ -127,7 +127,7 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
           backdropFilter: "blur(4px)",
         }}
       >
-        גרסה {APP_VERSION}
+        גרסה <span className="number-ltr">{APP_VERSION}</span>
       </div>
     </div>
   );

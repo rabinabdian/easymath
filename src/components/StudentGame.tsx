@@ -277,9 +277,9 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </h2>
             <p className="mb-3 text-slate-700">
               {t('student.finished.score')}{' '}
-              <span className="font-semibold">{score}</span> {t('student.of')}{' '}
-              <span className="font-semibold">{totalQuestions}</span> (
-              {percent}%)
+              <span className="font-semibold number-ltr">{score}</span> {t('student.of')}{' '}
+              <span className="font-semibold number-ltr">{totalQuestions}</span> (
+              <span className="number-ltr">{percent}</span>%)
             </p>
 
             <div className="mb-2 flex items-center gap-1 text-2xl">
@@ -319,7 +319,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             backdropFilter: "blur(4px)",
           }}
         >
-          גרסה {APP_VERSION}
+          גרסה <span className="number-ltr">{APP_VERSION}</span>
         </div>
       </div>
     );
@@ -470,22 +470,22 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             <div className="flex items-center gap-2">
               <span>{t('student.timer')}</span>
               <span
-                className={
+                className={`number-ltr ${
                   timeLeft <= 5 ? 'font-bold text-rose-600' : 'font-medium'
-                }
+                }`}
               >
                 {timeLeft}s
               </span>
             </div>
             <div>
               {t('student.score')}{' '}
-              <span className="font-semibold text-emerald-600">{Math.round(score)}</span>
+              <span className="font-semibold text-emerald-600 number-ltr">{Math.round(score)}</span>
             </div>
             {/* Attempts indicator */}
             {attempts > 0 && (
               <div className="flex items-center gap-1 text-amber-600">
                 <span>ניסיונות:</span>
-                <span className="font-bold">{attempts}/3</span>
+                <span className="font-bold number-ltr">{attempts}/3</span>
               </div>
             )}
           </div>
@@ -495,7 +495,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         <div className="mb-4">
           <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
             <span>
-              {t('student.question')} {index + 1} {t('student.of')} {totalQuestions}
+              {t('student.question')} <span className="number-ltr">{index + 1}</span> {t('student.of')} <span className="number-ltr">{totalQuestions}</span>
             </span>
           </div>
           <div className="h-2 w-full rounded-full bg-slate-200">

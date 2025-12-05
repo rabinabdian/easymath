@@ -110,7 +110,7 @@ function VersionBadge() {
         backdropFilter: "blur(4px)",
       }}
     >
-      גרסה {APP_VERSION}
+      גרסה <span className="number-ltr">{APP_VERSION}</span>
     </div>
   );
 }
@@ -372,7 +372,7 @@ function SessionPage() {
     return (
       <div className="page page-right">
         <h2 className="title">שגיאה</h2>
-        <p className="subtitle">לא נמצאו תרגילים (אורך: {sessionExercises.length}, אינדקס: {currentIndex})</p>
+        <p className="subtitle">לא נמצאו תרגילים (אורך: <span className="number-ltr">{sessionExercises.length}</span>, אינדקס: <span className="number-ltr">{currentIndex}</span>)</p>
         <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
         <VersionBadge />
       </div>
@@ -428,7 +428,7 @@ function SessionPage() {
       <div className="page page-right">
         <h2 className="title">כל הכבוד {settings.childName}! 🎉</h2>
         <p className="subtitle">
-          סיימנו {sessionExercises.length} תרגילים בסשן הזה.
+          סיימנו <span className="number-ltr">{sessionExercises.length}</span> תרגילים בסשן הזה.
         </p>
         <div className="buttons">
           <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
@@ -484,7 +484,7 @@ function SessionPage() {
       </div>
 
       <div className="subtitle-small">
-        תרגיל {currentIndex + 1} מתוך {sessionExercises.length}
+        תרגיל <span className="number-ltr">{currentIndex + 1}</span> מתוך <span className="number-ltr">{sessionExercises.length}</span>
       </div>
 
       <div className="icons-row">
@@ -680,17 +680,17 @@ function ParentPage() {
         <label className="form-group">
           <span>מספרים עד:</span>
           <select name="maxNumber" defaultValue={settings.maxNumber}>
-            <option value={5}>עד 5</option>
-            <option value={10}>עד 10</option>
+            <option value={5}>עד <span className="number-ltr">5</span></option>
+            <option value={10}>עד <span className="number-ltr">10</span></option>
           </select>
         </label>
 
         <label className="form-group">
           <span>אורך סשן (מספר תרגילים):</span>
           <select name="sessionLength" defaultValue={settings.sessionLength}>
-            <option value={5}>5 תרגילים</option>
-            <option value={7}>7 תרגילים</option>
-            <option value={10}>10 תרגילים</option>
+            <option value={5}><span className="number-ltr">5</span> תרגילים</option>
+            <option value={7}><span className="number-ltr">7</span> תרגילים</option>
+            <option value={10}><span className="number-ltr">10</span> תרגילים</option>
           </select>
         </label>
 
