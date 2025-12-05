@@ -4,6 +4,7 @@ import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonContent';
+import { AnimatedLesson } from './AnimatedLesson';
 
 interface IntroScreenProps {
   question: Question;
@@ -54,15 +55,20 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="mx-auto max-w-2xl px-4 py-8">
         {/* Header */}
-        <div className="mb-6 text-center">
-          <div className="mb-3 text-6xl">{lessonEmoji}</div>
+        <div className="mb-6 text-center animate-fade-slide-down">
+          <div className="mb-3 text-6xl animate-bounce-slow">{lessonEmoji}</div>
           <h2 className="text-3xl font-bold text-slate-800">{headerTitle}</h2>
           <p className="mt-2 text-lg text-slate-600">{headerSubtitle}</p>
         </div>
 
+        {/* Animated Visual Lesson - Interactive animation for the topic */}
+        <div className="mb-8 animate-fade-slide-up">
+          <AnimatedLesson question={question} locale={locale} />
+        </div>
+
         {/* Explanation Card with Speaker */}
         {explanation && (
-          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg">
+          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg animate-fade-slide-up" style={{ animationDelay: '0.2s' }}>
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-4xl">💡</span>
@@ -78,19 +84,19 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
         {/* Step-by-step guidance */}
         {steps.length > 0 && (
-          <div className="mb-8 rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-8 shadow-lg">
+          <div className="mb-8 rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-8 shadow-lg animate-fade-slide-up" style={{ animationDelay: '0.3s' }}>
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-4xl">📝</span>
+                <span className="text-4xl animate-bounce-slow">📝</span>
                 <h3 className="text-2xl font-bold text-blue-900">{stepsTitle}</h3>
               </div>
               <InlineSpeaker text={steps.join('. ')} />
             </div>
-            <ol className="space-y-3 text-lg leading-relaxed text-slate-800">
+            <ol className="space-y-3 text-lg leading-relaxed text-slate-800 stagger-children">
               {steps.map((step, idx) => (
-                <li key={`${idx}-${step.slice(0, 8)}`} className="flex gap-3">
-                  <span className="text-xl font-bold text-blue-700">{idx + 1}.</span>
-                  <span className="whitespace-pre-line">{step}</span>
+                <li key={`${idx}-${step.slice(0, 8)}`} className="flex gap-3 items-start">
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white text-lg font-bold flex-shrink-0">{idx + 1}</span>
+                  <span className="whitespace-pre-line pt-1">{step}</span>
                 </li>
               ))}
             </ol>
@@ -99,10 +105,10 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
         {/* Example Card with Speaker */}
         {example && (
-          <div className="mb-6 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300">
+          <div className="mb-6 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300 animate-fade-slide-up" style={{ animationDelay: '0.4s' }}>
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-4xl">✨</span>
+                <span className="text-4xl animate-float">✨</span>
                 <h3 className="text-2xl font-bold text-slate-800">{exampleLabel}</h3>
               </div>
               <InlineSpeaker text={example} />
@@ -117,10 +123,10 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
         {/* Quick tip */}
         {tip && (
-          <div className="mb-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 shadow-lg border-4 border-emerald-200">
+          <div className="mb-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 shadow-lg border-4 border-emerald-200 animate-fade-slide-up" style={{ animationDelay: '0.5s' }}>
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-4xl">🎯</span>
+                <span className="text-4xl animate-scale-pulse">🎯</span>
                 <h3 className="text-2xl font-bold text-emerald-900">{tipTitle}</h3>
               </div>
               <InlineSpeaker text={tip} />
@@ -132,10 +138,10 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
         )}
 
         {/* Upcoming Question Preview */}
-        <div className="mb-8 rounded-3xl bg-gradient-to-br from-purple-50 to-pink-50 p-8 shadow-lg border-4 border-purple-300">
+        <div className="mb-8 rounded-3xl bg-gradient-to-br from-purple-50 to-pink-50 p-8 shadow-lg border-4 border-purple-300 animate-fade-slide-up animate-glow" style={{ animationDelay: '0.6s' }}>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-4xl">📝</span>
+              <span className="text-4xl animate-heartbeat">📝</span>
               <h3 className="text-2xl font-bold text-slate-800">{upcomingQuestionLabel}</h3>
             </div>
             <InlineSpeaker text={questionText} />
@@ -147,13 +153,13 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
           </div>
         </div>
 
-        {/* Continue Button - Large and accessible */}
+        {/* Continue Button - Large and accessible with animation */}
         <button
           type="button"
           onClick={onContinue}
-          className="w-full rounded-3xl bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105"
+          className="w-full rounded-3xl bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 animate-pulse-slow"
         >
-          <span className="mr-2">✅</span>
+          <span className="mr-2 inline-block animate-bounce-slow">✅</span>
           {continueButton}
         </button>
       </div>
