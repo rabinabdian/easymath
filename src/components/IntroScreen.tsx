@@ -53,19 +53,19 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="mx-auto max-w-2xl px-4 py-8">
-        {/* Header */}
-        <div className="mb-6 text-center">
-          <div className="mb-3 text-6xl">{lessonEmoji}</div>
+        {/* Header - Animated entrance */}
+        <div className="mb-6 text-center animate-scale-in">
+          <div className="mb-3 text-6xl animate-gentle-bounce">{lessonEmoji}</div>
           <h2 className="text-3xl font-bold text-slate-800">{headerTitle}</h2>
           <p className="mt-2 text-lg text-slate-600">{headerSubtitle}</p>
         </div>
 
-        {/* Explanation Card with Speaker */}
+        {/* Explanation Card with Speaker - Animated entrance */}
         {explanation && (
-          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg">
+          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg hover-lift animate-fade-in-up animate-delay-200">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-4xl">💡</span>
+                <span className="text-4xl animate-rotate-scale">💡</span>
                 <h3 className="text-2xl font-bold text-slate-800">{explanationLabel}</h3>
               </div>
               <InlineSpeaker text={explanation} />
@@ -76,38 +76,41 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
           </div>
         )}
 
-        {/* Step-by-step guidance */}
+        {/* Step-by-step guidance - Animated with staggered steps */}
         {steps.length > 0 && (
-          <div className="mb-8 rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-8 shadow-lg">
+          <div className="mb-8 rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-8 shadow-lg hover-lift animate-fade-in-right animate-delay-300">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-4xl">📝</span>
+                <span className="text-4xl animate-wiggle">📝</span>
                 <h3 className="text-2xl font-bold text-blue-900">{stepsTitle}</h3>
               </div>
               <InlineSpeaker text={steps.join('. ')} />
             </div>
             <ol className="space-y-3 text-lg leading-relaxed text-slate-800">
-              {steps.map((step, idx) => (
-                <li key={`${idx}-${step.slice(0, 8)}`} className="flex gap-3">
-                  <span className="text-xl font-bold text-blue-700">{idx + 1}.</span>
-                  <span className="whitespace-pre-line">{step}</span>
-                </li>
-              ))}
+              {steps.map((step, idx) => {
+                const delayClass = `animate-delay-${Math.min(400 + idx * 100, 800)}`;
+                return (
+                  <li key={`${idx}-${step.slice(0, 8)}`} className={`flex gap-3 animate-fade-in-left ${delayClass}`}>
+                    <span className="text-xl font-bold text-blue-700 animate-number-pop">{idx + 1}.</span>
+                    <span className="whitespace-pre-line">{step}</span>
+                  </li>
+                );
+              })}
             </ol>
           </div>
         )}
 
-        {/* Example Card with Speaker */}
+        {/* Example Card with Speaker - Animated entrance */}
         {example && (
-          <div className="mb-6 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300">
+          <div className="mb-6 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300 hover-lift animate-fade-in-up animate-delay-400">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-4xl">✨</span>
+                <span className="text-4xl animate-heartbeat">✨</span>
                 <h3 className="text-2xl font-bold text-slate-800">{exampleLabel}</h3>
               </div>
               <InlineSpeaker text={example} />
             </div>
-            <div className="rounded-2xl bg-white p-6 shadow-sm">
+            <div className="rounded-2xl bg-white p-6 shadow-sm animate-pulse-glow">
               <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
                 {example}
               </p>
@@ -115,12 +118,12 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
           </div>
         )}
 
-        {/* Quick tip */}
+        {/* Quick tip - Animated entrance with attention effect */}
         {tip && (
-          <div className="mb-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 shadow-lg border-4 border-emerald-200">
+          <div className="mb-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 shadow-lg border-4 border-emerald-200 hover-lift animate-fade-in-right animate-delay-500">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-4xl">🎯</span>
+                <span className="text-4xl animate-gentle-bounce">🎯</span>
                 <h3 className="text-2xl font-bold text-emerald-900">{tipTitle}</h3>
               </div>
               <InlineSpeaker text={tip} />
@@ -131,29 +134,29 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
           </div>
         )}
 
-        {/* Upcoming Question Preview */}
-        <div className="mb-8 rounded-3xl bg-gradient-to-br from-purple-50 to-pink-50 p-8 shadow-lg border-4 border-purple-300">
+        {/* Upcoming Question Preview - Animated entrance with pulse effect */}
+        <div className="mb-8 rounded-3xl bg-gradient-to-br from-purple-50 to-pink-50 p-8 shadow-lg border-4 border-purple-300 hover-lift animate-fade-in-up animate-delay-600">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-4xl">📝</span>
+              <span className="text-4xl animate-float">📝</span>
               <h3 className="text-2xl font-bold text-slate-800">{upcomingQuestionLabel}</h3>
             </div>
             <InlineSpeaker text={questionText} />
           </div>
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
+          <div className="rounded-2xl bg-white p-6 shadow-sm animate-pulse-glow">
             <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line text-center">
               {questionText}
             </p>
           </div>
         </div>
 
-        {/* Continue Button - Large and accessible */}
+        {/* Continue Button - Large and accessible with animation */}
         <button
           type="button"
           onClick={onContinue}
-          className="w-full rounded-3xl bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105"
+          className="w-full rounded-3xl bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 animate-fade-in-up animate-delay-700"
         >
-          <span className="mr-2">✅</span>
+          <span className="mr-2 inline-block animate-heartbeat">✅</span>
           {continueButton}
         </button>
       </div>

@@ -27,10 +27,10 @@ export function ExplanationVisual({ question, className = '' }: ExplanationVisua
   }
 
   return (
-    <div className={`rounded-3xl bg-gradient-to-br from-yellow-50 to-amber-50 p-6 shadow-lg border-2 border-yellow-200 ${className}`}>
+    <div className={`rounded-3xl bg-gradient-to-br from-yellow-50 to-amber-50 p-6 shadow-lg border-2 border-yellow-200 animate-fade-in-up hover-lift ${className}`}>
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-3xl">🎨</span>
+          <span className="text-3xl animate-rotate-scale">🎨</span>
           <h4 className="text-xl font-bold text-amber-800">הסבר ויזואלי</h4>
         </div>
         <SpeakerButton
@@ -41,7 +41,7 @@ export function ExplanationVisual({ question, className = '' }: ExplanationVisua
         />
       </div>
       
-      <div className="rounded-2xl bg-white p-6 shadow-sm">
+      <div className="rounded-2xl bg-white p-6 shadow-sm animate-pulse-glow">
         {visual}
       </div>
     </div>
@@ -91,7 +91,7 @@ function generateVisualForQuestion(question: Question): React.ReactNode {
     case 'evenOdd':
       return generateEvenOddVisual(question);
     default:
-      return generateGenericVisual(question);
+      return generateGenericVisual();
   }
 }
 
@@ -255,11 +255,11 @@ function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray 
       return (
         <div className="space-y-6">
           {/* Step 1: First number */}
-          <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-blue-700">קבוצה ראשונה: {a}</div>
+          <div className="text-center animate-fade-in-up">
+            <div className="mb-2 text-lg font-bold text-blue-700 animate-scale-in">קבוצה ראשונה: {a}</div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: a }).map((_, i) => (
-                <span key={`a-${i}`} className="text-4xl animate-bounce" style={{ animationDelay: `${i * 0.1}s` }}>
+                <span key={`a-${i}`} className="text-4xl animate-bounce animate-gentle-bounce" style={{ animationDelay: `${i * 0.1}s` }}>
                   🔵
                 </span>
               ))}
@@ -267,16 +267,16 @@ function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray 
           </div>
 
           {/* Plus sign */}
-          <div className="text-center">
-            <span className="text-5xl font-bold text-green-600">+</span>
+          <div className="text-center animate-scale-in animate-delay-200">
+            <span className="text-5xl font-bold text-green-600 animate-heartbeat">+</span>
           </div>
 
           {/* Step 2: Second number */}
-          <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-red-700">קבוצה שנייה: {b}</div>
+          <div className="text-center animate-fade-in-up animate-delay-300">
+            <div className="mb-2 text-lg font-bold text-red-700 animate-scale-in">קבוצה שנייה: {b}</div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: b }).map((_, i) => (
-                <span key={`b-${i}`} className="text-4xl animate-bounce" style={{ animationDelay: `${i * 0.1}s` }}>
+                <span key={`b-${i}`} className="text-4xl animate-bounce animate-gentle-bounce" style={{ animationDelay: `${(a + i) * 0.1}s` }}>
                   🔴
                 </span>
               ))}
@@ -284,22 +284,22 @@ function generateAdditionVisual(question: Question, mathMatch: RegExpMatchArray 
           </div>
 
           {/* Arrow */}
-          <div className="text-center">
-            <span className="text-4xl">⬇️</span>
+          <div className="text-center animate-scale-in animate-delay-400">
+            <span className="text-4xl animate-gentle-bounce">⬇️</span>
           </div>
 
           {/* Result: Combined */}
-          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-            <div className="mb-2 text-lg font-bold text-green-800">ביחד: {sum}</div>
+          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center animate-fade-in-up animate-delay-500 animate-pulse-glow">
+            <div className="mb-2 text-lg font-bold text-green-800 animate-scale-in">ביחד: {sum}</div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: a }).map((_, i) => (
-                <span key={`sum-a-${i}`} className="text-3xl">🔵</span>
+                <span key={`sum-a-${i}`} className="text-3xl animate-scale-in" style={{ animationDelay: `${0.6 + i * 0.05}s` }}>🔵</span>
               ))}
               {Array.from({ length: b }).map((_, i) => (
-                <span key={`sum-b-${i}`} className="text-3xl">🔴</span>
+                <span key={`sum-b-${i}`} className="text-3xl animate-scale-in" style={{ animationDelay: `${0.6 + (a + i) * 0.05}s` }}>🔴</span>
               ))}
             </div>
-            <div className="mt-3 text-3xl font-bold text-green-700">
+            <div className="mt-3 text-3xl font-bold text-green-700 animate-number-pop animate-delay-700">
               {a} + {b} = {sum}
             </div>
           </div>
@@ -329,13 +329,14 @@ function generateSubtractionVisual(question: Question, mathMatch: RegExpMatchArr
       return (
         <div className="space-y-6">
           {/* Step 1: Start with all items */}
-          <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-blue-700">התחלנו עם: {a}</div>
+          <div className="text-center animate-fade-in-up">
+            <div className="mb-2 text-lg font-bold text-blue-700 animate-scale-in">התחלנו עם: {a}</div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: a }).map((_, i) => (
                 <span 
                   key={`start-${i}`} 
-                  className={`text-4xl ${i >= result ? 'opacity-100' : ''}`}
+                  className={`text-4xl animate-scale-in ${i >= result ? 'opacity-100' : ''}`}
+                  style={{ animationDelay: `${i * 0.08}s` }}
                 >
                   🍎
                 </span>
@@ -344,38 +345,38 @@ function generateSubtractionVisual(question: Question, mathMatch: RegExpMatchArr
           </div>
 
           {/* Minus sign */}
-          <div className="text-center">
-            <span className="text-5xl font-bold text-red-600">−</span>
+          <div className="text-center animate-scale-in animate-delay-200">
+            <span className="text-5xl font-bold text-red-600 animate-heartbeat">−</span>
           </div>
 
           {/* Step 2: Items being removed */}
-          <div className="text-center">
-            <div className="mb-2 text-lg font-bold text-red-700">הורדנו: {b}</div>
+          <div className="text-center animate-fade-in-up animate-delay-300">
+            <div className="mb-2 text-lg font-bold text-red-700 animate-scale-in">הורדנו: {b}</div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: b }).map((_, i) => (
-                <div key={`remove-${i}`} className="relative">
+                <div key={`remove-${i}`} className="relative animate-scale-in" style={{ animationDelay: `${0.4 + i * 0.1}s` }}>
                   <span className="text-4xl opacity-50">🍎</span>
-                  <span className="absolute inset-0 flex items-center justify-center text-4xl">❌</span>
+                  <span className="absolute inset-0 flex items-center justify-center text-4xl animate-rotate-scale">❌</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Arrow */}
-          <div className="text-center">
-            <span className="text-4xl">⬇️</span>
+          <div className="text-center animate-scale-in animate-delay-500">
+            <span className="text-4xl animate-gentle-bounce">⬇️</span>
           </div>
 
           {/* Result */}
-          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-            <div className="mb-2 text-lg font-bold text-green-800">נשאר: {result}</div>
+          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center animate-fade-in-up animate-delay-600 animate-pulse-glow">
+            <div className="mb-2 text-lg font-bold text-green-800 animate-scale-in">נשאר: {result}</div>
             <div className="flex flex-wrap justify-center gap-2">
               {Array.from({ length: result }).map((_, i) => (
-                <span key={`result-${i}`} className="text-4xl">🍎</span>
+                <span key={`result-${i}`} className="text-4xl animate-scale-in" style={{ animationDelay: `${0.7 + i * 0.08}s` }}>🍎</span>
               ))}
-              {result === 0 && <span className="text-2xl text-gray-500">כלום לא נשאר</span>}
+              {result === 0 && <span className="text-2xl text-gray-500 animate-fade-in-up">כלום לא נשאר</span>}
             </div>
-            <div className="mt-3 text-3xl font-bold text-green-700">
+            <div className="mt-3 text-3xl font-bold text-green-700 animate-number-pop animate-delay-800">
               {a} − {b} = {result}
             </div>
           </div>
@@ -405,8 +406,8 @@ function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatc
       return (
         <div className="space-y-6">
           {/* Explanation */}
-          <div className="text-center">
-            <div className="text-xl font-bold text-purple-700 mb-4">
+          <div className="text-center animate-scale-in">
+            <div className="text-xl font-bold text-purple-700 mb-4 animate-fade-in-up">
               {a} × {b} = {a} קבוצות של {b}
             </div>
           </div>
@@ -416,19 +417,24 @@ function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatc
             {Array.from({ length: a }).map((_, groupIndex) => (
               <div 
                 key={`group-${groupIndex}`} 
-                className="rounded-2xl border-4 border-dashed border-purple-300 bg-purple-50 p-3"
+                className="rounded-2xl border-4 border-dashed border-purple-300 bg-purple-50 p-3 hover-lift animate-fade-in-up"
+                style={{ animationDelay: `${groupIndex * 0.15}s` }}
               >
-                <div className="text-center text-sm font-bold text-purple-600 mb-2">
+                <div className="text-center text-sm font-bold text-purple-600 mb-2 animate-scale-in" style={{ animationDelay: `${groupIndex * 0.15 + 0.1}s` }}>
                   קבוצה {groupIndex + 1}
                 </div>
                 <div className="flex flex-wrap justify-center gap-1">
                   {Array.from({ length: b }).map((_, itemIndex) => (
-                    <span key={`item-${groupIndex}-${itemIndex}`} className="text-3xl">
+                    <span 
+                      key={`item-${groupIndex}-${itemIndex}`} 
+                      className="text-3xl animate-scale-in animate-gentle-bounce"
+                      style={{ animationDelay: `${groupIndex * 0.15 + itemIndex * 0.05}s` }}
+                    >
                       ⭐
                     </span>
                   ))}
                 </div>
-                <div className="text-center text-sm font-bold text-purple-600 mt-1">
+                <div className="text-center text-sm font-bold text-purple-600 mt-1 animate-number-pop" style={{ animationDelay: `${groupIndex * 0.15 + 0.2}s` }}>
                   = {b}
                 </div>
               </div>
@@ -436,16 +442,16 @@ function generateMultiplicationVisual(_question: Question, mathMatch: RegExpMatc
           </div>
 
           {/* Arrow */}
-          <div className="text-center">
-            <span className="text-4xl">⬇️</span>
+          <div className="text-center animate-scale-in" style={{ animationDelay: `${a * 0.15 + 0.2}s` }}>
+            <span className="text-4xl animate-gentle-bounce">⬇️</span>
           </div>
 
           {/* Result */}
-          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-            <div className="mb-2 text-lg font-bold text-green-800">
+          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center animate-fade-in-up animate-pulse-glow" style={{ animationDelay: `${a * 0.15 + 0.3}s` }}>
+            <div className="mb-2 text-lg font-bold text-green-800 animate-scale-in">
               {a} קבוצות × {b} בכל קבוצה = {product}
             </div>
-            <div className="text-4xl font-bold text-green-700">
+            <div className="text-4xl font-bold text-green-700 animate-number-pop" style={{ animationDelay: `${a * 0.15 + 0.4}s` }}>
               {a} × {b} = {product}
             </div>
           </div>
@@ -481,12 +487,12 @@ function generateGeometryVisual(question: Question): React.ReactNode {
   if (promptHe.includes('משולש')) {
     return (
       <div className="space-y-6">
-        <div className="text-center">
-          <div className="text-xl font-bold text-blue-700 mb-4">משולש</div>
+        <div className="text-center animate-scale-in">
+          <div className="text-xl font-bold text-blue-700 mb-4 animate-fade-in-up">משולש</div>
           
           {/* Triangle SVG with labels */}
-          <div className="flex justify-center">
-            <svg width="200" height="180" viewBox="0 0 200 180">
+          <div className="flex justify-center animate-fade-in-up animate-delay-200">
+            <svg width="200" height="180" viewBox="0 0 200 180" className="animate-float">
               {/* Triangle */}
               <polygon 
                 points="100,20 20,160 180,160" 
@@ -511,27 +517,27 @@ function generateGeometryVisual(question: Question): React.ReactNode {
         </div>
 
         {/* Properties */}
-        <div className="rounded-2xl bg-blue-50 p-4">
-          <div className="text-lg font-bold text-blue-800 mb-2">תכונות המשולש:</div>
+        <div className="rounded-2xl bg-blue-50 p-4 animate-fade-in-right animate-delay-300 hover-lift">
+          <div className="text-lg font-bold text-blue-800 mb-2 animate-scale-in">תכונות המשולש:</div>
           <ul className="space-y-2 text-blue-700 text-right">
-            <li className="flex items-center gap-2 justify-end">
+            <li className="flex items-center gap-2 justify-end animate-fade-in-left animate-delay-400">
               <span>צלעות</span>
-              <span className="text-2xl">3️⃣</span>
+              <span className="text-2xl animate-number-pop animate-delay-500">3️⃣</span>
             </li>
-            <li className="flex items-center gap-2 justify-end">
+            <li className="flex items-center gap-2 justify-end animate-fade-in-left animate-delay-500">
               <span>קודקודים (פינות)</span>
-              <span className="text-2xl">3️⃣</span>
+              <span className="text-2xl animate-number-pop animate-delay-600">3️⃣</span>
             </li>
-            <li className="flex items-center gap-2 justify-end">
+            <li className="flex items-center gap-2 justify-end animate-fade-in-left animate-delay-600">
               <span>זוויות</span>
-              <span className="text-2xl">3️⃣</span>
+              <span className="text-2xl animate-number-pop animate-delay-700">3️⃣</span>
             </li>
           </ul>
         </div>
 
         {/* Result */}
-        <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-          <div className="text-2xl font-bold text-green-700">
+        <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center animate-fade-in-up animate-delay-700 animate-pulse-glow">
+          <div className="text-2xl font-bold text-green-700 animate-scale-in animate-delay-800">
             למשולש יש {typeof answer === 'number' ? answer : 3} צלעות! ✅
           </div>
         </div>
@@ -543,12 +549,12 @@ function generateGeometryVisual(question: Question): React.ReactNode {
   if (promptHe.includes('ריבוע')) {
     return (
       <div className="space-y-6">
-        <div className="text-center">
-          <div className="text-xl font-bold text-purple-700 mb-4">ריבוע</div>
+        <div className="text-center animate-scale-in">
+          <div className="text-xl font-bold text-purple-700 mb-4 animate-fade-in-up">ריבוע</div>
           
           {/* Square SVG with labels */}
-          <div className="flex justify-center">
-            <svg width="200" height="200" viewBox="0 0 200 200">
+          <div className="flex justify-center animate-fade-in-up animate-delay-200">
+            <svg width="200" height="200" viewBox="0 0 200 200" className="animate-float">
               {/* Square */}
               <rect 
                 x="30" y="30" 
@@ -572,27 +578,27 @@ function generateGeometryVisual(question: Question): React.ReactNode {
         </div>
 
         {/* Properties */}
-        <div className="rounded-2xl bg-purple-50 p-4">
-          <div className="text-lg font-bold text-purple-800 mb-2">תכונות הריבוע:</div>
+        <div className="rounded-2xl bg-purple-50 p-4 animate-fade-in-right animate-delay-300 hover-lift">
+          <div className="text-lg font-bold text-purple-800 mb-2 animate-scale-in">תכונות הריבוע:</div>
           <ul className="space-y-2 text-purple-700 text-right">
-            <li className="flex items-center gap-2 justify-end">
+            <li className="flex items-center gap-2 justify-end animate-fade-in-left animate-delay-400">
               <span>צלעות (כולן שוות)</span>
-              <span className="text-2xl">4️⃣</span>
+              <span className="text-2xl animate-number-pop animate-delay-500">4️⃣</span>
             </li>
-            <li className="flex items-center gap-2 justify-end">
+            <li className="flex items-center gap-2 justify-end animate-fade-in-left animate-delay-500">
               <span>קודקודים (פינות)</span>
-              <span className="text-2xl">4️⃣</span>
+              <span className="text-2xl animate-number-pop animate-delay-600">4️⃣</span>
             </li>
-            <li className="flex items-center gap-2 justify-end">
+            <li className="flex items-center gap-2 justify-end animate-fade-in-left animate-delay-600">
               <span>זוויות ישרות</span>
-              <span className="text-2xl">4️⃣</span>
+              <span className="text-2xl animate-number-pop animate-delay-700">4️⃣</span>
             </li>
           </ul>
         </div>
 
         {/* Result */}
-        <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-          <div className="text-2xl font-bold text-green-700">
+        <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center animate-fade-in-up animate-delay-700 animate-pulse-glow">
+          <div className="text-2xl font-bold text-green-700 animate-scale-in animate-delay-800">
             לריבוע יש {typeof answer === 'number' ? answer : 4} צלעות! ✅
           </div>
         </div>
@@ -654,22 +660,22 @@ function generateGeometryVisual(question: Question): React.ReactNode {
   if (subtopic?.includes('סימטריה') || promptHe.includes('סימטרי')) {
     return (
       <div className="space-y-6">
-        <div className="text-center">
-          <div className="text-xl font-bold text-pink-700 mb-4">סימטריה</div>
+        <div className="text-center animate-scale-in">
+          <div className="text-xl font-bold text-pink-700 mb-4 animate-fade-in-up">סימטריה</div>
           
           {/* Symmetry visualization */}
-          <div className="flex justify-center items-center gap-4">
-            <div className="text-6xl">🦋</div>
-            <div className="h-24 w-1 bg-pink-400 rounded"></div>
-            <div className="text-6xl transform scale-x-[-1]">🦋</div>
+          <div className="flex justify-center items-center gap-4 animate-fade-in-up animate-delay-200">
+            <div className="text-6xl animate-float">🦋</div>
+            <div className="h-24 w-1 bg-pink-400 rounded animate-scale-in animate-delay-300"></div>
+            <div className="text-6xl transform scale-x-[-1] animate-float" style={{ animationDelay: '0.5s' }}>🦋</div>
           </div>
-          <div className="mt-2 text-pink-600 font-bold">קו סימטריה</div>
+          <div className="mt-2 text-pink-600 font-bold animate-fade-in-up animate-delay-400">קו סימטריה</div>
         </div>
 
         {/* Explanation */}
-        <div className="rounded-2xl bg-pink-50 p-4">
-          <div className="text-lg font-bold text-pink-800 mb-2">מה זה סימטריה?</div>
-          <p className="text-pink-700 text-right">
+        <div className="rounded-2xl bg-pink-50 p-4 animate-fade-in-right animate-delay-500 hover-lift">
+          <div className="text-lg font-bold text-pink-800 mb-2 animate-scale-in animate-delay-600">מה זה סימטריה?</div>
+          <p className="text-pink-700 text-right animate-fade-in-up animate-delay-700">
             צורה סימטרית היא צורה שאם מקפלים אותה על קו הסימטריה, 
             שני הצדדים מתאימים בדיוק אחד לשני!
           </p>
@@ -677,12 +683,12 @@ function generateGeometryVisual(question: Question): React.ReactNode {
 
         {/* Examples */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-xl bg-green-50 p-3 text-center">
-            <div className="text-3xl mb-2">❤️</div>
+          <div className="rounded-xl bg-green-50 p-3 text-center hover-lift animate-fade-in-left animate-delay-700">
+            <div className="text-3xl mb-2 animate-heartbeat">❤️</div>
             <div className="text-green-700 font-bold text-sm">סימטרי ✅</div>
           </div>
-          <div className="rounded-xl bg-red-50 p-3 text-center">
-            <div className="text-3xl mb-2">➡️</div>
+          <div className="rounded-xl bg-red-50 p-3 text-center hover-lift animate-fade-in-right animate-delay-800">
+            <div className="text-3xl mb-2 animate-wiggle">➡️</div>
             <div className="text-red-700 font-bold text-sm">לא סימטרי ❌</div>
           </div>
         </div>
@@ -711,23 +717,23 @@ function generateNumbersVisual(question: Question): React.ReactNode {
     if (count > 0 && count <= 15) {
       return (
         <div className="space-y-6">
-          <div className="text-center">
-            <div className="text-xl font-bold text-blue-700 mb-4">בואו נספור ביחד!</div>
+          <div className="text-center animate-scale-in">
+            <div className="text-xl font-bold text-blue-700 mb-4 animate-fade-in-up">בואו נספור ביחד!</div>
           </div>
 
           {/* Counting visualization with numbers */}
           <div className="flex flex-wrap justify-center gap-3">
             {Array.from({ length: count }).map((_, i) => (
-              <div key={i} className="flex flex-col items-center">
-                <span className="text-4xl">🌟</span>
-                <span className="text-lg font-bold text-blue-600">{i + 1}</span>
+              <div key={i} className="flex flex-col items-center animate-scale-in" style={{ animationDelay: `${i * 0.1}s` }}>
+                <span className="text-4xl animate-gentle-bounce" style={{ animationDelay: `${i * 0.1 + 0.2}s` }}>🌟</span>
+                <span className="text-lg font-bold text-blue-600 animate-number-pop" style={{ animationDelay: `${i * 0.1 + 0.3}s` }}>{i + 1}</span>
               </div>
             ))}
           </div>
 
           {/* Result */}
-          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center">
-            <div className="text-2xl font-bold text-green-700">
+          <div className="rounded-2xl bg-gradient-to-r from-green-100 to-emerald-100 p-4 text-center animate-fade-in-up animate-pulse-glow" style={{ animationDelay: `${count * 0.1 + 0.3}s` }}>
+            <div className="text-2xl font-bold text-green-700 animate-scale-in" style={{ animationDelay: `${count * 0.1 + 0.4}s` }}>
               סה״כ: {count} ⭐
             </div>
           </div>
@@ -742,24 +748,24 @@ function generateNumbersVisual(question: Question): React.ReactNode {
     if (num > 0 && num <= 20) {
       return (
         <div className="space-y-6">
-          <div className="text-center">
-            <div className="text-xl font-bold text-purple-700 mb-4">שכנים על ציר המספרים</div>
+          <div className="text-center animate-scale-in">
+            <div className="text-xl font-bold text-purple-700 mb-4 animate-fade-in-up">שכנים על ציר המספרים</div>
           </div>
 
           {/* Number line with neighbors */}
-          <div className="flex justify-center items-center gap-2">
-            <div className="flex flex-col items-center px-4 py-2 bg-blue-100 rounded-xl">
-              <span className="text-3xl font-bold text-blue-700">{num - 1}</span>
+          <div className="flex justify-center items-center gap-2 animate-fade-in-up animate-delay-200">
+            <div className="flex flex-col items-center px-4 py-2 bg-blue-100 rounded-xl hover-lift animate-fade-in-left animate-delay-300">
+              <span className="text-3xl font-bold text-blue-700 animate-number-pop animate-delay-400">{num - 1}</span>
               <span className="text-sm text-blue-600">שכן לפני</span>
             </div>
-            <span className="text-2xl">←</span>
-            <div className="flex flex-col items-center px-4 py-2 bg-yellow-200 rounded-xl border-4 border-yellow-400">
-              <span className="text-4xl font-bold text-yellow-700">{num}</span>
+            <span className="text-2xl animate-gentle-bounce animate-delay-500">←</span>
+            <div className="flex flex-col items-center px-4 py-2 bg-yellow-200 rounded-xl border-4 border-yellow-400 hover-lift animate-scale-in animate-delay-400 animate-pulse-glow">
+              <span className="text-4xl font-bold text-yellow-700 animate-heartbeat">{num}</span>
               <span className="text-sm text-yellow-600">המספר</span>
             </div>
-            <span className="text-2xl">→</span>
-            <div className="flex flex-col items-center px-4 py-2 bg-red-100 rounded-xl">
-              <span className="text-3xl font-bold text-red-700">{num + 1}</span>
+            <span className="text-2xl animate-gentle-bounce animate-delay-500">→</span>
+            <div className="flex flex-col items-center px-4 py-2 bg-red-100 rounded-xl hover-lift animate-fade-in-right animate-delay-300">
+              <span className="text-3xl font-bold text-red-700 animate-number-pop animate-delay-400">{num + 1}</span>
               <span className="text-sm text-red-600">שכן אחרי</span>
             </div>
           </div>
@@ -782,35 +788,35 @@ function generateNumbersVisual(question: Question): React.ReactNode {
   if (subtopic?.includes('דילוגים') || subtopic?.includes('סדרות') || promptHe.includes('השלם')) {
     return (
       <div className="space-y-6">
-        <div className="text-center">
-          <div className="text-xl font-bold text-indigo-700 mb-4">סדרות ודילוגים</div>
+        <div className="text-center animate-scale-in">
+          <div className="text-xl font-bold text-indigo-700 mb-4 animate-fade-in-up">סדרות ודילוגים</div>
         </div>
 
         {/* Pattern visualization */}
-        <div className="rounded-2xl bg-indigo-50 p-4">
-          <div className="text-lg text-indigo-700 mb-2">
-            <span className="font-bold">טיפ:</span> חפשו את הדפוס!
+        <div className="rounded-2xl bg-indigo-50 p-4 hover-lift animate-fade-in-right animate-delay-200">
+          <div className="text-lg text-indigo-700 mb-2 animate-scale-in animate-delay-300">
+            <span className="font-bold animate-wiggle">טיפ:</span> חפשו את הדפוס!
           </div>
           <ul className="space-y-2 text-indigo-600 text-right">
-            <li className="flex items-center gap-2 justify-end">
+            <li className="flex items-center gap-2 justify-end animate-fade-in-left animate-delay-400">
               <span>מה ההפרש בין כל שני מספרים?</span>
-              <span className="text-xl">🔍</span>
+              <span className="text-xl animate-gentle-bounce">🔍</span>
             </li>
-            <li className="flex items-center gap-2 justify-end">
+            <li className="flex items-center gap-2 justify-end animate-fade-in-left animate-delay-500">
               <span>האם הסדרה עולה או יורדת?</span>
-              <span className="text-xl">📈</span>
+              <span className="text-xl animate-float">📈</span>
             </li>
           </ul>
         </div>
 
         {/* Example pattern */}
-        <div className="flex justify-center gap-2 items-center">
+        <div className="flex justify-center gap-2 items-center animate-fade-in-up animate-delay-600">
           {[2, 4, 6, 8, 10].map((n, i) => (
             <div key={i} className="flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-xl">
+              <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-xl hover-lift animate-scale-in" style={{ animationDelay: `${0.7 + i * 0.1}s` }}>
                 {n}
               </div>
-              {i < 4 && <span className="text-indigo-400 mt-1">+2</span>}
+              {i < 4 && <span className="text-indigo-400 mt-1 animate-fade-in-up" style={{ animationDelay: `${0.8 + i * 0.1}s` }}>+2</span>}
             </div>
           ))}
         </div>
@@ -834,57 +840,58 @@ function generateEvenOddVisual(question: Question): React.ReactNode {
     
     return (
       <div className="space-y-6">
-        <div className="text-center">
-          <div className="text-xl font-bold text-purple-700 mb-4">
+        <div className="text-center animate-scale-in">
+          <div className="text-xl font-bold text-purple-700 mb-4 animate-fade-in-up">
             האם {num} זוגי או אי-זוגי?
           </div>
         </div>
 
         {/* Pairing visualization */}
         <div className="text-center">
-          <div className="text-lg font-bold text-blue-700 mb-3">
+          <div className="text-lg font-bold text-blue-700 mb-3 animate-fade-in-up animate-delay-200">
             בואו ננסה לסדר {num} בזוגות:
           </div>
           <div className="flex flex-wrap justify-center gap-4">
             {Array.from({ length: Math.floor(num / 2) }).map((_, i) => (
               <div 
                 key={i} 
-                className="rounded-xl border-4 border-dashed border-green-400 bg-green-50 p-2 flex gap-1"
+                className="rounded-xl border-4 border-dashed border-green-400 bg-green-50 p-2 flex gap-1 hover-lift animate-scale-in"
+                style={{ animationDelay: `${0.3 + i * 0.15}s` }}
               >
-                <span className="text-3xl">🧑</span>
-                <span className="text-3xl">🧑</span>
+                <span className="text-3xl animate-gentle-bounce" style={{ animationDelay: `${0.4 + i * 0.15}s` }}>🧑</span>
+                <span className="text-3xl animate-gentle-bounce" style={{ animationDelay: `${0.5 + i * 0.15}s` }}>🧑</span>
               </div>
             ))}
             {/* Show leftover if odd */}
             {!isEven && (
-              <div className="rounded-xl border-4 border-dashed border-red-400 bg-red-50 p-2">
-                <span className="text-3xl">🧑</span>
-                <span className="text-xs text-red-600 font-bold block">לבד!</span>
+              <div className="rounded-xl border-4 border-dashed border-red-400 bg-red-50 p-2 hover-lift animate-scale-in animate-wiggle" style={{ animationDelay: `${0.3 + Math.floor(num / 2) * 0.15}s` }}>
+                <span className="text-3xl animate-heartbeat">🧑</span>
+                <span className="text-xs text-red-600 font-bold block animate-fade-in-up">לבד!</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Explanation */}
-        <div className={`rounded-2xl p-4 text-center ${isEven ? 'bg-green-100' : 'bg-orange-100'}`}>
+        <div className={`rounded-2xl p-4 text-center animate-fade-in-up animate-pulse-glow ${isEven ? 'bg-green-100' : 'bg-orange-100'}`} style={{ animationDelay: `${0.5 + Math.ceil(num / 2) * 0.15}s` }}>
           {isEven ? (
-            <div className="text-xl font-bold text-green-700">
-              ✅ כולם בזוגות! {num} הוא מספר זוגי
+            <div className="text-xl font-bold text-green-700 animate-scale-in" style={{ animationDelay: `${0.6 + Math.ceil(num / 2) * 0.15}s` }}>
+              <span className="inline-block animate-heartbeat">✅</span> כולם בזוגות! {num} הוא מספר זוגי
             </div>
           ) : (
-            <div className="text-xl font-bold text-orange-700">
-              ❌ נשאר אחד לבד! {num} הוא מספר אי-זוגי
+            <div className="text-xl font-bold text-orange-700 animate-scale-in" style={{ animationDelay: `${0.6 + Math.ceil(num / 2) * 0.15}s` }}>
+              <span className="inline-block animate-wiggle">❌</span> נשאר אחד לבד! {num} הוא מספר אי-זוגי
             </div>
           )}
         </div>
 
         {/* Rule */}
-        <div className="rounded-2xl bg-purple-50 p-4">
-          <div className="text-lg font-bold text-purple-800 mb-2">כלל:</div>
+        <div className="rounded-2xl bg-purple-50 p-4 hover-lift animate-fade-in-right" style={{ animationDelay: `${0.7 + Math.ceil(num / 2) * 0.15}s` }}>
+          <div className="text-lg font-bold text-purple-800 mb-2 animate-scale-in" style={{ animationDelay: `${0.8 + Math.ceil(num / 2) * 0.15}s` }}>כלל:</div>
           <ul className="space-y-1 text-purple-700 text-right">
-            <li>• מספרים זוגיים: 0, 2, 4, 6, 8, 10...</li>
-            <li>• מספרים אי-זוגיים: 1, 3, 5, 7, 9, 11...</li>
-            <li>• טיפ: הספרה האחרונה קובעת!</li>
+            <li className="animate-fade-in-left" style={{ animationDelay: `${0.9 + Math.ceil(num / 2) * 0.15}s` }}>• מספרים זוגיים: 0, 2, 4, 6, 8, 10...</li>
+            <li className="animate-fade-in-left" style={{ animationDelay: `${1.0 + Math.ceil(num / 2) * 0.15}s` }}>• מספרים אי-זוגיים: 1, 3, 5, 7, 9, 11...</li>
+            <li className="animate-fade-in-left" style={{ animationDelay: `${1.1 + Math.ceil(num / 2) * 0.15}s` }}>• טיפ: הספרה האחרונה קובעת!</li>
           </ul>
         </div>
       </div>
@@ -940,7 +947,7 @@ function generateWordProblemVisual(question: Question, operation: 'addition' | '
 }
 
 // ===== GENERIC VISUAL =====
-function generateGenericVisual(_question: Question): React.ReactNode {
+function generateGenericVisual(): React.ReactNode {
   return (
     <div className="space-y-4 text-center">
       <div className="text-5xl">💡</div>
