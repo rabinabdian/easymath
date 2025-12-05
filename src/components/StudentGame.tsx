@@ -10,6 +10,7 @@ import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
+import { ensureLtr } from '../utils/bidi';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -277,9 +278,9 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </h2>
             <p className="mb-3 text-slate-700">
               {t('student.finished.score')}{' '}
-              <span className="font-semibold">{score}</span> {t('student.of')}{' '}
-              <span className="font-semibold">{totalQuestions}</span> (
-              {percent}%)
+              <span className="font-semibold">{ensureLtr(score)}</span> {t('student.of')}{' '}
+              <span className="font-semibold">{ensureLtr(totalQuestions)}</span>{' '}
+              ({ensureLtr(`${percent}%`)})
             </p>
 
             <div className="mb-2 flex items-center gap-1 text-2xl">
@@ -319,7 +320,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             backdropFilter: "blur(4px)",
           }}
         >
-          גרסה {APP_VERSION}
+          גרסה {ensureLtr(APP_VERSION)}
         </div>
       </div>
     );
@@ -474,18 +475,20 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
                   timeLeft <= 5 ? 'font-bold text-rose-600' : 'font-medium'
                 }
               >
-                {timeLeft}s
+                {ensureLtr(`${timeLeft}s`)}
               </span>
             </div>
             <div>
               {t('student.score')}{' '}
-              <span className="font-semibold text-emerald-600">{Math.round(score)}</span>
+              <span className="font-semibold text-emerald-600">
+                {ensureLtr(Math.round(score))}
+              </span>
             </div>
             {/* Attempts indicator */}
             {attempts > 0 && (
               <div className="flex items-center gap-1 text-amber-600">
                 <span>ניסיונות:</span>
-                <span className="font-bold">{attempts}/3</span>
+                <span className="font-bold">{ensureLtr(`${attempts}/3`)}</span>
               </div>
             )}
           </div>
@@ -495,7 +498,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         <div className="mb-4">
           <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
             <span>
-              {t('student.question')} {index + 1} {t('student.of')} {totalQuestions}
+              {t('student.question')} {ensureLtr(index + 1)} {t('student.of')}{' '}
+              {ensureLtr(totalQuestions)}
             </span>
           </div>
           <div className="h-2 w-full rounded-full bg-slate-200">
@@ -525,6 +529,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
                 }}
                 placeholder={t('student.placeholder')}
                 className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                dir="ltr"
               />
               <button
                 type="button"
@@ -570,7 +575,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
           backdropFilter: "blur(4px)",
         }}
       >
-        גרסה {APP_VERSION}
+        גרסה {ensureLtr(APP_VERSION)}
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { getQuestionPrompt } from '../utils/questionText';
 import { getAssetUrl } from '../utils/assets';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { InlineSpeaker, SpeakerButton } from './SpeakerButton';
+import { ensureLtrIfNoHebrew } from '../utils/bidi';
 
 interface QuestionCardProps {
   question: Question;
@@ -90,7 +91,7 @@ export function QuestionCard({
                 onClick={() => onOptionClick?.(String(opt))}
                 className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center text-base font-medium hover:border-blue-500 hover:bg-blue-50 transition-colors"
               >
-                {opt}
+                {ensureLtrIfNoHebrew(opt)}
               </button>
             ))}
           </div>

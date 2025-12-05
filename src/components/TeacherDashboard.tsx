@@ -24,6 +24,7 @@ import type { StudentRecord, AvatarType } from '../types/students';
 import { QuestionCard } from './QuestionCard';
 import { avatarEmoji } from '../utils/avatar';
 import { APP_VERSION } from '../App';
+import { ensureLtr } from '../utils/bidi';
 import { useChildSettings } from '../context/ChildSettingsContext';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
@@ -795,8 +796,8 @@ export default function TeacherDashboard() {
                     {selectedTopics.size > 0 && (
                       <p className="text-xs text-blue-600">
                         {locale === 'he'
-                          ? `נבחרו ${selectedTopics.size} נושאים`
-                          : `${selectedTopics.size} topic(s) selected`}
+                          ? `נבחרו ${ensureLtr(selectedTopics.size)} נושאים`
+                          : `${ensureLtr(selectedTopics.size)} topic(s) selected`}
                       </p>
                     )}
                   </div>
@@ -844,6 +845,7 @@ export default function TeacherDashboard() {
                     setCount(Math.max(1, Number(e.target.value) || 1))
                   }
                   className="w-20 rounded-lg border border-slate-300 p-1 text-center"
+                  dir="ltr"
                 />
               </label>
 
@@ -924,7 +926,7 @@ export default function TeacherDashboard() {
                       <option value="">{t('teacher.year.weekOption')}</option>
                       {yearPlan.weeks.map((w, idx) => (
                         <option key={idx} value={idx}>
-                          {w.month} – שבוע {w.weekOfMonth} – {w.topic}
+                          {w.month} – שבוע {ensureLtr(w.weekOfMonth)} – {w.topic}
                           {w.subtopic ? ` (${w.subtopic})` : ''}
                         </option>
                       ))}
@@ -972,7 +974,7 @@ export default function TeacherDashboard() {
                       <div>
                         <div className="font-medium">{b.month}</div>
                         <div className="text-[0.7rem] text-slate-600">
-                          {t('teacher.badges.best', { score: b.bestScore })}
+                          {t('teacher.badges.best', { score: ensureLtr(`${b.bestScore}%`) })}
                         </div>
                       </div>
                     </li>
@@ -1065,7 +1067,7 @@ export default function TeacherDashboard() {
                 </p>
               )}
               <p className="mt-2 text-xs text-slate-500">
-                {t('teacher.questions.generated', { count: generated.length })}
+                {t('teacher.questions.generated', { count: ensureLtr(generated.length) })}
               </p>
             </section>
 
@@ -1087,7 +1089,7 @@ export default function TeacherDashboard() {
                     >
                       <div className="mb-2 flex justify-between">
                         <span className="font-medium text-slate-700">
-                          #{idx + 1}
+                          {ensureLtr(`#${idx + 1}`)}
                         </span>
                         <span className="text-xs text-slate-500">
                           {q.difficulty === 'easy'
@@ -1123,7 +1125,7 @@ export default function TeacherDashboard() {
                       <div>
                         <div className="font-medium">{exam.name}</div>
                         <div className="text-xs text-slate-500">
-                          {exam.questions.length} תרגילים ·{' '}
+                          {ensureLtr(exam.questions.length)} תרגילים ·{' '}
                           {new Date(exam.createdAt).toLocaleString('he-IL')}
                         </div>
                       </div>
@@ -1173,7 +1175,7 @@ export default function TeacherDashboard() {
           backdropFilter: "blur(4px)",
         }}
       >
-        גרסה {APP_VERSION}
+        גרסה {ensureLtr(APP_VERSION)}
       </div>
     </div>
   );

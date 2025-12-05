@@ -16,6 +16,7 @@ import StudentGame from "./components/StudentGame";
 import { loadStudentRecords } from "./utils/studentStorage";
 import type { StudentRecord } from "./types/students";
 import { avatarEmoji } from "./utils/avatar";
+import { ensureLtr } from "./utils/bidi";
 
 // גרסת האפליקציה
 export const APP_VERSION = "1.0.0";
@@ -110,7 +111,7 @@ function VersionBadge() {
         backdropFilter: "blur(4px)",
       }}
     >
-      גרסה {APP_VERSION}
+      גרסה {ensureLtr(APP_VERSION)}
     </div>
   );
 }
@@ -267,7 +268,7 @@ function TutorialExercise({ onDone, onExit }: { onDone: () => void; onExit: () =
               feedback === "wrong" ? "option-button-wrong" : ""
             }`}
           >
-            {option}
+            {ensureLtr(option)}
           </button>
         ))}
       </div>
@@ -372,7 +373,10 @@ function SessionPage() {
     return (
       <div className="page page-right">
         <h2 className="title">שגיאה</h2>
-        <p className="subtitle">לא נמצאו תרגילים (אורך: {sessionExercises.length}, אינדקס: {currentIndex})</p>
+        <p className="subtitle">
+          לא נמצאו תרגילים (אורך: {ensureLtr(sessionExercises.length)}, אינדקס:{' '}
+          {ensureLtr(currentIndex)})
+        </p>
         <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
         <VersionBadge />
       </div>
@@ -428,7 +432,7 @@ function SessionPage() {
       <div className="page page-right">
         <h2 className="title">כל הכבוד {settings.childName}! 🎉</h2>
         <p className="subtitle">
-          סיימנו {sessionExercises.length} תרגילים בסשן הזה.
+          סיימנו {ensureLtr(sessionExercises.length)} תרגילים בסשן הזה.
         </p>
         <div className="buttons">
           <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
@@ -484,7 +488,7 @@ function SessionPage() {
       </div>
 
       <div className="subtitle-small">
-        תרגיל {currentIndex + 1} מתוך {sessionExercises.length}
+        תרגיל {ensureLtr(currentIndex + 1)} מתוך {ensureLtr(sessionExercises.length)}
       </div>
 
       <div className="icons-row">
@@ -507,7 +511,7 @@ function SessionPage() {
               feedback === "wrong" ? "option-button-wrong" : ""
             }`}
           >
-            {option}
+            {ensureLtr(option)}
           </button>
         ))}
       </div>
@@ -680,27 +684,27 @@ function ParentPage() {
         <label className="form-group">
           <span>מספרים עד:</span>
           <select name="maxNumber" defaultValue={settings.maxNumber}>
-            <option value={5}>עד 5</option>
-            <option value={10}>עד 10</option>
+            <option value={5}>עד {ensureLtr(5)}</option>
+            <option value={10}>עד {ensureLtr(10)}</option>
           </select>
         </label>
 
         <label className="form-group">
           <span>אורך סשן (מספר תרגילים):</span>
           <select name="sessionLength" defaultValue={settings.sessionLength}>
-            <option value={5}>5 תרגילים</option>
-            <option value={7}>7 תרגילים</option>
-            <option value={10}>10 תרגילים</option>
+            <option value={5}>{ensureLtr(5)} תרגילים</option>
+            <option value={7}>{ensureLtr(7)} תרגילים</option>
+            <option value={10}>{ensureLtr(10)} תרגילים</option>
           </select>
         </label>
 
         <label className="form-group">
           <span>בחר תרגילים מהמורה:</span>
           <select name="selectedExamId" defaultValue={settings.selectedExamId || ""}>
-            <option value="">ברירת מחדל (ספירה עד 5)</option>
+            <option value="">ברירת מחדל (ספירה עד {ensureLtr(5)})</option>
             {savedExams.map((exam) => (
               <option key={exam.id} value={exam.id}>
-                {exam.name} ({exam.questions.length} תרגילים)
+                {exam.name} ({ensureLtr(exam.questions.length)} תרגילים)
               </option>
             ))}
           </select>

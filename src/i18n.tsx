@@ -114,7 +114,7 @@ const translations: Record<Locale, Record<TransKey, string>> = {
     'teacher.badges.title': 'תגי התקדמות (Badges)',
     'teacher.badges.empty':
       'עדיין אין תגי חודש. כשילד יסיים תרגול עם ציון טוב – יופיעו כאן.',
-    'teacher.badges.best': 'שיא: {score}%',
+    'teacher.badges.best': 'שיא: {score}',
     // Student Game
     'student.backToTeacher': '← חזרה למורה',
     'student.hearts': 'לבבות:',
@@ -187,7 +187,7 @@ const translations: Record<Locale, Record<TransKey, string>> = {
     'teacher.badges.title': 'Progress Badges',
     'teacher.badges.empty':
       'No month badges yet. When a student completes practice with a good score – they will appear here.',
-    'teacher.badges.best': 'Best: {score}%',
+    'teacher.badges.best': 'Best: {score}',
     // Student Game
     'student.backToTeacher': '← Back to teacher',
     'student.hearts': 'Hearts:',

@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import type { YearPlan } from '../types/yearPlan';
 import { APP_VERSION } from '../App';
+import { ensureLtr } from '../utils/bidi';
 
 interface YearPlanViewProps {
   plan: YearPlan;
@@ -46,7 +47,9 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
               <h1 className="text-3xl font-bold text-slate-900">
                 תכנית שנתית – כיתה {plan.grade}
               </h1>
-              <p className="text-sm text-slate-600">שנת לימודים: {plan.yearLabel}</p>
+              <p className="text-sm text-slate-600">
+                שנת לימודים: {ensureLtr(plan.yearLabel)}
+              </p>
             </div>
             <button
               type="button"
@@ -76,7 +79,7 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
                   >
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-sm font-medium text-slate-700">
-                        שבוע {week.weekOfMonth}
+                        שבוע {ensureLtr(week.weekOfMonth)}
                       </span>
                       <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
                         {TOPIC_LABELS[week.topic] || week.topic}
@@ -127,7 +130,7 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
           backdropFilter: "blur(4px)",
         }}
       >
-        גרסה {APP_VERSION}
+        גרסה {ensureLtr(APP_VERSION)}
       </div>
     </div>
   );
