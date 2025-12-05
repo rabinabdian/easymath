@@ -66,14 +66,14 @@ export function QuestionCard({
               variant="primary"
               label={speakerLabel}
             />
-            <p className="text-lg font-semibold text-slate-900 text-center whitespace-pre-line">
+            <p className="text-lg font-semibold text-slate-900 text-center whitespace-pre-line ltr-numbers">
               {questionText}
             </p>
           </div>
         ) : (
           // Regular question - Show text with speaker icon
           <div className="flex items-start justify-between gap-3">
-            <p className="text-lg font-semibold text-slate-900 whitespace-pre-line text-right flex-1">
+            <p className="text-lg font-semibold text-slate-900 whitespace-pre-line text-right flex-1 ltr-numbers">
               {questionText}
             </p>
             <InlineSpeaker text={questionText} className="shrink-0" />

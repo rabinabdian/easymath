@@ -60,6 +60,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const understandingSolution = current
     ? buildUnderstandingNarration(current, locale, { includeAnswer: true })
     : '';
+  const lessonContent = current ? getLessonContent(current, locale) : undefined;
 
   // Helper function to get hint text based on attempt and locale
   function getHintText(hintNumber: 1 | 2): string | undefined {
@@ -278,7 +279,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             <h2 className="mb-2 text-xl font-bold text-slate-900">
               {t('student.finished.title')}
             </h2>
-            <p className="mb-3 text-slate-700">
+            <p className="mb-3 text-slate-700 ltr-numbers">
               {t('student.finished.score')}{' '}
               <span className="font-semibold">{score}</span> {t('student.of')}{' '}
               <span className="font-semibold">{totalQuestions}</span> (
@@ -333,9 +334,15 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     return null;
   }
 
-  // Show intro screen before each question (if has intro content)
-  if (showIntro && (current.introExplanationHe || current.introExampleHe)) {
-    return <IntroScreen question={current} onContinue={() => setShowIntro(false)} />;
+  // Always show intro screen with a short lesson/context before each question
+  if (showIntro) {
+    return (
+      <IntroScreen
+        question={current}
+        lesson={lessonContent}
+        onContinue={() => setShowIntro(false)}
+      />
+    );
   }
 
   // Show progressive hint after failed attempt (1 or 2)
@@ -377,7 +384,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
               <InlineSpeaker text={`השאלה הייתה: ${questionText}`} />
             </div>
             <div className="rounded-2xl bg-white p-6 shadow-sm">
-              <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line text-center">
+              <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line text-center ltr-numbers">
                 {questionText}
               </p>
             </div>
@@ -399,7 +406,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
               <InlineSpeaker text={`התשובה הנכונה היא ${answerText}`} />
             </div>
             <div className="rounded-2xl bg-white p-6 shadow-sm">
-              <p className="text-4xl font-bold text-center text-green-600">
+              <p className="text-4xl font-bold text-center text-green-600 ltr-numbers">
                 {current.answer}
               </p>
             </div>
@@ -473,20 +480,20 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             <div className="flex items-center gap-2">
               <span>{t('student.timer')}</span>
               <span
-                className={
+                className={`ltr-inline ${
                   timeLeft <= 5 ? 'font-bold text-rose-600' : 'font-medium'
-                }
+                }`}
               >
                 {timeLeft}s
               </span>
             </div>
-            <div>
+            <div className="ltr-numbers">
               {t('student.score')}{' '}
               <span className="font-semibold text-emerald-600">{Math.round(score)}</span>
             </div>
             {/* Attempts indicator */}
             {attempts > 0 && (
-              <div className="flex items-center gap-1 text-amber-600">
+              <div className="flex items-center gap-1 text-amber-600 ltr-numbers">
                 <span>ניסיונות:</span>
                 <span className="font-bold">{attempts}/3</span>
               </div>
@@ -497,7 +504,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         {/* Progress bar */}
         <div className="mb-4">
           <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
-            <span>
+            <span className="ltr-numbers">
               {t('student.question')} {index + 1} {t('student.of')} {totalQuestions}
             </span>
           </div>
