@@ -330,8 +330,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     return null;
   }
 
-  // Show intro screen before each question (if has intro content)
-  if (showIntro && (current.introExplanationHe || current.introExampleHe)) {
+  // Show intro screen before each question (with fallback lesson content)
+  if (showIntro) {
     return <IntroScreen question={current} onContinue={() => setShowIntro(false)} />;
   }
 

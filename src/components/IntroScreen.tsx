@@ -1,6 +1,7 @@
 // src/components/IntroScreen.tsx
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
+import { buildLessonContent } from '../utils/questionText';
 import { InlineSpeaker } from './SpeakerButton';
 
 interface IntroScreenProps {
@@ -15,9 +16,9 @@ interface IntroScreenProps {
  */
 export function IntroScreen({ question, onContinue }: IntroScreenProps) {
   const { locale } = useI18n();
-
-  const explanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
-  const example = locale === 'he' ? question.introExampleHe : question.introExampleEn;
+  const lessonContent = buildLessonContent(question, locale);
+  const explanation = lessonContent.explanation?.trim() || undefined;
+  const example = lessonContent.example?.trim() || undefined;
 
   // If no intro content, skip to question
   if (!explanation && !example) {
