@@ -16,6 +16,7 @@ import StudentGame from "./components/StudentGame";
 import { loadStudentRecords } from "./utils/studentStorage";
 import type { StudentRecord } from "./types/students";
 import { avatarEmoji } from "./utils/avatar";
+import { ensureLTRNumbers } from "./utils/textDirection";
 
 // גרסת האפליקציה
 export const APP_VERSION = "1.0.0";
@@ -110,7 +111,7 @@ function VersionBadge() {
         backdropFilter: "blur(4px)",
       }}
     >
-      גרסה {APP_VERSION}
+      {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
     </div>
   );
 }
@@ -372,7 +373,11 @@ function SessionPage() {
     return (
       <div className="page page-right">
         <h2 className="title">שגיאה</h2>
-        <p className="subtitle">לא נמצאו תרגילים (אורך: {sessionExercises.length}, אינדקס: {currentIndex})</p>
+        <p className="subtitle">
+          {ensureLTRNumbers(
+            `לא נמצאו תרגילים (אורך: ${sessionExercises.length}, אינדקס: ${currentIndex})`
+          )}
+        </p>
         <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
         <VersionBadge />
       </div>
@@ -427,8 +432,10 @@ function SessionPage() {
     return (
       <div className="page page-right">
         <h2 className="title">כל הכבוד {settings.childName}! 🎉</h2>
-        <p className="subtitle ltr-numbers">
-          סיימנו {sessionExercises.length} תרגילים בסשן הזה.
+        <p className="subtitle">
+          {ensureLTRNumbers(
+            `סיימנו ${sessionExercises.length} תרגילים בסשן הזה.`
+          )}
         </p>
         <div className="buttons">
           <button onClick={() => navigate("/")}>חזרה לדף הבית</button>
@@ -483,8 +490,10 @@ function SessionPage() {
         </button>
       </div>
 
-      <div className="subtitle-small ltr-numbers">
-        תרגיל {currentIndex + 1} מתוך {sessionExercises.length}
+      <div className="subtitle-small">
+        {ensureLTRNumbers(
+          `תרגיל ${currentIndex + 1} מתוך ${sessionExercises.length}`
+        )}
       </div>
 
       <div className="icons-row">

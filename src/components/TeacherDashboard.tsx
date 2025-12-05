@@ -25,6 +25,7 @@ import { QuestionCard } from './QuestionCard';
 import { avatarEmoji } from '../utils/avatar';
 import { APP_VERSION } from '../App';
 import { useChildSettings } from '../context/ChildSettingsContext';
+import { ensureLTRNumbers } from '../utils/textDirection';
 
 function getRandomSubset<T>(items: T[], count: number): T[] {
   const copy = [...items];
@@ -364,9 +365,13 @@ export default function TeacherDashboard() {
 
         // Optionally auto-save as a saved exam
         const importedExamName = file.name.replace(/\.json$/i, '');
+        const localizedName =
+          locale === 'he'
+            ? ensureLTRNumbers(`ייבוא: ${importedExamName}`)
+            : `Import: ${importedExamName}`;
         const newExam: SavedExam = {
           id: `${Date.now()}_import`,
-          name: `ייבוא: ${importedExamName}`,
+          name: localizedName,
           createdAt: new Date().toISOString(),
           questions: cleaned,
         };
@@ -596,7 +601,7 @@ export default function TeacherDashboard() {
               <div className="border-t border-slate-200 pt-4">
                 <h3 className="mb-3 text-sm font-semibold text-slate-900">
                   {locale === 'he'
-                    ? `תמונת ${activeStudent.profile.name}`
+                  ? ensureLTRNumbers(`תמונת ${activeStudent.profile.name}`)
                     : `${activeStudent.profile.name}'s Photo`}
                 </h3>
 
@@ -795,7 +800,7 @@ export default function TeacherDashboard() {
                     {selectedTopics.size > 0 && (
                       <p className="text-xs text-blue-600">
                         {locale === 'he'
-                          ? `נבחרו ${selectedTopics.size} נושאים`
+                          ? ensureLTRNumbers(`נבחרו ${selectedTopics.size} נושאים`)
                           : `${selectedTopics.size} topic(s) selected`}
                       </p>
                     )}
@@ -1173,7 +1178,7 @@ export default function TeacherDashboard() {
           backdropFilter: "blur(4px)",
         }}
       >
-        גרסה {APP_VERSION}
+        {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
       </div>
     </div>
   );
