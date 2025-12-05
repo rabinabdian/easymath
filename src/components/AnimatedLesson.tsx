@@ -18,12 +18,15 @@ export function AnimatedLesson({ question, locale, className = '' }: AnimatedLes
   const { topic, subtopic } = question;
   
   // Render appropriate animation based on topic
+  // ALWAYS returns an animation component - ensures animation is shown before ALL exercises
+  // This includes subtraction and all other topics
   switch (topic) {
     case 'numbers':
       return <NumbersAnimation question={question} locale={locale} className={className} />;
     case 'addition':
       return <AdditionAnimation question={question} locale={locale} className={className} />;
     case 'subtraction':
+      // Subtraction animation - always shown for subtraction exercises
       return <SubtractionAnimation question={question} locale={locale} className={className} />;
     case 'multiplication':
       return <MultiplicationAnimation question={question} locale={locale} className={className} />;
@@ -35,6 +38,8 @@ export function AnimatedLesson({ question, locale, className = '' }: AnimatedLes
       }
       return <GeometryAnimation locale={locale} className={className} />;
     default:
+      // Fallback animation for any topic that doesn't match above cases
+      // Ensures animation is ALWAYS shown before exercises
       return <GenericAnimation locale={locale} className={className} />;
   }
 }

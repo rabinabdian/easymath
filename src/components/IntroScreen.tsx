@@ -62,6 +62,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
         </div>
 
         {/* Animated Visual Lesson - Interactive animation for the topic */}
+        {/* ALWAYS SHOWN - This animation appears before ALL exercises for ALL topics including subtraction */}
         <div className="mb-8 animate-fade-slide-up">
           <AnimatedLesson question={question} locale={locale} />
         </div>
