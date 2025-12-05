@@ -56,7 +56,7 @@ export function HintDisplay({ hintNumber, hintText, visualAid, onDismiss }: Hint
 
         {/* Hint Text */}
         <div className="mb-4 rounded-2xl bg-white p-5 shadow-sm">
-          <p className="whitespace-pre-line text-xl leading-relaxed text-slate-700 text-right">
+          <p className="whitespace-pre-line text-xl leading-relaxed text-slate-700 text-right ltr-numbers">
             {hintText}
           </p>
         </div>
@@ -69,7 +69,7 @@ export function HintDisplay({ hintNumber, hintText, visualAid, onDismiss }: Hint
         )}
 
         {/* Attempt Counter */}
-        <div className="mb-4 flex items-center justify-center gap-2">
+        <div className="mb-4 flex items-center justify-center gap-2 ltr-numbers">
           <span className="text-slate-600">ניסיון</span>
           <div className="flex gap-1">
             {[1, 2, 3].map((num) => (
