@@ -271,45 +271,164 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
   );
 }
 
+const MAX_SUBTRACTION_VISUAL_ITEMS = 12;
+const DEFAULT_SUBTRACTION_START = 5;
+const DEFAULT_SUBTRACTION_REMOVE = 2;
+
+function clampNumber(value: number, min: number, max: number): number {
+  if (Number.isNaN(value)) return min;
+  return Math.max(min, Math.min(value, max));
+}
+
+function extractNumbersFromText(text?: string): number[] {
+  if (!text) return [];
+  return (text.match(/\d+/g) ?? [])
+    .map((match) => parseInt(match, 10))
+    .filter((num) => !Number.isNaN(num));
+}
+
+function deriveScenarioFromPrompt(question: Question, numericAnswer: number | null): { total: number; removed: number } | null {
+  const numbers = [
+    ...extractNumbersFromText(question.promptHe),
+    ...extractNumbersFromText(question.promptEn),
+  ];
+
+  if (numbers.length < 2) return null;
+
+  // Prefer an exact pair that matches the answer (a - b = answer)
+  if (numericAnswer !== null) {
+    for (let i = 0; i < numbers.length; i += 1) {
+      for (let j = 0; j < numbers.length; j += 1) {
+        if (i === j) continue;
+        const startCandidate = numbers[i];
+        const removeCandidate = numbers[j];
+        if (startCandidate >= removeCandidate && startCandidate - removeCandidate === numericAnswer) {
+          return { total: startCandidate, removed: removeCandidate };
+        }
+      }
+    }
+  }
+
+  const sorted = [...numbers].sort((a, b) => b - a);
+  const startFallback = sorted[0];
+  const secondValue = sorted[1] ?? 0;
+  let removeFallback = secondValue;
+
+  if (numericAnswer !== null && startFallback >= numericAnswer) {
+    removeFallback = startFallback - numericAnswer;
+  }
+
+  return {
+    total: startFallback,
+    removed: clampNumber(removeFallback, 0, startFallback),
+  };
+}
+
+function computeSubtractionScenario(question: Question): { total: number; removed: number; result: number } {
+  const numericAnswer = typeof question.answer === 'number' ? question.answer : null;
+  const expressionMatch =
+    question.promptHe?.match(/(\d+)\s*[-−]\s*(\d+)/) ??
+    question.promptEn?.match(/(\d+)\s*[-−]\s*(\d+)/);
+
+  let total = expressionMatch ? parseInt(expressionMatch[1], 10) : null;
+  let removed = expressionMatch ? parseInt(expressionMatch[2], 10) : null;
+
+  if ((total === null || removed === null) && question) {
+    const fallback = deriveScenarioFromPrompt(question, numericAnswer);
+    if (fallback) {
+      total ??= fallback.total;
+      removed ??= fallback.removed;
+    }
+  }
+
+  if (total === null) {
+    total =
+      numericAnswer !== null
+        ? Math.max(numericAnswer + DEFAULT_SUBTRACTION_REMOVE, DEFAULT_SUBTRACTION_START)
+        : DEFAULT_SUBTRACTION_START;
+  }
+
+  if (removed === null) {
+    removed =
+      numericAnswer !== null ? Math.max(total - numericAnswer, 0) : DEFAULT_SUBTRACTION_REMOVE;
+  }
+
+  total = Math.max(total, 1);
+  removed = clampNumber(removed, 0, total);
+
+  let result = total - removed;
+  if (numericAnswer !== null) {
+    result = clampNumber(numericAnswer, 0, total);
+    removed = clampNumber(total - result, 0, total);
+  }
+
+  return { total, removed, result };
+}
+
+function getVisualCounts(total: number, removed: number) {
+  if (total <= MAX_SUBTRACTION_VISUAL_ITEMS) {
+    return {
+      visualTotal: total,
+      visualRemoved: removed,
+      visualResult: total - removed,
+    };
+  }
+
+  const ratio = total > 0 ? removed / total : 0;
+  let visualTotal = MAX_SUBTRACTION_VISUAL_ITEMS;
+  let visualRemoved = Math.round(visualTotal * ratio);
+
+  if (removed > 0 && visualRemoved === 0) {
+    visualRemoved = 1;
+  }
+  if (removed === total) {
+    visualRemoved = visualTotal;
+  }
+
+  visualRemoved = clampNumber(visualRemoved, 0, visualTotal);
+  const visualResult = visualTotal - visualRemoved;
+
+  return { visualTotal, visualRemoved, visualResult };
+}
+
 // ========================================
 // SUBTRACTION ANIMATION - Items being removed
 // ========================================
 function SubtractionAnimation({ question, locale, className }: AnimatedLessonProps) {
   const [step, setStep] = useState(0);
-  const [removedCount, setRemovedCount] = useState(0);
+  const [removedVisualCount, setRemovedVisualCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  
-  // Extract numbers from the question prompt
-  const mathMatch = question.promptHe?.match(/(\d+)\s*[-−]\s*(\d+)/);
-  const num1 = mathMatch ? Math.min(parseInt(mathMatch[1]), 10) : 5;
-  const num2 = mathMatch ? Math.min(parseInt(mathMatch[2]), num1) : 2;
-  const result = num1 - num2;
+
+  const scenario = useMemo(() => computeSubtractionScenario(question), [question]);
+  const { total, removed, result } = scenario;
+  const visualCounts = useMemo(() => getVisualCounts(total, removed), [total, removed]);
+  const { visualTotal, visualRemoved, visualResult } = visualCounts;
   
   const isHebrew = locale === 'he';
   const title = isHebrew ? 'בואו נלמד חיסור!' : "Let's learn subtraction!";
   const instruction = isHebrew ? 'לחץ לראות איך מחסרים' : 'Click to see how to subtract';
   const audioText = isHebrew
-    ? `חיסור זה להוריד דברים. יש לנו ${num1}. נוריד ${num2}. נשאר לנו ${result}.`
-    : `Subtraction is taking things away. We have ${num1}. We take away ${num2}. We are left with ${result}.`;
+    ? `חיסור זה להוריד דברים. יש לנו ${total}. נוריד ${removed}. נשאר לנו ${result}.`
+    : `Subtraction is taking things away. We have ${total}. We take away ${removed}. We are left with ${result}.`;
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
     setIsPlaying(true);
     setStep(0);
-    setRemovedCount(0);
+    setRemovedVisualCount(0);
   }, [isPlaying]);
 
   useEffect(() => {
     if (!isPlaying) return;
     
-    if (step === 1 && removedCount < num2) {
+    if (step === 1 && visualRemoved > 0 && removedVisualCount < visualRemoved) {
       const timer = setTimeout(() => {
-        setRemovedCount(prev => prev + 1);
+        setRemovedVisualCount(prev => prev + 1);
       }, 500);
       return () => clearTimeout(timer);
     }
     
-    if (step === 1 && removedCount >= num2) {
+    if (step === 1 && (visualRemoved === 0 || removedVisualCount >= visualRemoved)) {
       const timer = setTimeout(() => {
         setStep(2);
       }, 800);
@@ -328,7 +447,7 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsPlaying(false);
     }
-  }, [isPlaying, step, removedCount, num2]);
+  }, [isPlaying, step, removedVisualCount, visualRemoved]);
 
   return (
     <div className={`animated-lesson rounded-3xl bg-gradient-to-br from-orange-100 to-red-100 p-6 shadow-xl border-4 border-orange-300 ${className}`}>
@@ -346,30 +465,35 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
           {/* Starting Items */}
           <div className={`transition-all duration-700 ${step >= 1 ? 'opacity-100' : 'opacity-50'}`}>
             <div className="text-lg font-bold text-gray-600 mb-2 text-center">
-              {isHebrew ? `התחלנו עם ${num1}` : `Started with ${num1}`}
+              {isHebrew ? `התחלנו עם ${total}` : `Started with ${total}`}
             </div>
             <div className="flex gap-2 flex-wrap justify-center">
-              {Array.from({ length: num1 }).map((_, i) => (
-                <div
-                  key={`item-${i}`}
-                  className={`relative transition-all duration-500 ${
-                    i >= result && removedCount > (i - result)
-                      ? 'opacity-30 scale-75'
-                      : 'opacity-100 scale-100'
-                  }`}
-                >
-                  <span className="text-4xl">🍎</span>
-                  {i >= result && removedCount > (i - result) && (
-                    <span className="absolute inset-0 flex items-center justify-center text-4xl animate-pop-in">❌</span>
-                  )}
-                </div>
-              ))}
+              {Array.from({ length: visualTotal }).map((_, i) => {
+                const removalStartIndex = Math.max(visualTotal - visualRemoved, 0);
+                const removalIndex = i - removalStartIndex;
+                const isBeingRemoved =
+                  visualRemoved > 0 && i >= removalStartIndex && removalIndex < removedVisualCount;
+
+                return (
+                  <div
+                    key={`item-${i}`}
+                    className={`relative transition-all duration-500 ${
+                      isBeingRemoved ? 'opacity-30 scale-75' : 'opacity-100 scale-100'
+                    }`}
+                  >
+                    <span className="text-4xl">🍎</span>
+                    {isBeingRemoved && (
+                      <span className="absolute inset-0 flex items-center justify-center text-4xl animate-pop-in">❌</span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           {/* Minus Indicator */}
           <div className={`flex items-center gap-2 transition-all duration-500 ${step >= 1 ? 'opacity-100' : 'opacity-0'}`}>
-            <span className="text-3xl font-bold text-red-600">−{num2}</span>
+            <span className="text-3xl font-bold text-red-600">−{removed}</span>
             <span className="text-2xl">👋</span>
           </div>
 
@@ -380,7 +504,7 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
                 {isHebrew ? 'נשאר:' : 'Left:'}
               </div>
               <div className="flex gap-2 justify-center">
-                {Array.from({ length: result }).map((_, i) => (
+                {Array.from({ length: visualResult }).map((_, i) => (
                   <span key={`result-${i}`} className="text-4xl animate-pop-in" style={{ animationDelay: `${i * 100}ms` }}>🍎</span>
                 ))}
                 {result === 0 && <span className="text-2xl text-gray-500">{isHebrew ? 'כלום!' : 'Nothing!'}</span>}
@@ -389,12 +513,17 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
             </div>
           </div>
         </div>
+        {total > MAX_SUBTRACTION_VISUAL_ITEMS && (
+          <p className="mt-4 text-center text-sm text-slate-500">
+            {isHebrew ? 'מציגים המחשה קטנה של החיסור' : 'Showing a scaled illustration of the subtraction'}
+          </p>
+        )}
       </div>
 
       {/* Formula Display */}
       <div className={`text-center mb-4 transition-all duration-500 ${step >= 2 ? 'opacity-100' : 'opacity-0'}`}>
         <div className="inline-block rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-8 py-3">
-          <span className="text-2xl font-bold text-white">{num1} − {num2} = {result} ✅</span>
+          <span className="text-2xl font-bold text-white">{total} − {removed} = {result} ✅</span>
         </div>
       </div>
 
