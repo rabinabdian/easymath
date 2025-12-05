@@ -61,11 +61,6 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
           <p className="mt-2 text-lg text-slate-600">{headerSubtitle}</p>
         </div>
 
-        {/* Animated Visual Lesson - Interactive animation for the topic */}
-        <div className="mb-8 animate-fade-slide-up">
-          <AnimatedLesson question={question} locale={locale} />
-        </div>
-
         {/* Explanation Card with Speaker */}
         {explanation && (
           <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg animate-fade-slide-up" style={{ animationDelay: '0.2s' }}>
@@ -102,6 +97,11 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
             </ol>
           </div>
         )}
+
+        {/* Animated Visual Lesson - Interactive animation for the topic - RIGHT BEFORE EXAMPLE */}
+        <div className="mb-8 animate-fade-slide-up" style={{ animationDelay: '0.35s' }}>
+          <AnimatedLesson question={question} locale={locale} />
+        </div>
 
         {/* Example Card with Speaker */}
         {example && (

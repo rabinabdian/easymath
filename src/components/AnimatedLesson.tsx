@@ -349,21 +349,28 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
               {isHebrew ? `התחלנו עם ${num1}` : `Started with ${num1}`}
             </div>
             <div className="flex gap-2 flex-wrap justify-center">
-              {Array.from({ length: num1 }).map((_, i) => (
-                <div
-                  key={`item-${i}`}
-                  className={`relative transition-all duration-500 ${
-                    i >= result && removedCount > (i - result)
-                      ? 'opacity-30 scale-75'
-                      : 'opacity-100 scale-100'
-                  }`}
-                >
-                  <span className="text-4xl">🍎</span>
-                  {i >= result && removedCount > (i - result) && (
-                    <span className="absolute inset-0 flex items-center justify-center text-4xl animate-pop-in">❌</span>
-                  )}
-                </div>
-              ))}
+              {Array.from({ length: num1 }).map((_, i) => {
+                // Items to remove are the last num2 items (indices num1-num2 to num1-1)
+                // We remove them one by one, starting from the last item
+                const itemIndexFromEnd = num1 - 1 - i; // 0 = last item, 1 = second to last, etc.
+                const shouldBeRemoved = itemIndexFromEnd < removedCount;
+                
+                return (
+                  <div
+                    key={`item-${i}`}
+                    className={`relative transition-all duration-500 ${
+                      shouldBeRemoved
+                        ? 'opacity-30 scale-75'
+                        : 'opacity-100 scale-100'
+                    }`}
+                  >
+                    <span className="text-4xl">🍎</span>
+                    {shouldBeRemoved && (
+                      <span className="absolute inset-0 flex items-center justify-center text-4xl animate-pop-in">❌</span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
