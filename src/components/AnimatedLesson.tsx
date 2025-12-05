@@ -279,10 +279,17 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
   const [removedCount, setRemovedCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   
-  // Extract numbers from the question prompt
+  // Extract numbers from the question prompt - try multiple patterns
   const mathMatch = question.promptHe?.match(/(\d+)\s*[-−]\s*(\d+)/);
-  const num1 = mathMatch ? Math.min(parseInt(mathMatch[1]), 10) : 5;
-  const num2 = mathMatch ? Math.min(parseInt(mathMatch[2]), num1) : 2;
+  // Also try to extract from "לוח 10" style questions: "צבועים X... מחקו Y"
+  const boardMatch = question.promptHe?.match(/צבועים?\s*(\d+).*?מחק[וי]\s*(\d+)/);
+  
+  const num1 = mathMatch ? Math.min(parseInt(mathMatch[1]), 10) 
+    : boardMatch ? Math.min(parseInt(boardMatch[1]), 10) 
+    : 7; // Default to 7 - 3 = 4 to match lesson example
+  const num2 = mathMatch ? Math.min(parseInt(mathMatch[2]), num1) 
+    : boardMatch ? Math.min(parseInt(boardMatch[2]), num1) 
+    : 3;
   const result = num1 - num2;
   
   const isHebrew = locale === 'he';
@@ -358,7 +365,7 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
                       : 'opacity-100 scale-100'
                   }`}
                 >
-                  <span className="text-4xl">🍎</span>
+                  <span className="text-4xl">🔵</span>
                   {i >= result && removedCount > (i - result) && (
                     <span className="absolute inset-0 flex items-center justify-center text-4xl animate-pop-in">❌</span>
                   )}
@@ -381,7 +388,7 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
               </div>
               <div className="flex gap-2 justify-center">
                 {Array.from({ length: result }).map((_, i) => (
-                  <span key={`result-${i}`} className="text-4xl animate-pop-in" style={{ animationDelay: `${i * 100}ms` }}>🍎</span>
+                  <span key={`result-${i}`} className="text-4xl animate-pop-in" style={{ animationDelay: `${i * 100}ms` }}>🔵</span>
                 ))}
                 {result === 0 && <span className="text-2xl text-gray-500">{isHebrew ? 'כלום!' : 'Nothing!'}</span>}
               </div>
