@@ -10,6 +10,7 @@ import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
+import { hasTopicLesson } from '../data/topicLessons';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -330,8 +331,12 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     return null;
   }
 
-  // Show intro screen before each question (if has intro content)
-  if (showIntro && (current.introExplanationHe || current.introExampleHe)) {
+  // Show intro screen with short lesson before each question
+  // Shows either question-specific intro or topic-based lesson
+  const hasQuestionIntro = current.introExplanationHe || current.introExampleHe;
+  const hasLessonContent = hasQuestionIntro || hasTopicLesson(current.topic, current.subtopic);
+  
+  if (showIntro && hasLessonContent) {
     return <IntroScreen question={current} onContinue={() => setShowIntro(false)} />;
   }
 
