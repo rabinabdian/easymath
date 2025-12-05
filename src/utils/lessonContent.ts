@@ -1,61 +1,55 @@
 import type { Question } from '../types/questions';
-import type { TopicLesson } from '../data/topicLessons';
-import { TOPIC_LESSONS } from '../data/topicLessons';
+import { getTopicLesson } from '../data/topicLessons';
 
 export interface LocalizedLessonContent {
   explanation?: string;
   example?: string;
   steps?: string[];
   tip?: string;
-}
-
-function matchLessonTemplate(question: Question): TopicLesson | undefined {
-  if (question.subtopic) {
-    const bySubtopic = TOPIC_LESSONS.find(
-      (lesson) =>
-        lesson.topic === question.topic &&
-        lesson.subtopics?.some((sub) => sub === question.subtopic)
-    );
-
-    if (bySubtopic) {
-      return bySubtopic;
-    }
-  }
-
-  return TOPIC_LESSONS.find((lesson) => lesson.topic === question.topic && !lesson.subtopics);
+  emoji?: string;
 }
 
 export function getLessonContent(
   question: Question,
   locale: 'he' | 'en'
 ): LocalizedLessonContent | undefined {
-  const template = matchLessonTemplate(question);
+  const topicLesson = getTopicLesson(question.topic, question.subtopic);
 
   const explanationFromQuestion = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
   const exampleFromQuestion = locale === 'he' ? question.introExampleHe : question.introExampleEn;
 
-  if (!template && !explanationFromQuestion && !exampleFromQuestion) {
-    return undefined;
-  }
-
   const explanation = explanationFromQuestion
-    ?? (template ? (locale === 'he' ? template.explanationHe : template.explanationEn) : undefined);
+    ?? (topicLesson ? (locale === 'he' ? topicLesson.explanationHe : topicLesson.explanationEn) : undefined);
 
   const example = exampleFromQuestion
-    ?? (template ? (locale === 'he' ? template.exampleHe : template.exampleEn) : undefined);
+    ?? (topicLesson ? (locale === 'he' ? topicLesson.exampleHe : topicLesson.exampleEn) : undefined);
 
-  const steps = template
-    ? (locale === 'he' ? template.stepsHe : template.stepsEn)
+  const steps = topicLesson
+    ? (locale === 'he' ? topicLesson.stepsHe : topicLesson.stepsEn)
     : undefined;
 
-  const tip = template
-    ? (locale === 'he' ? template.tipHe : template.tipEn)
+  const tip = topicLesson
+    ? (locale === 'he' ? topicLesson.tipHe : topicLesson.tipEn)
     : undefined;
+
+  const normalizedSteps = steps?.filter((step) => Boolean(step?.trim())) ?? [];
+  const normalizedTip = tip?.trim();
+  const emoji = topicLesson?.emoji;
+
+  if (
+    !explanation &&
+    !example &&
+    normalizedSteps.length === 0 &&
+    (!normalizedTip || normalizedTip.length === 0)
+  ) {
+    return undefined;
+  }
 
   return {
     explanation,
     example,
-    steps,
-    tip,
+    steps: normalizedSteps.length > 0 ? normalizedSteps : undefined,
+    tip: normalizedTip,
+    emoji,
   };
 }

@@ -332,7 +332,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     return null;
   }
 
-  // Show intro screen before each question (if has intro content)
+  // Always show intro screen with a short lesson/context before each question
   if (showIntro) {
     return (
       <IntroScreen
