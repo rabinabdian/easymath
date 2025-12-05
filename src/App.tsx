@@ -427,7 +427,7 @@ function SessionPage() {
     return (
       <div className="page page-right">
         <h2 className="title">כל הכבוד {settings.childName}! 🎉</h2>
-        <p className="subtitle">
+        <p className="subtitle ltr-numbers">
           סיימנו {sessionExercises.length} תרגילים בסשן הזה.
         </p>
         <div className="buttons">
@@ -483,7 +483,7 @@ function SessionPage() {
         </button>
       </div>
 
-      <div className="subtitle-small">
+      <div className="subtitle-small ltr-numbers">
         תרגיל {currentIndex + 1} מתוך {sessionExercises.length}
       </div>
 

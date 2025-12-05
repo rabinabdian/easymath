@@ -243,3 +243,32 @@ select {
 .hint-glow {
   box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
 }
+
+/* ===== LTR Number Display ===== */
+/* Ensures numbers and math expressions display left-to-right in RTL context */
+
+/* Apply to text containing math expressions or numbers that need LTR display */
+.ltr-numbers {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: right; /* Keep aligned with RTL layout */
+}
+
+/* For inline number spans within RTL text */
+.ltr-inline {
+  direction: ltr;
+  unicode-bidi: embed;
+  display: inline-block;
+}
+
+/* For math expressions that should be fully LTR */
+.ltr-math {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+/* For content blocks with mixed Hebrew and numbers */
+.mixed-content {
+  unicode-bidi: plaintext;
+}
