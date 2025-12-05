@@ -16,6 +16,10 @@ export interface TopicLesson {
   exampleHe: string;
   exampleEn: string;
   emoji: string;
+  stepsHe?: string[];
+  stepsEn?: string[];
+  tipHe?: string;
+  tipEn?: string;
 }
 
 // Lessons organized by topic and optional subtopic
@@ -30,6 +34,18 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
     exampleHe: 'דוגמא: אם יש 3 תפוחים 🍎🍎🍎\nהמספר 3 אומר לנו כמה תפוחים יש!',
     exampleEn: 'Example: If there are 3 apples 🍎🍎🍎\nThe number 3 tells us how many apples there are!',
     emoji: '🔢',
+    stepsHe: [
+      'התבונן בקבוצה ומצא נקודת התחלה קלה לספירה.',
+      'סמן כל פריט באצבע או בעיפרון וספור בקול: אחד, שתיים, שלוש...',
+      'המספר האחרון שנאמר הוא הכמות הכוללת – כתוב או בחר אותו.',
+    ],
+    stepsEn: [
+      'Look at the group and choose an easy starting point.',
+      'Point to every item and count out loud: one, two, three...',
+      'The last number you say is the total – write it down or select it.',
+    ],
+    tipHe: 'אם מתבלבלים, מתחילים מחדש ומסמנים כל פריט שוב. מותר לעבור על הקבוצה יותר מפעם אחת.',
+    tipEn: 'If you get confused, start over and touch each item again. It is fine to recount slowly.',
   },
 
   'numbers:ספירה': {
@@ -113,6 +129,18 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
     exampleHe: 'דוגמא: 2 + 3 = ?\n🍎🍎 ועוד 🍎🍎🍎\nביחד: 🍎🍎🍎🍎🍎 = 5',
     exampleEn: 'Example: 2 + 3 = ?\n🍎🍎 plus 🍎🍎🍎\nTogether: 🍎🍎🍎🍎🍎 = 5',
     emoji: '➕',
+    stepsHe: [
+      'קרא את הסיפור או המספר הראשון והבן מה כבר יש לך.',
+      'הוסף את הכמות החדשה באמצעות אצבעות, נקודות או ציור של הקבוצה הנוספת.',
+      'ספור את כל הפריטים יחד או בצע חישוב בראש כדי לקבל את הסכום.',
+    ],
+    stepsEn: [
+      'Read the story or first number to know what you already have.',
+      'Add the new amount with fingers, dots, or a drawing of the extra group.',
+      'Count everything together or calculate mentally to get the sum.',
+    ],
+    tipHe: 'ספר את החיבור במילים: "היו לי... קיבלתי עוד... עכשיו יש לי..." – זה מקל להבין מה מוסיפים.',
+    tipEn: 'Tell the addition as a mini story: "I had..., I got more..., now I have..." – it clarifies the action.',
   },
 
   'addition:חיבור עד 10': {
@@ -164,6 +192,18 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
     exampleHe: 'דוגמא: 5 - 2 = ?\n🍎🍎🍎🍎🍎 מוריד 🍎🍎\nנשאר: 🍎🍎🍎 = 3',
     exampleEn: 'Example: 5 - 2 = ?\n🍎🍎🍎🍎🍎 take away 🍎🍎\nLeft: 🍎🍎🍎 = 3',
     emoji: '➖',
+    stepsHe: [
+      'זהה את הכמות שממנה מתחילים – המספר הראשון בתרגיל.',
+      'סמן או כסה את הכמות שיורדת (באצבע, בקו או בחפצים ממשיים).',
+      'ספר כמה נשארו גלויים או חשב: המספר ההתחלתי פחות מה שהורדנו.',
+    ],
+    stepsEn: [
+      'Identify the amount you start with – the first number.',
+      'Mark or cover the amount that goes away (using fingers, marks, or real objects).',
+      'Count what remains or compute: starting number minus the amount removed.',
+    ],
+    tipHe: 'אפשר להשתמש באצבעות: פרוש את כולן ומהד על מה שיורד. מה שנשאר פתוח הוא הפתרון.',
+    tipEn: 'Use your fingers: show all of them, fold down the ones you subtract, and count what stays up.',
   },
 
   'subtraction:חיסור עד 10': {
@@ -215,6 +255,18 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
     exampleHe: 'דוגמא: 3 × 4 = ?\nזה כמו: 3 + 3 + 3 + 3 = 12\n🍎🍎🍎 🍎🍎🍎 🍎🍎🍎 🍎🍎🍎',
     exampleEn: 'Example: 3 × 4 = ?\nThis is like: 3 + 3 + 3 + 3 = 12\n🍎🍎🍎 🍎🍎🍎 🍎🍎🍎 🍎🍎🍎',
     emoji: '✖️',
+    stepsHe: [
+      'בדוק כמה פריטים יש בקבוצה אחת.',
+      'ספר כמה קבוצות שוות כאלה יש בתרגיל.',
+      'בצע חיבור חוזר (למשל 4+4+4) או השתמש בטבלת הכפל כדי לקבל את התוצאה.',
+    ],
+    stepsEn: [
+      'See how many items live inside one group.',
+      'Count how many equal groups appear in the problem.',
+      'Use repeated addition (like 4+4+4) or the multiplication table to get the answer.',
+    ],
+    tipHe: 'שרטט קבוצות קטנות של נקודות או השתמש באביזרים כדי לוודא שלא פספסת קבוצה.',
+    tipEn: 'Sketch dots in groups or use counters so you do not skip a group while counting.',
   },
 
   'multiplication:לוח הכפל עד 5': {
@@ -250,6 +302,18 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
     exampleHe: 'דוגמא:\n6 = 🧦🧦🧦 (3 זוגות) = זוגי ✅\n7 = 🧦🧦🧦🧦 (3 זוגות + 1) = אי-זוגי ❌',
     exampleEn: 'Example:\n6 = 🧦🧦🧦 (3 pairs) = even ✅\n7 = 🧦🧦🧦🧦 (3 pairs + 1) = odd ❌',
     emoji: '⚖️',
+    stepsHe: [
+      'חלק את הפריטים לזוגות – שניים בכל קבוצה.',
+      'אם כל הפריטים מצאו זוג בלי שארית, המספר זוגי.',
+      'אם נשאר פריט בודד ללא זוג, המספר אי-זוגי.',
+    ],
+    stepsEn: [
+      'Split the items into pairs – two in each group.',
+      'If everyone finds a partner with no leftovers, the number is even.',
+      'If one item is left alone, the number is odd.',
+    ],
+    tipHe: 'תוכל לבדוק גם לפי הספרה האחרונה: 0,2,4,6,8 = זוגי. 1,3,5,7,9 = אי-זוגי.',
+    tipEn: 'You can also inspect the last digit: 0,2,4,6,8 are even while 1,3,5,7,9 are odd.',
   },
 
   // ========================================
@@ -261,6 +325,18 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
     exampleHe: 'דוגמא: ריבוע יש לו 4 צלעות שוות ⬜\nמשולש יש לו 3 צלעות 🔺',
     exampleEn: 'Example: A square has 4 equal sides ⬜\nA triangle has 3 sides 🔺',
     emoji: '📐',
+    stepsHe: [
+      'בדוק כמה צלעות או פינות יש לצורה שמולך.',
+      'שאל: האם כל הצלעות שוות? האם קיימת סימטריה או קווים מיוחדים?',
+      'השווה את המאפיינים למה שאתה מכיר (משולש, ריבוע, מחומש וכדומה).',
+    ],
+    stepsEn: [
+      'Count how many sides or corners the shape has.',
+      'Ask: are the sides equal? Is there a symmetry line or special feature?',
+      'Match the findings to a known shape (triangle, square, pentagon, etc.).',
+    ],
+    tipHe: 'שימוש בצבעים שונים לכל צלע או שרטוט קו סימטריה עוזר לזהות את הצורה במהירות.',
+    tipEn: 'Color each side differently or sketch the symmetry line to identify the shape faster.',
   },
 
   'geometry:צורות': {

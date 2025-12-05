@@ -2,12 +2,13 @@
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
-import { getTopicLesson } from '../data/topicLessons';
 import { getQuestionPrompt } from '../utils/questionText';
+import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonContent';
 
 interface IntroScreenProps {
   question: Question;
   onContinue: () => void;
+  lesson?: LocalizedLessonContent;
 }
 
 /**
@@ -23,19 +24,18 @@ interface IntroScreenProps {
  * - Displays the upcoming question to prepare the student
  * - Interactive audio with speaker icons
  */
-export function IntroScreen({ question, onContinue }: IntroScreenProps) {
+export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
   const { locale } = useI18n();
+  const derivedLesson = lesson ?? getLessonContent(question, locale);
 
-  // Try to get question-specific intro content first
   const questionExplanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
   const questionExample = locale === 'he' ? question.introExampleHe : question.introExampleEn;
 
-  // Fall back to topic-based lesson if no question-specific content
-  const topicLesson = getTopicLesson(question.topic, question.subtopic);
-  
-  const explanation = questionExplanation || (topicLesson && (locale === 'he' ? topicLesson.explanationHe : topicLesson.explanationEn));
-  const example = questionExample || (topicLesson && (locale === 'he' ? topicLesson.exampleHe : topicLesson.exampleEn));
-  const lessonEmoji = topicLesson?.emoji || '📚';
+  const explanation = derivedLesson?.explanation ?? questionExplanation;
+  const example = derivedLesson?.example ?? questionExample;
+  const steps = derivedLesson?.steps ?? [];
+  const tip = derivedLesson?.tip;
+  const lessonEmoji = derivedLesson?.emoji || '📚';
 
   // Get the question text to show a preview
   const questionText = getQuestionPrompt(question, locale);
@@ -47,6 +47,8 @@ export function IntroScreen({ question, onContinue }: IntroScreenProps) {
   const exampleLabel = locale === 'he' ? 'דוגמא' : 'Example';
   const upcomingQuestionLabel = locale === 'he' ? 'התרגיל שלך' : 'Your Exercise';
   const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
+  const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
+  const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -74,6 +76,27 @@ export function IntroScreen({ question, onContinue }: IntroScreenProps) {
           </div>
         )}
 
+        {/* Step-by-step guidance */}
+        {steps.length > 0 && (
+          <div className="mb-8 rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-8 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">📝</span>
+                <h3 className="text-2xl font-bold text-blue-900">{stepsTitle}</h3>
+              </div>
+              <InlineSpeaker text={steps.join('. ')} />
+            </div>
+            <ol className="space-y-3 text-lg leading-relaxed text-slate-800">
+              {steps.map((step, idx) => (
+                <li key={`${idx}-${step.slice(0, 8)}`} className="flex gap-3">
+                  <span className="text-xl font-bold text-blue-700">{idx + 1}.</span>
+                  <span className="whitespace-pre-line">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
         {/* Example Card with Speaker */}
         {example && (
           <div className="mb-6 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300">
@@ -89,6 +112,22 @@ export function IntroScreen({ question, onContinue }: IntroScreenProps) {
                 {example}
               </p>
             </div>
+          </div>
+        )}
+
+        {/* Quick tip */}
+        {tip && (
+          <div className="mb-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 shadow-lg border-4 border-emerald-200">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">🎯</span>
+                <h3 className="text-2xl font-bold text-emerald-900">{tipTitle}</h3>
+              </div>
+              <InlineSpeaker text={tip} />
+            </div>
+            <p className="text-xl leading-relaxed text-slate-800 whitespace-pre-line">
+              {tip}
+            </p>
           </div>
         )}
 
