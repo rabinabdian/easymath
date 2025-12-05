@@ -2,6 +2,8 @@
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
+import { getTopicLesson } from '../data/topicLessons';
+import { getQuestionPrompt } from '../utils/questionText';
 
 interface IntroScreenProps {
   question: Question;
@@ -9,30 +11,51 @@ interface IntroScreenProps {
 }
 
 /**
- * IntroScreen - Displays explanation and example before each exercise
+ * IntroScreen - Displays a short lesson before each exercise
  * For children with learning disabilities - uses large text, simple layout
- * Now includes interactive audio with speaker icons!
+ * 
+ * Content priority:
+ * 1. Question-specific intro content (if available)
+ * 2. Topic/subtopic-based lesson (fallback)
+ * 
+ * Features:
+ * - Shows explanation and example related to the topic
+ * - Displays the upcoming question to prepare the student
+ * - Interactive audio with speaker icons
  */
 export function IntroScreen({ question, onContinue }: IntroScreenProps) {
   const { locale } = useI18n();
 
-  const explanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
-  const example = locale === 'he' ? question.introExampleHe : question.introExampleEn;
+  // Try to get question-specific intro content first
+  const questionExplanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
+  const questionExample = locale === 'he' ? question.introExampleHe : question.introExampleEn;
 
-  // If no intro content, skip to question
-  if (!explanation && !example) {
-    onContinue();
-    return null;
-  }
+  // Fall back to topic-based lesson if no question-specific content
+  const topicLesson = getTopicLesson(question.topic, question.subtopic);
+  
+  const explanation = questionExplanation || (topicLesson && (locale === 'he' ? topicLesson.explanationHe : topicLesson.explanationEn));
+  const example = questionExample || (topicLesson && (locale === 'he' ? topicLesson.exampleHe : topicLesson.exampleEn));
+  const lessonEmoji = topicLesson?.emoji || '📚';
+
+  // Get the question text to show a preview
+  const questionText = getQuestionPrompt(question, locale);
+
+  // Header text based on locale
+  const headerTitle = locale === 'he' ? 'שיעור קצר לפני התרגיל' : 'Short Lesson Before Exercise';
+  const headerSubtitle = locale === 'he' ? 'לחץ על הרמקול כדי לשמוע 🔈' : 'Click the speaker to listen 🔈';
+  const explanationLabel = locale === 'he' ? 'הסבר' : 'Explanation';
+  const exampleLabel = locale === 'he' ? 'דוגמא' : 'Example';
+  const upcomingQuestionLabel = locale === 'he' ? 'התרגיל שלך' : 'Your Exercise';
+  const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="mx-auto max-w-2xl px-4 py-8">
         {/* Header */}
         <div className="mb-6 text-center">
-          <div className="mb-3 text-6xl">📚</div>
-          <h2 className="text-3xl font-bold text-slate-800">בואו נבין למה!</h2>
-          <p className="mt-2 text-lg text-slate-600">לחץ על הרמקול כדי לשמוע 🔈</p>
+          <div className="mb-3 text-6xl">{lessonEmoji}</div>
+          <h2 className="text-3xl font-bold text-slate-800">{headerTitle}</h2>
+          <p className="mt-2 text-lg text-slate-600">{headerSubtitle}</p>
         </div>
 
         {/* Explanation Card with Speaker */}
@@ -41,7 +64,7 @@ export function IntroScreen({ question, onContinue }: IntroScreenProps) {
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-4xl">💡</span>
-                <h3 className="text-2xl font-bold text-slate-800">הסבר</h3>
+                <h3 className="text-2xl font-bold text-slate-800">{explanationLabel}</h3>
               </div>
               <InlineSpeaker text={explanation} />
             </div>
@@ -53,11 +76,11 @@ export function IntroScreen({ question, onContinue }: IntroScreenProps) {
 
         {/* Example Card with Speaker */}
         {example && (
-          <div className="mb-8 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300">
+          <div className="mb-6 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-4xl">✨</span>
-                <h3 className="text-2xl font-bold text-slate-800">דוגמא</h3>
+                <h3 className="text-2xl font-bold text-slate-800">{exampleLabel}</h3>
               </div>
               <InlineSpeaker text={example} />
             </div>
@@ -69,6 +92,22 @@ export function IntroScreen({ question, onContinue }: IntroScreenProps) {
           </div>
         )}
 
+        {/* Upcoming Question Preview */}
+        <div className="mb-8 rounded-3xl bg-gradient-to-br from-purple-50 to-pink-50 p-8 shadow-lg border-4 border-purple-300">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-4xl">📝</span>
+              <h3 className="text-2xl font-bold text-slate-800">{upcomingQuestionLabel}</h3>
+            </div>
+            <InlineSpeaker text={questionText} />
+          </div>
+          <div className="rounded-2xl bg-white p-6 shadow-sm">
+            <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line text-center">
+              {questionText}
+            </p>
+          </div>
+        </div>
+
         {/* Continue Button - Large and accessible */}
         <button
           type="button"
@@ -76,7 +115,7 @@ export function IntroScreen({ question, onContinue }: IntroScreenProps) {
           className="w-full rounded-3xl bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105"
         >
           <span className="mr-2">✅</span>
-          הבנתי! בואו נתחיל
+          {continueButton}
         </button>
       </div>
     </div>
