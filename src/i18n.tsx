@@ -1,5 +1,6 @@
 // src/i18n.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { ensureLTRNumbers } from './utils/textDirection';
 
 export type Locale = 'he' | 'en';
 
@@ -258,6 +259,10 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
       Object.entries(params).forEach(([k, v]) => {
         text = text.replace(`{${k}}`, String(v));
       });
+    }
+
+    if (locale === 'he') {
+      text = ensureLTRNumbers(text);
     }
 
     return text;

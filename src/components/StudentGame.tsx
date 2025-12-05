@@ -10,6 +10,7 @@ import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
+import { ensureLTRNumbers } from '../utils/textDirection';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -98,7 +99,9 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
       // רמז שני - יותר ישיר
       switch (topic) {
         case 'numbers':
-          return `הגענו ל... כמעט שם!\nהתשובה קרובה ל-${Number(answer) - 1} או ${Number(answer) + 1}...`;
+          return ensureLTRNumbers(
+            `הגענו ל... כמעט שם!\nהתשובה קרובה ל-${Number(answer) - 1} או ${Number(answer) + 1}...`
+          );
         case 'addition':
           return `בוא נספור ביחד:\nקודם את הראשון, ואז מוסיפים את השני!`;
         case 'subtraction':
@@ -319,7 +322,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             backdropFilter: "blur(4px)",
           }}
         >
-          גרסה {APP_VERSION}
+          {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
         </div>
       </div>
     );
@@ -570,7 +573,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
           backdropFilter: "blur(4px)",
         }}
       >
-        גרסה {APP_VERSION}
+        {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
       </div>
     </div>
   );
