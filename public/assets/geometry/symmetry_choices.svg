@@ -1,0 +1,29 @@
+<svg width="420" height="320" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Symmetry comparison of shapes">
+  <defs>
+    <linearGradient id="choices-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="100%" stop-color="#fbcfe8" />
+    </linearGradient>
+  </defs>
+  <rect width="420" height="320" rx="36" fill="url(#choices-bg)" />
+  <g font-family="Heebo, Arial" font-size="20" font-weight="600" fill="#0f172a">
+    <text x="105" y="60" text-anchor="middle"> шйбет</text>
+    <text x="210" y="60" text-anchor="middle">=: ощемщ</text>
+    <text x="315" y="60" text-anchor="middle">Ё зх</text>
+  </g>
+  <g transform="translate(40 80) scale(5)">
+    <path fill="#60a5fa" d="M36 32c0 2.209-1.791 4-4 4H4c-2.209 0-4-1.791-4-4V4c0-2.209 1.791-4 4-4h28c2.209 0 4 1.791 4 4v28z" />
+  </g>
+  <g transform="translate(160 80) scale(5)">
+    <path fill="#34d399" d="M19.146 7.639c-.63-.901-1.637-.884-2.236.038L6.09 24.323C5.491 25.245 5.9 26 7 26h23c1.1 0 1.483-.737.854-1.639L19.146 7.639z" />
+  </g>
+  <g transform="translate(275 80) scale(5)">
+    <path fill="#0ea5e9" d="M36 32c0 2.209-1.791 4-4 4H4c-2.209 0-4-1.791-4-4V4c0-2.209 1.791-4 4-4h28c2.209 0 4 1.791 4 4v28z" />
+    <path fill="#fff" d="M7 14h9V7l13 11-13 11v-7H7z" />
+  </g>
+  <g font-family="Heebo, Arial" font-size="18" fill="#1e293b" text-anchor="middle">
+    <text x="105" y="280">сйоишй</text>
+    <text x="210" y="280">сйоишй</text>
+    <text x="315" y="280">ма сйоишй</text>
+  </g>
+</svg>
