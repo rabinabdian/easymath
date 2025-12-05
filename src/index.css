@@ -243,3 +243,123 @@ select {
 .hint-glow {
   box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
 }
+
+/* ===== Animated lesson strip ===== */
+.lesson-animated-strip {
+  position: relative;
+}
+
+.lesson-orb {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 9999px;
+  opacity: 0.2;
+  filter: blur(4px);
+  animation: lessonOrb 12s ease-in-out infinite alternate;
+}
+
+.lesson-orb-left {
+  top: -80px;
+  right: -60px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.6), rgba(14, 165, 233, 0));
+}
+
+.lesson-orb-right {
+  bottom: -120px;
+  left: -40px;
+  background: radial-gradient(circle, rgba(244, 114, 182, 0.6), rgba(244, 114, 182, 0));
+}
+
+.animated-lesson-card {
+  opacity: 0;
+  transform: translateY(24px) scale(0.97);
+  animation: lessonCardPop 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.lesson-floating-icon {
+  animation: lessonFloat 4s ease-in-out infinite;
+}
+
+.lesson-card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  pointer-events: none;
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.15);
+  opacity: 0;
+  animation: lessonGlow 6s ease-in-out infinite;
+}
+
+.lesson-progress-line {
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.3);
+  overflow: hidden;
+}
+
+.lesson-progress {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #a855f7, #f472b6, #38bdf8);
+  background-size: 200% 100%;
+  animation: lessonProgress 3.8s linear infinite;
+}
+
+@keyframes lessonCardPop {
+  0% {
+    opacity: 0;
+    transform: translateY(32px) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes lessonFloat {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes lessonGlow {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes lessonProgress {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes lessonOrb {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(20px, -10px) scale(1.05);
+  }
+  100% {
+    transform: translate(-10px, 20px) scale(0.95);
+  }
+}
