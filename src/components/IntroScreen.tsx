@@ -4,6 +4,8 @@ import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonContent';
+import { FadeInSection, AnimatedText, AnimatedStep } from './AnimatedLessonContent';
+import { AnimatedMathExplanation } from './AnimatedMathExplanation';
 
 interface IntroScreenProps {
   question: Question;
@@ -53,109 +55,123 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="mx-auto max-w-2xl px-4 py-8">
-        {/* Header */}
-        <div className="mb-6 text-center">
-          <div className="mb-3 text-6xl">{lessonEmoji}</div>
-          <h2 className="text-3xl font-bold text-slate-800">{headerTitle}</h2>
-          <p className="mt-2 text-lg text-slate-600">{headerSubtitle}</p>
-        </div>
+        {/* Header with animation */}
+        <FadeInSection delay={0}>
+          <div className="mb-6 text-center">
+            <div className="mb-3 text-6xl animate-bounce" style={{ animationDuration: '2s' }}>
+              {lessonEmoji}
+            </div>
+            <h2 className="text-3xl font-bold text-slate-800">{headerTitle}</h2>
+            <p className="mt-2 text-lg text-slate-600">{headerSubtitle}</p>
+          </div>
+        </FadeInSection>
 
-        {/* Explanation Card with Speaker */}
+        {/* Explanation Card with Speaker and Animation */}
         {explanation && (
-          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl">💡</span>
-                <h3 className="text-2xl font-bold text-slate-800">{explanationLabel}</h3>
+          <FadeInSection delay={300}>
+            <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl animate-pulse">💡</span>
+                  <h3 className="text-2xl font-bold text-slate-800">{explanationLabel}</h3>
+                </div>
+                <InlineSpeaker text={explanation} />
               </div>
-              <InlineSpeaker text={explanation} />
+              <AnimatedText text={explanation} delay={100} />
+              {/* Animated Math Explanation if applicable */}
+              <div className="mt-6">
+                <AnimatedMathExplanation question={question} explanation={explanation} delay={800} />
+              </div>
             </div>
-            <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
-              {explanation}
-            </p>
-          </div>
+          </FadeInSection>
         )}
 
-        {/* Step-by-step guidance */}
+        {/* Step-by-step guidance with animations */}
         {steps.length > 0 && (
-          <div className="mb-8 rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-8 shadow-lg">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl">📝</span>
-                <h3 className="text-2xl font-bold text-blue-900">{stepsTitle}</h3>
+          <FadeInSection delay={600}>
+            <div className="mb-8 rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-8 shadow-lg">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl animate-pulse">📝</span>
+                  <h3 className="text-2xl font-bold text-blue-900">{stepsTitle}</h3>
+                </div>
+                <InlineSpeaker text={steps.join('. ')} />
               </div>
-              <InlineSpeaker text={steps.join('. ')} />
+              <ol className="space-y-3 text-lg leading-relaxed text-slate-800">
+                {steps.map((step, idx) => (
+                  <AnimatedStep
+                    key={`${idx}-${step.slice(0, 8)}`}
+                    step={step}
+                    index={idx}
+                    delay={800}
+                  />
+                ))}
+              </ol>
             </div>
-            <ol className="space-y-3 text-lg leading-relaxed text-slate-800">
-              {steps.map((step, idx) => (
-                <li key={`${idx}-${step.slice(0, 8)}`} className="flex gap-3">
-                  <span className="text-xl font-bold text-blue-700">{idx + 1}.</span>
-                  <span className="whitespace-pre-line">{step}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
+          </FadeInSection>
         )}
 
-        {/* Example Card with Speaker */}
+        {/* Example Card with Speaker and Animation */}
         {example && (
-          <div className="mb-6 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300">
+          <FadeInSection delay={900}>
+            <div className="mb-6 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl animate-pulse">✨</span>
+                  <h3 className="text-2xl font-bold text-slate-800">{exampleLabel}</h3>
+                </div>
+                <InlineSpeaker text={example} />
+              </div>
+              <div className="rounded-2xl bg-white p-6 shadow-sm">
+                <AnimatedText text={example} delay={200} />
+              </div>
+            </div>
+          </FadeInSection>
+        )}
+
+        {/* Quick tip with animation */}
+        {tip && (
+          <FadeInSection delay={1200}>
+            <div className="mb-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 shadow-lg border-4 border-emerald-200">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl animate-pulse">🎯</span>
+                  <h3 className="text-2xl font-bold text-emerald-900">{tipTitle}</h3>
+                </div>
+                <InlineSpeaker text={tip} />
+              </div>
+              <AnimatedText text={tip} delay={200} />
+            </div>
+          </FadeInSection>
+        )}
+
+        {/* Upcoming Question Preview with animation */}
+        <FadeInSection delay={1500}>
+          <div className="mb-8 rounded-3xl bg-gradient-to-br from-purple-50 to-pink-50 p-8 shadow-lg border-4 border-purple-300">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-4xl">✨</span>
-                <h3 className="text-2xl font-bold text-slate-800">{exampleLabel}</h3>
+                <span className="text-4xl animate-pulse">📝</span>
+                <h3 className="text-2xl font-bold text-slate-800">{upcomingQuestionLabel}</h3>
               </div>
-              <InlineSpeaker text={example} />
+              <InlineSpeaker text={questionText} />
             </div>
             <div className="rounded-2xl bg-white p-6 shadow-sm">
-              <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line">
-                {example}
-              </p>
+              <AnimatedText text={questionText} delay={200} className="text-center" />
             </div>
           </div>
-        )}
+        </FadeInSection>
 
-        {/* Quick tip */}
-        {tip && (
-          <div className="mb-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 shadow-lg border-4 border-emerald-200">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl">🎯</span>
-                <h3 className="text-2xl font-bold text-emerald-900">{tipTitle}</h3>
-              </div>
-              <InlineSpeaker text={tip} />
-            </div>
-            <p className="text-xl leading-relaxed text-slate-800 whitespace-pre-line">
-              {tip}
-            </p>
-          </div>
-        )}
-
-        {/* Upcoming Question Preview */}
-        <div className="mb-8 rounded-3xl bg-gradient-to-br from-purple-50 to-pink-50 p-8 shadow-lg border-4 border-purple-300">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-4xl">📝</span>
-              <h3 className="text-2xl font-bold text-slate-800">{upcomingQuestionLabel}</h3>
-            </div>
-            <InlineSpeaker text={questionText} />
-          </div>
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <p className="text-xl leading-relaxed text-slate-700 whitespace-pre-line text-center">
-              {questionText}
-            </p>
-          </div>
-        </div>
-
-        {/* Continue Button - Large and accessible */}
-        <button
-          type="button"
-          onClick={onContinue}
-          className="w-full rounded-3xl bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105"
-        >
-          <span className="mr-2">✅</span>
-          {continueButton}
-        </button>
+        {/* Continue Button - Large and accessible with animation */}
+        <FadeInSection delay={1800}>
+          <button
+            type="button"
+            onClick={onContinue}
+            className="w-full rounded-3xl bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 animate-pulse"
+          >
+            <span className="mr-2">✅</span>
+            {continueButton}
+          </button>
+        </FadeInSection>
       </div>
     </div>
   );
