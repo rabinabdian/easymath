@@ -9,6 +9,7 @@ export type ChildSettings = {
   showHints: boolean;
   animationsEnabled: boolean;
   soundsEnabled: boolean;
+  autoPlayLessonAudio: boolean; // השמעה אוטומטית של הסבר לפני כל תרגיל
   selectedExamId?: string; // מזהה מבחן שנבחר ע"י הורה
   // מידע על התלמיד הנבחר
   studentId?: string; // מזהה התלמיד
@@ -24,6 +25,7 @@ const defaultSettings: ChildSettings = {
   showHints: true,
   animationsEnabled: false,
   soundsEnabled: true,
+  autoPlayLessonAudio: true, // ברירת מחדל: השמעה אוטומטית של הסבר לפני תרגיל
 };
 
 type ChildSettingsContextType = {

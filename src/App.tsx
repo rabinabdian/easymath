@@ -620,6 +620,7 @@ function ParentPage() {
       showHints: formData.get("showHints") === "on",
       animationsEnabled: formData.get("animationsEnabled") === "on",
       soundsEnabled: formData.get("soundsEnabled") === "on",
+      autoPlayLessonAudio: formData.get("autoPlayLessonAudio") === "on",
       selectedExamId: selectedExamId || undefined,
       studentId,
       studentAvatar,
@@ -740,6 +741,15 @@ function ParentPage() {
             defaultChecked={settings.soundsEnabled}
           />
           <span>צליל / קריינות</span>
+        </label>
+
+        <label className="form-check">
+          <input
+            type="checkbox"
+            name="autoPlayLessonAudio"
+            defaultChecked={settings.autoPlayLessonAudio}
+          />
+          <span>השמעה אוטומטית של הסבר לפני תרגיל 🔊</span>
         </label>
 
         <div className="buttons parent-buttons">
