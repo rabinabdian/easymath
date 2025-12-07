@@ -2,47 +2,50 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Question } from '../types/questions';
 import { InlineSpeaker } from './SpeakerButton';
+import { speak } from '../utils/speech';
 
 interface AnimatedLessonProps {
   question: Question;
   locale: 'he' | 'en';
   className?: string;
+  autoPlay?: boolean; // New prop to control auto-play
 }
 
 /**
  * AnimatedLesson - Rich animated visual explanations for each topic
  * Designed for children with learning disabilities
  * Shows step-by-step animations to help understand math concepts
+ * Now supports automatic audio playback when animations start
  */
-export function AnimatedLesson({ question, locale, className = '' }: AnimatedLessonProps) {
+export function AnimatedLesson({ question, locale, className = '', autoPlay = false }: AnimatedLessonProps) {
   const { topic, subtopic } = question;
   
   // Render appropriate animation based on topic
   switch (topic) {
     case 'numbers':
-      return <NumbersAnimation question={question} locale={locale} className={className} />;
+      return <NumbersAnimation question={question} locale={locale} className={className} autoPlay={autoPlay} />;
     case 'addition':
-      return <AdditionAnimation question={question} locale={locale} className={className} />;
+      return <AdditionAnimation question={question} locale={locale} className={className} autoPlay={autoPlay} />;
     case 'subtraction':
-      return <SubtractionAnimation question={question} locale={locale} className={className} />;
+      return <SubtractionAnimation question={question} locale={locale} className={className} autoPlay={autoPlay} />;
     case 'multiplication':
-      return <MultiplicationAnimation question={question} locale={locale} className={className} />;
+      return <MultiplicationAnimation question={question} locale={locale} className={className} autoPlay={autoPlay} />;
     case 'evenOdd':
-      return <EvenOddAnimation question={question} locale={locale} className={className} />;
+      return <EvenOddAnimation question={question} locale={locale} className={className} autoPlay={autoPlay} />;
     case 'geometry':
       if (subtopic?.includes('סימטריה') || subtopic?.includes('שיקוף')) {
-        return <SymmetryAnimation locale={locale} className={className} />;
+        return <SymmetryAnimation locale={locale} className={className} autoPlay={autoPlay} />;
       }
-      return <GeometryAnimation locale={locale} className={className} />;
+      return <GeometryAnimation locale={locale} className={className} autoPlay={autoPlay} />;
     default:
-      return <GenericAnimation locale={locale} className={className} />;
+      return <GenericAnimation locale={locale} className={className} autoPlay={autoPlay} />;
   }
 }
 
 // ========================================
 // NUMBERS ANIMATION - Counting with visual items
 // ========================================
-function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) {
+function NumbersAnimation({ question, locale, className, autoPlay }: AnimatedLessonProps) {
   const [visibleCount, setVisibleCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const targetNumber = typeof question.answer === 'number' ? question.answer : 5;
@@ -67,7 +70,22 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
     if (isPlaying) return;
     setIsPlaying(true);
     setVisibleCount(0);
-  }, [isPlaying]);
+    
+    // Auto-play audio explanation when animation starts
+    if (autoPlay) {
+      speak(audioText);
+    }
+  }, [isPlaying, autoPlay, audioText]);
+
+  // Auto-start animation if autoPlay is enabled
+  useEffect(() => {
+    if (autoPlay && !isPlaying) {
+      const timer = setTimeout(() => {
+        startAnimation();
+      }, 500); // Small delay for better UX
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, isPlaying, startAnimation]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -148,7 +166,7 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
 // ========================================
 // ADDITION ANIMATION - Two groups combining
 // ========================================
-function AdditionAnimation({ question, locale, className }: AnimatedLessonProps) {
+function AdditionAnimation({ question, locale, className, autoPlay }: AnimatedLessonProps) {
   const [step, setStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -169,7 +187,22 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
     if (isPlaying) return;
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+    
+    // Auto-play audio explanation when animation starts
+    if (autoPlay) {
+      speak(audioText);
+    }
+  }, [isPlaying, autoPlay, audioText]);
+
+  // Auto-start animation if autoPlay is enabled
+  useEffect(() => {
+    if (autoPlay && !isPlaying) {
+      const timer = setTimeout(() => {
+        startAnimation();
+      }, 500); // Small delay for better UX
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, isPlaying, startAnimation]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -274,7 +307,7 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
 // ========================================
 // SUBTRACTION ANIMATION - Items being removed
 // ========================================
-function SubtractionAnimation({ question, locale, className }: AnimatedLessonProps) {
+function SubtractionAnimation({ question, locale, className, autoPlay }: AnimatedLessonProps) {
   const [step, setStep] = useState(0);
   const [removedCount, setRemovedCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -297,7 +330,22 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
     setIsPlaying(true);
     setStep(0);
     setRemovedCount(0);
-  }, [isPlaying]);
+    
+    // Auto-play audio explanation when animation starts
+    if (autoPlay) {
+      speak(audioText);
+    }
+  }, [isPlaying, autoPlay, audioText]);
+
+  // Auto-start animation if autoPlay is enabled
+  useEffect(() => {
+    if (autoPlay && !isPlaying) {
+      const timer = setTimeout(() => {
+        startAnimation();
+      }, 500); // Small delay for better UX
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, isPlaying, startAnimation]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -418,7 +466,7 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
 // ========================================
 // MULTIPLICATION ANIMATION - Groups of items
 // ========================================
-function MultiplicationAnimation({ question, locale, className }: AnimatedLessonProps) {
+function MultiplicationAnimation({ question, locale, className, autoPlay }: AnimatedLessonProps) {
   const [visibleGroups, setVisibleGroups] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -448,7 +496,22 @@ function MultiplicationAnimation({ question, locale, className }: AnimatedLesson
     setIsPlaying(true);
     setVisibleGroups(0);
     setShowResult(false);
-  }, [isPlaying]);
+    
+    // Auto-play audio explanation when animation starts
+    if (autoPlay) {
+      speak(audioText);
+    }
+  }, [isPlaying, autoPlay, audioText]);
+
+  // Auto-start animation if autoPlay is enabled
+  useEffect(() => {
+    if (autoPlay && !isPlaying) {
+      const timer = setTimeout(() => {
+        startAnimation();
+      }, 500); // Small delay for better UX
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, isPlaying, startAnimation]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -545,7 +608,7 @@ function MultiplicationAnimation({ question, locale, className }: AnimatedLesson
 // ========================================
 // EVEN/ODD ANIMATION - Pairing items
 // ========================================
-function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) {
+function EvenOddAnimation({ question, locale, className, autoPlay }: AnimatedLessonProps) {
   const [step, setStep] = useState(0);
   const [pairsFormed, setPairsFormed] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -569,7 +632,22 @@ function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) 
     setIsPlaying(true);
     setStep(0);
     setPairsFormed(0);
-  }, [isPlaying]);
+    
+    // Auto-play audio explanation when animation starts
+    if (autoPlay) {
+      speak(audioText);
+    }
+  }, [isPlaying, autoPlay, audioText]);
+
+  // Auto-start animation if autoPlay is enabled
+  useEffect(() => {
+    if (autoPlay && !isPlaying) {
+      const timer = setTimeout(() => {
+        startAnimation();
+      }, 500); // Small delay for better UX
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, isPlaying, startAnimation]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -689,7 +767,7 @@ function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) 
 // ========================================
 // GEOMETRY ANIMATION - Shapes intro
 // ========================================
-function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'question'>) {
+function GeometryAnimation({ locale, className, autoPlay }: Omit<AnimatedLessonProps, 'question'>) {
   const [currentShape, setCurrentShape] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -711,7 +789,22 @@ function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
     if (isPlaying) return;
     setIsPlaying(true);
     setCurrentShape(0);
-  }, [isPlaying]);
+    
+    // Auto-play audio explanation when animation starts
+    if (autoPlay) {
+      speak(audioText);
+    }
+  }, [isPlaying, autoPlay, audioText]);
+
+  // Auto-start animation if autoPlay is enabled
+  useEffect(() => {
+    if (autoPlay && !isPlaying) {
+      const timer = setTimeout(() => {
+        startAnimation();
+      }, 500); // Small delay for better UX
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, isPlaying, startAnimation]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -797,7 +890,7 @@ function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
 // ========================================
 // SYMMETRY ANIMATION - Mirror effect
 // ========================================
-function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'question'>) {
+function SymmetryAnimation({ locale, className, autoPlay }: Omit<AnimatedLessonProps, 'question'>) {
   const [step, setStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -814,7 +907,12 @@ function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
     if (isPlaying) return;
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+    
+    // Auto-play audio explanation when animation starts
+    if (autoPlay) {
+      speak(audioText);
+    }
+  }, [isPlaying, autoPlay, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -903,12 +1001,22 @@ function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
 // ========================================
 // GENERIC ANIMATION - Default fallback
 // ========================================
-function GenericAnimation({ locale, className }: Omit<AnimatedLessonProps, 'question'>) {
+function GenericAnimation({ locale, className, autoPlay }: Omit<AnimatedLessonProps, 'question'>) {
   const isHebrew = locale === 'he';
   const title = isHebrew ? 'בואו ללמוד!' : "Let's learn!";
   const audioText = isHebrew
     ? 'קראו את השאלה בעיון ונסו להבין מה מבקשים. אתם יכולים!'
     : 'Read the question carefully and try to understand what is being asked. You can do it!';
+
+  // Auto-play audio when component mounts
+  useEffect(() => {
+    if (autoPlay) {
+      const timer = setTimeout(() => {
+        speak(audioText);
+      }, 500); // Small delay for better UX
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, audioText]);
 
   return (
     <div className={`animated-lesson rounded-3xl bg-gradient-to-br from-indigo-100 to-violet-100 p-6 shadow-xl border-4 border-indigo-300 ${className}`}>

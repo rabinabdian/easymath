@@ -11,6 +11,7 @@ import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
+import { getLessonContent } from '../utils/lessonContent';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -341,6 +342,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         question={current}
         lesson={lessonContent}
         onContinue={() => setShowIntro(false)}
+        autoPlay={true}
       />
     );
   }

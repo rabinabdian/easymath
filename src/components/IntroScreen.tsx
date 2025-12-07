@@ -1,15 +1,18 @@
 // src/components/IntroScreen.tsx
+import { useEffect, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonContent';
 import { AnimatedLesson } from './AnimatedLesson';
+import { speak, stopSpeaking } from '../utils/speech';
 
 interface IntroScreenProps {
   question: Question;
   onContinue: () => void;
   lesson?: LocalizedLessonContent;
+  autoPlay?: boolean; // Enable automatic audio playback
 }
 
 /**
@@ -24,13 +27,16 @@ interface IntroScreenProps {
  * - Shows explanation and example related to the topic
  * - Displays the upcoming question to prepare the student
  * - Interactive audio with speaker icons
+ * - Sequential auto-play of lesson sections (when enabled)
  */
-export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
+export function IntroScreen({ question, onContinue, lesson, autoPlay = false }: IntroScreenProps) {
   const { locale } = useI18n();
+  const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const derivedLesson = lesson ?? getLessonContent(question, locale);
 
   const questionExplanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
-  const questionExample = locale === 'he' ? question.introExampleHe : question.introExampleEn;
+  const questionExample = locale === 'he' ? question.introExampleHe : question.introExplanationEn;
 
   const explanation = derivedLesson?.explanation ?? questionExplanation;
   const example = derivedLesson?.example ?? questionExample;
@@ -43,7 +49,9 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
   // Header text based on locale
   const headerTitle = locale === 'he' ? 'שיעור קצר לפני התרגיל' : 'Short Lesson Before Exercise';
-  const headerSubtitle = locale === 'he' ? 'לחץ על הרמקול כדי לשמוע 🔈' : 'Click the speaker to listen 🔈';
+  const headerSubtitle = locale === 'he' 
+    ? (autoPlay ? 'מקשיב להסבר... 🔊' : 'לחץ על הרמקול כדי לשמוע 🔈')
+    : (autoPlay ? 'Listening to explanation... 🔊' : 'Click the speaker to listen 🔈');
   const explanationLabel = locale === 'he' ? 'הסבר' : 'Explanation';
   const exampleLabel = locale === 'he' ? 'דוגמא' : 'Example';
   const upcomingQuestionLabel = locale === 'he' ? 'התרגיל שלך' : 'Your Exercise';
@@ -51,9 +59,92 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
   const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
 
+  // Sequential auto-play of lesson sections
+  useEffect(() => {
+    if (!autoPlay || hasAutoPlayed) return;
+    
+    setHasAutoPlayed(true);
+    
+    // Build sequential audio narration
+    const audioSegments: string[] = [];
+    
+    // Start with header
+    audioSegments.push(headerTitle);
+    
+    // Add explanation if exists
+    if (explanation) {
+      audioSegments.push(explanation);
+    }
+    
+    // Add steps if exist
+    if (steps.length > 0) {
+      const stepsIntro = locale === 'he' ? 'שלבי פתרון:' : 'Steps to solve:';
+      audioSegments.push(stepsIntro);
+      audioSegments.push(steps.join('. '));
+    }
+    
+    // Add example if exists
+    if (example) {
+      const exampleIntro = locale === 'he' ? 'דוגמא:' : 'Example:';
+      audioSegments.push(exampleIntro);
+      audioSegments.push(example);
+    }
+    
+    // Add tip if exists
+    if (tip) {
+      const tipIntro = locale === 'he' ? 'טיפ קצר:' : 'Quick tip:';
+      audioSegments.push(tipIntro);
+      audioSegments.push(tip);
+    }
+    
+    // Add question preview
+    const questionIntro = locale === 'he' ? 'התרגיל שלך:' : 'Your exercise:';
+    audioSegments.push(questionIntro);
+    audioSegments.push(questionText);
+    
+    // Combine all segments with pauses
+    const fullNarration = audioSegments.join('. ');
+    
+    // Play after animation starts (delayed by 6 seconds for animation audio to play first)
+    setIsAudioPlaying(true);
+    const timer = setTimeout(() => {
+      speak(fullNarration, () => {
+        setIsAudioPlaying(false);
+      });
+    }, 6000); // Wait 6 seconds for animation to play its audio first
+    
+    return () => {
+      clearTimeout(timer);
+      stopSpeaking();
+      setIsAudioPlaying(false);
+    };
+  }, [autoPlay, hasAutoPlayed, headerTitle, explanation, steps, example, tip, questionText, locale]);
+  
+  // Handle manual stop of audio
+  const handleStopAudio = () => {
+    stopSpeaking();
+    setIsAudioPlaying(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="mx-auto max-w-2xl px-4 py-8">
+        {/* Audio Control Button - Fixed position */}
+        {autoPlay && isAudioPlaying && (
+          <div className="fixed top-4 left-4 z-50 animate-fade-slide-down">
+            <button
+              onClick={handleStopAudio}
+              className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-rose-600 px-4 py-3 text-white shadow-lg hover:from-red-600 hover:to-rose-700 transition-all transform hover:scale-105 animate-pulse"
+              aria-label={locale === 'he' ? 'עצור הקראה' : 'Stop audio'}
+            >
+              <span className="text-2xl">⏸️</span>
+              <span className="text-sm font-bold">
+                {locale === 'he' ? 'עצור הקראה' : 'Stop Audio'}
+              </span>
+            </button>
+          </div>
+        )}
+        
         {/* Header */}
         <div className="mb-6 text-center animate-fade-slide-down">
           <div className="mb-3 text-6xl animate-bounce-slow">{lessonEmoji}</div>
@@ -63,7 +154,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
         {/* Animated Visual Lesson - Interactive animation for the topic */}
         <div className="mb-8 animate-fade-slide-up">
-          <AnimatedLesson question={question} locale={locale} />
+          <AnimatedLesson question={question} locale={locale} autoPlay={autoPlay} />
         </div>
 
         {/* Explanation Card with Speaker */}
