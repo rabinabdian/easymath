@@ -12,6 +12,9 @@ import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
+import { useChildSettings } from '../context/ChildSettingsContext';
+import { speak } from '../utils/speech';
+import { getTopicLesson } from '../data/topicLessons';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -37,6 +40,7 @@ const MAX_ATTEMPTS_PER_QUESTION = 3; // Maximum attempts before auto-solve
 
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
   const { t, locale } = useI18n();
+  const { settings } = useChildSettings();
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -227,6 +231,50 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const handleOptionClick = (val: string) => {
     checkAnswer(val);
   };
+
+  // Automatic greeting and explanation when entering exercises
+  useEffect(() => {
+    // Only run once when component first mounts (entering exercises)
+    if (questions.length === 0) return;
+
+    const firstQuestion = questions[0];
+    if (!firstQuestion) return;
+
+    // Get student name
+    const studentName = settings.childName || 'ילד';
+
+    // Get topic information
+    const topic = firstQuestion.topic;
+    const topicLesson = getTopicLesson(topic, firstQuestion.subtopic);
+    
+    // Build greeting and explanation text
+    let greetingText = `שלום ${studentName}. `;
+    
+    // Add topic explanation
+    if (topicLesson) {
+      const topicExplanation = locale === 'he' ? topicLesson.explanationHe : topicLesson.explanationEn;
+      if (topicExplanation) {
+        // Clean up the explanation text (remove newlines for speech)
+        const cleanExplanation = topicExplanation.replace(/\n/g, ' ');
+        greetingText += `אנחנו עכשיו נתרגל. ${cleanExplanation} `;
+      }
+    } else if (firstQuestion.introExplanationHe || firstQuestion.introExplanationEn) {
+      const introExplanation = locale === 'he' ? firstQuestion.introExplanationHe : firstQuestion.introExplanationEn;
+      if (introExplanation) {
+        const cleanExplanation = introExplanation.replace(/\n/g, ' ');
+        greetingText += cleanExplanation + '. ';
+      }
+    }
+
+    // Add information about number of exercises
+    const numExercises = questions.length;
+    if (numExercises > 0) {
+      greetingText += `יש לנו ${numExercises} תרגילים. בואו נתחיל!`;
+    }
+
+    // Speak the greeting and explanation automatically
+    speak(greetingText);
+  }, []); // Empty dependency array - only run once on mount
 
   // Initialize timer and reset state for each new question
   useEffect(() => {
