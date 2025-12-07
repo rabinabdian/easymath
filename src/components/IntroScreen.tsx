@@ -1,10 +1,13 @@
 // src/components/IntroScreen.tsx
+import { useEffect, useRef, useMemo } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonContent';
 import { AnimatedLesson } from './AnimatedLesson';
+import { useChildSettings } from '../context/ChildSettingsContext';
+import { speak, stopSpeaking } from '../utils/speech';
 
 interface IntroScreenProps {
   question: Question;
@@ -27,6 +30,8 @@ interface IntroScreenProps {
  */
 export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
   const { locale } = useI18n();
+  const { settings } = useChildSettings();
+  const hasPlayedRef = useRef(false);
   const derivedLesson = lesson ?? getLessonContent(question, locale);
 
   const questionExplanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
@@ -34,7 +39,8 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
   const explanation = derivedLesson?.explanation ?? questionExplanation;
   const example = derivedLesson?.example ?? questionExample;
-  const steps = derivedLesson?.steps ?? [];
+  // Memoize steps to prevent the useEffect dependency from changing on every render
+  const steps = useMemo(() => derivedLesson?.steps ?? [], [derivedLesson?.steps]);
   const tip = derivedLesson?.tip;
   const lessonEmoji = derivedLesson?.emoji || '📚';
 
@@ -50,6 +56,69 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
   const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
   const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
+
+  // Auto-play lesson audio when the setting is enabled
+  useEffect(() => {
+    // Only play once per intro screen mount
+    if (hasPlayedRef.current) return;
+    
+    // Check if auto-play is enabled and sounds are enabled
+    if (!settings.autoPlayLessonAudio || !settings.soundsEnabled) return;
+    
+    // Build comprehensive audio text for the lesson
+    const audioIntro = locale === 'he' 
+      ? 'שיעור קצר לפני התרגיל.'
+      : 'Short lesson before the exercise.';
+    
+    const audioParts: string[] = [audioIntro];
+    
+    // Add explanation if available
+    if (explanation) {
+      audioParts.push(explanation);
+    }
+    
+    // Add steps if available
+    if (steps.length > 0) {
+      const stepsIntro = locale === 'he' ? 'שלבי פתרון:' : 'Steps to solve:';
+      audioParts.push(stepsIntro);
+      steps.forEach((step, idx) => {
+        audioParts.push(`${idx + 1}. ${step}`);
+      });
+    }
+    
+    // Add example if available
+    if (example) {
+      const exampleIntro = locale === 'he' ? 'דוגמא:' : 'Example:';
+      audioParts.push(exampleIntro);
+      audioParts.push(example);
+    }
+    
+    // Add tip if available
+    if (tip) {
+      const tipIntro = locale === 'he' ? 'טיפ:' : 'Tip:';
+      audioParts.push(tipIntro);
+      audioParts.push(tip);
+    }
+    
+    // Add the upcoming question
+    const questionIntro = locale === 'he'
+      ? 'והנה התרגיל שלך:'
+      : 'And here is your exercise:';
+    audioParts.push(questionIntro);
+    audioParts.push(questionText);
+    
+    // Combine and speak
+    const fullAudioText = audioParts.join(' ');
+    
+    // Mark as played and start speaking
+    hasPlayedRef.current = true;
+    speak(fullAudioText);
+    
+    // Cleanup: stop speaking when component unmounts
+    return () => {
+      stopSpeaking();
+    };
+  }, [settings.autoPlayLessonAudio, settings.soundsEnabled, explanation, example, steps, tip, questionText, locale]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
