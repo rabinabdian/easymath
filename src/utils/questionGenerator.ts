@@ -2,6 +2,35 @@
 import type { Difficulty, TopicId, Question } from '../types/questions';
 import { wrapLTR } from './questionText';
 
+/**
+ * Generate multiple choice options for a numeric answer
+ * Creates options that are close to the correct answer to make it educational
+ */
+function generateOptions(correctAnswer: number, count: number = 4): number[] {
+  const options = new Set<number>();
+  options.add(correctAnswer);
+  
+  // Add options that are close to the answer (±1, ±2, etc.)
+  const offsets = [-2, -1, 1, 2, -3, 3, -4, 4];
+  
+  for (const offset of offsets) {
+    if (options.size >= count) break;
+    const candidate = correctAnswer + offset;
+    if (candidate >= 0) { // Don't allow negative numbers
+      options.add(candidate);
+    }
+  }
+  
+  // If we still need more options, add some random ones
+  while (options.size < count) {
+    const random = Math.max(0, correctAnswer + Math.floor(Math.random() * 10) - 5);
+    options.add(random);
+  }
+  
+  // Convert to array and sort
+  return Array.from(options).sort((a, b) => a - b);
+}
+
 type AddTemplate = {
   idPrefix: string;
   topic: TopicId;
@@ -55,9 +84,10 @@ export function generateAdditionQuestions(t: AddTemplate): Question[] {
         topic,
         subtopic,
         difficulty,
-        promptHe: `פתור: ${wrapLTR(mathExpr)}`,
+        promptHe: `פתור:\n${wrapLTR(mathExpr)}`,
         promptEn: `Solve: ${mathExpr}`,
         answer: sum,
+        options: generateOptions(sum, 4),
       });
 
       counter++;
@@ -113,9 +143,10 @@ export function generateSubtractionQuestions(t: SubTemplate): Question[] {
         topic,
         subtopic,
         difficulty,
-        promptHe: `פתור: ${wrapLTR(mathExpr)}`,
+        promptHe: `פתור:\n${wrapLTR(mathExpr)}`,
         promptEn: `Solve: ${mathExpr}`,
         answer: result,
+        options: generateOptions(result, 4),
       });
 
       counter++;
@@ -169,9 +200,10 @@ export function generateMultiplicationQuestions(t: MultiplicationTemplate): Ques
         topic,
         subtopic,
         difficulty,
-        promptHe: `פתור: ${wrapLTR(mathExpr)}`,
+        promptHe: `פתור:\n${wrapLTR(mathExpr)}`,
         promptEn: `Solve: ${mathExpr}`,
         answer: product,
+        options: generateOptions(product, 4),
       });
 
       counter++;
@@ -280,6 +312,7 @@ export function generateWordProblems(cfg: WordTemplateConfig): Question[] {
       promptHe,
       promptEn,
       answer,
+      options: generateOptions(answer, 4),
     });
 
     counter++;

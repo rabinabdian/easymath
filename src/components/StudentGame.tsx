@@ -10,6 +10,7 @@ import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
+import { AnimatedLesson } from './AnimatedLesson';
 import { APP_VERSION } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
@@ -50,6 +51,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
   // New state for interactive exercise system
   const [showIntro, setShowIntro] = useState(true); // Show intro before each question
+  const [showAnimation, setShowAnimation] = useState(false); // Show animation for arithmetic questions
   const [attempts, setAttempts] = useState(0); // Track attempts for current question
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
   const [showHint, setShowHint] = useState<1 | 2 | null>(null); // Show progressive hints (1 or 2)
@@ -238,13 +240,14 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     setTimeLeft(TIME_PER_QUESTION);
     setAttempts(0); // Reset attempts for new question
     setShowIntro(true); // Show intro for new question
+    setShowAnimation(false); // Reset animation
     setShowAutoSolve(false); // Reset auto-solve
     setShowHint(null); // Reset hint display
   }, [index, finished, current]);
 
-  // Timer countdown (only when not showing intro, auto-solve, or hints)
+  // Timer countdown (only when not showing intro, animation, auto-solve, or hints)
   useEffect(() => {
-    if (!current || finished || showIntro || showAutoSolve || showHint) return;
+    if (!current || finished || showIntro || showAnimation || showAutoSolve || showHint) return;
     if (timeLeft <= 0) {
       // Time's up - count as wrong attempt
       handleWrong(t('student.timeUp'));
@@ -256,7 +259,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     }, 1000);
 
     return () => clearTimeout(id);
-  }, [timeLeft, current, finished, showIntro, showAutoSolve, showHint, t]);
+  }, [timeLeft, current, finished, showIntro, showAnimation, showAutoSolve, showHint, t]);
 
   // Call onFinished when game is completed successfully
   useEffect(() => {
@@ -355,9 +358,59 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
       <IntroScreen
         question={current}
         lesson={lessonContent}
-        onContinue={() => setShowIntro(false)}
+        onContinue={() => {
+          setShowIntro(false);
+          // Show animation for arithmetic questions (addition/subtraction)
+          if (current.topic === 'addition' || current.topic === 'subtraction') {
+            setShowAnimation(true);
+          }
+        }}
         onBack={onExit}
       />
+    );
+  }
+
+  // Show animation for arithmetic questions to help visualize the problem
+  if (showAnimation) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+        <div className="mx-auto max-w-3xl px-4 py-8">
+          {/* Header */}
+          <div className="mb-6 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={onExit}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            >
+              {t('student.backToTeacher')}
+            </button>
+            <div className="text-sm font-semibold text-slate-700 ltr-numbers">
+              שאלה {index + 1} מתוך {totalQuestions}
+            </div>
+          </div>
+
+          {/* Animated Lesson */}
+          <AnimatedLesson 
+            question={current}
+            onAnimationComplete={() => {
+              // Animation complete, user can now answer
+            }}
+            showAnswer={false}
+          />
+
+          {/* Continue Button */}
+          <div className="mt-8 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAnimation(false)}
+              className="rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 px-8 py-4 text-xl font-bold text-white shadow-lg hover:from-blue-600 hover:to-indigo-700 transition-all transform hover:scale-105"
+            >
+              <span className="mr-2">✓</span>
+              הבנתי! עכשיו אני רוצה לענות
+            </button>
+          </div>
+        </div>
+      </div>
     );
   }
 

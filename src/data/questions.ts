@@ -505,6 +505,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('3 + 2 =')}`,
     promptEn: 'Solve: 3 + 2 = ?',
     answer: 5,
+    options: [3, 4, 5, 6],
   },
   {
     id: 'add_basic_002',
@@ -514,6 +515,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('1 + 6 =')}`,
     promptEn: 'Solve: 1 + 6 = ?',
     answer: 7,
+    options: [5, 6, 7, 8],
   },
   {
     id: 'add_basic_003',
@@ -523,6 +525,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('4 + 5 =')}`,
     promptEn: 'Solve: 4 + 5 = ?',
     answer: 9,
+    options: [7, 8, 9, 10],
   },
   {
     id: 'add_basic_004',
@@ -541,6 +544,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('4 + 3 =')}`,
     promptEn: 'Solve: 4 + 3 = ?',
     answer: 7,
+    options: [5, 6, 7, 8],
   },
   {
     id: 'add_basic_006',
@@ -550,6 +554,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('2 + 5 =')}`,
     promptEn: 'Solve: 2 + 5 = ?',
     answer: 7,
+    options: [5, 6, 7, 8],
   },
   {
     id: 'add_basic_007',
@@ -559,6 +564,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('1 + 1 =')}`,
     promptEn: 'Solve: 1 + 1 = ?',
     answer: 2,
+    options: [1, 2, 3, 4],
   },
   {
     id: 'add_basic_008',
@@ -568,6 +574,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('5 + 4 =')}`,
     promptEn: 'Solve: 5 + 4 = ?',
     answer: 9,
+    options: [7, 8, 9, 10],
   },
   {
     id: 'add_basic_009',
@@ -577,6 +584,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('3 + 3 =')}`,
     promptEn: 'Solve: 3 + 3 = ?',
     answer: 6,
+    options: [4, 5, 6, 7],
   },
   {
     id: 'add_basic_010',
@@ -586,6 +594,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('2 + 2 =')}`,
     promptEn: 'Solve: 2 + 2 = ?',
     answer: 4,
+    options: [2, 3, 4, 5],
   },
 
   // ---- בינוני: השלמה ל-10, דומינו, מילולי ----
@@ -808,6 +817,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('5 - 2 =')}`,
     promptEn: 'Solve: 5 - 2 = ?',
     answer: 3,
+    options: [1, 2, 3, 4],
   },
   {
     id: 'sub_basic_002',
@@ -817,6 +827,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('9 - 4 =')}`,
     promptEn: 'Solve: 9 - 4 = ?',
     answer: 5,
+    options: [3, 4, 5, 6],
   },
   {
     id: 'sub_basic_003',
@@ -835,6 +846,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('7 - 3 =')}`,
     promptEn: 'Solve: 7 - 3 = ?',
     answer: 4,
+    options: [2, 3, 4, 5],
   },
   {
     id: 'sub_basic_005',
@@ -844,6 +856,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('8 - 2 =')}`,
     promptEn: 'Solve: 8 - 2 = ?',
     answer: 6,
+    options: [4, 5, 6, 7],
   },
   {
     id: 'sub_basic_006',
@@ -853,6 +866,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('6 - 1 =')}`,
     promptEn: 'Solve: 6 - 1 = ?',
     answer: 5,
+    options: [3, 4, 5, 6],
   },
   {
     id: 'sub_basic_007',
@@ -862,6 +876,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('10 - 5 =')}`,
     promptEn: 'Solve: 10 - 5 = ?',
     answer: 5,
+    options: [3, 4, 5, 6],
   },
   {
     id: 'sub_basic_008',
@@ -871,6 +886,7 @@ const MANUAL_QUESTIONS: Question[] = [
     promptHe: `פתור:\n${wrapLTR('4 - 4 =')}`,
     promptEn: 'Solve: 4 - 4 = ?',
     answer: 0,
+    options: [0, 1, 2, 4],
   },
 
   // ---- בינוני: מילולי, לוח 10 ----

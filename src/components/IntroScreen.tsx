@@ -147,9 +147,11 @@ export function IntroScreen({ question, onContinue, onBack, lesson }: IntroScree
         </div>
 
         {/* Animated Visual Lesson - Interactive animation for the topic */}
-        <div className="mb-8 animate-fade-slide-up">
-          <AnimatedLesson question={question} locale={locale} />
-        </div>
+        {(question.topic === 'addition' || question.topic === 'subtraction') && (
+          <div className="mb-8 animate-fade-slide-up">
+            <AnimatedLesson question={question} showAnswer={false} />
+          </div>
+        )}
 
         {/* Explanation Card with Speaker */}
         {explanation && (
