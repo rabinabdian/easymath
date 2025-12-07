@@ -1,5 +1,6 @@
 // src/components/IntroScreen.tsx
 import { useEffect, useRef, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
@@ -31,6 +32,7 @@ interface IntroScreenProps {
 export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
   const { locale } = useI18n();
   const { settings } = useChildSettings();
+  const navigate = useNavigate();
   const hasPlayedRef = useRef(false);
   const derivedLesson = lesson ?? getLessonContent(question, locale);
 
@@ -56,6 +58,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
   const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
   const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
+  const backButton = locale === 'he' ? 'חזרה' : 'Back';
 
   // Auto-play lesson audio when the setting is enabled
   useEffect(() => {
@@ -123,6 +126,20 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="mx-auto max-w-2xl px-4 py-8">
+        {/* Back to Home Button */}
+        <div className="flex items-center gap-3 mb-6">
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 transition-colors"
+            style={{ direction: 'ltr' }}
+            aria-label={locale === 'he' ? 'חזרה למסך הראשי' : 'Back to Home'}
+          >
+            <span className="text-lg">←</span>
+            <span>{backButton}</span>
+          </button>
+        </div>
+
         {/* Header */}
         <div className="mb-6 text-center animate-fade-slide-down">
           <div className="mb-3 text-6xl animate-bounce-slow">{lessonEmoji}</div>
