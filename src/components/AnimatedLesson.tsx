@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Question } from '../types/questions';
 import { InlineSpeaker } from './SpeakerButton';
+import { speak } from '../utils/speech';
 
 interface AnimatedLessonProps {
   question: Question;
@@ -67,7 +68,12 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
     if (isPlaying) return;
     setIsPlaying(true);
     setVisibleCount(0);
-  }, [isPlaying]);
+    // Start voice narration
+    const narrationText = isHebrew 
+      ? `לחץ לראות איך סופרים. בואו נספור ביחד עד ${displayCount}.`
+      : `Click to see how to count. Let's count together to ${displayCount}.`;
+    speak(narrationText);
+  }, [isPlaying, isHebrew, displayCount]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -169,7 +175,12 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
     if (isPlaying) return;
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+    // Start voice narration for addition animation
+    const narrationText = isHebrew
+      ? `לחץ לראות איך מחברים. יש לנו ${num1} ועוד ${num2}. כשנחבר אותם ביחד נקבל ${sum}.`
+      : `Click to see how to add. We have ${num1} plus ${num2}. When we add them together we get ${sum}.`;
+    speak(narrationText);
+  }, [isPlaying, isHebrew, num1, num2, sum]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -297,7 +308,12 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
     setIsPlaying(true);
     setStep(0);
     setRemovedCount(0);
-  }, [isPlaying]);
+    // Start voice narration
+    const narrationText = isHebrew
+      ? `לחץ לראות איך מחסרים. יש לנו ${num1}. נוריד ${num2}. נשאר לנו ${result}.`
+      : `Click to see how to subtract. We have ${num1}. We take away ${num2}. We are left with ${result}.`;
+    speak(narrationText);
+  }, [isPlaying, isHebrew, num1, num2, result]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -448,7 +464,12 @@ function MultiplicationAnimation({ question, locale, className }: AnimatedLesson
     setIsPlaying(true);
     setVisibleGroups(0);
     setShowResult(false);
-  }, [isPlaying]);
+    // Start voice narration
+    const narrationText = isHebrew
+      ? `לחץ לראות קבוצות. יש לנו ${groups} קבוצות ובכל קבוצה ${itemsPerGroup} פריטים. ביחד יש ${product}.`
+      : `Click to see groups. We have ${groups} groups with ${itemsPerGroup} items each. Together there are ${product}.`;
+    speak(narrationText);
+  }, [isPlaying, isHebrew, groups, itemsPerGroup, product]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -569,7 +590,12 @@ function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) 
     setIsPlaying(true);
     setStep(0);
     setPairsFormed(0);
-  }, [isPlaying]);
+    // Start voice narration
+    const narrationText = isHebrew
+      ? `לחץ לראות את הבדיקה. בואו נבדוק אם ${number} הוא זוגי או אי-זוגי. נסדר בזוגות. ${isEven ? 'כולם בזוגות! זה זוגי.' : 'נשאר אחד לבד! זה אי-זוגי.'}`
+      : `Click to see the check. Let's check if ${number} is even or odd. We'll pair them up. ${isEven ? 'Everyone has a partner! It is even.' : 'One is left alone! It is odd.'}`;
+    speak(narrationText);
+  }, [isPlaying, isHebrew, number, isEven]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -711,7 +737,12 @@ function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
     if (isPlaying) return;
     setIsPlaying(true);
     setCurrentShape(0);
-  }, [isPlaying]);
+    // Start voice narration
+    const narrationText = isHebrew
+      ? `לחץ לראות צורות. צורות שונות במספר הצלעות שלהן. משולש יש 3 צלעות, ריבוע 4, מחומש 5, ומשושה 6 צלעות.`
+      : `Click to see shapes. Shapes differ in the number of sides. Triangle has 3 sides, square has 4, pentagon has 5, and hexagon has 6 sides.`;
+    speak(narrationText);
+  }, [isPlaying, isHebrew]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -814,7 +845,12 @@ function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
     if (isPlaying) return;
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+    // Start voice narration for symmetry animation
+    const narrationText = isHebrew
+      ? `לחץ לראות סימטריה. סימטריה זה כששני צדדים של צורה נראים אותו דבר. כמו פרפר או לב. אם נקפל על קו האמצע, הצדדים יתאימו.`
+      : `Click to see symmetry. Symmetry is when both sides of a shape look the same. Like a butterfly or heart. If we fold on the middle line, the sides match.`;
+    speak(narrationText);
+  }, [isPlaying, isHebrew]);
 
   useEffect(() => {
     if (!isPlaying) return;
