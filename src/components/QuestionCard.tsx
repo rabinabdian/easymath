@@ -9,6 +9,11 @@ import { InlineSpeaker, SpeakerButton } from './SpeakerButton';
 interface QuestionCardProps {
   question: Question;
   showOptions?: boolean;
+  /**
+   * Optional external options override (used when we auto-generate options on the fly)
+   */
+  options?: (number | string)[];
+  selectedOption?: string | null;
   onOptionClick?: (value: string) => void;
   className?: string;
 }
@@ -26,6 +31,8 @@ interface QuestionCardProps {
 export function QuestionCard({
   question,
   showOptions = false,
+  options,
+  selectedOption,
   onOptionClick,
   className = ''
 }: QuestionCardProps) {
@@ -33,6 +40,7 @@ export function QuestionCard({
   const assetUrl = getAssetUrl(question.assetId);
   const questionText = getQuestionPrompt(question, locale);
   const speakerLabel = locale === 'he' ? 'הקרא את השאלה' : 'Read the question';
+  const displayOptions = options ?? question.options;
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
@@ -81,18 +89,27 @@ export function QuestionCard({
         )}
 
         {/* Multiple Choice Options */}
-        {showOptions && question.options && (
+        {showOptions && displayOptions && displayOptions.length > 0 && (
           <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {question.options.map((opt) => (
-              <button
-                key={opt.toString()}
-                type="button"
-                onClick={() => onOptionClick?.(String(opt))}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center text-base font-medium hover:border-blue-500 hover:bg-blue-50 transition-colors"
-              >
-                {opt}
-              </button>
-            ))}
+            {displayOptions.map((opt) => {
+              const value = String(opt);
+              const isSelected = selectedOption === value;
+
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => onOptionClick?.(value)}
+                  className={`rounded-xl border px-3 py-2 text-center text-base font-medium transition-colors ${
+                    isSelected
+                      ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                      : 'border-slate-200 bg-slate-50 text-slate-900 hover:border-blue-500 hover:bg-blue-50'
+                  }`}
+                >
+                  {value}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
