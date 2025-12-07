@@ -12,6 +12,7 @@ import { speak, stopSpeaking } from '../utils/speech';
 interface IntroScreenProps {
   question: Question;
   onContinue: () => void;
+  onExit: () => void;
   lesson?: LocalizedLessonContent;
 }
 
@@ -28,7 +29,7 @@ interface IntroScreenProps {
  * - Displays the upcoming question to prepare the student
  * - Interactive audio with speaker icons
  */
-export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
+export function IntroScreen({ question, onContinue, onExit, lesson }: IntroScreenProps) {
   const { locale } = useI18n();
   const { settings } = useChildSettings();
   const hasPlayedRef = useRef(false);
@@ -56,6 +57,12 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
   const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
   const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
+  const backButtonLabel = locale === 'he' ? 'חזרה למסך הראשי' : 'Back to main screen';
+
+  const handleExit = () => {
+    stopSpeaking();
+    onExit();
+  };
 
   // Auto-play lesson audio when the setting is enabled
   useEffect(() => {
@@ -123,6 +130,17 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="mx-auto max-w-2xl px-4 py-8">
+        <div className={`mb-4 flex ${locale === 'he' ? 'justify-end' : 'justify-start'}`}>
+          <button
+            type="button"
+            onClick={handleExit}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          >
+            <span className="text-lg">🏠</span>
+            {backButtonLabel}
+          </button>
+        </div>
+
         {/* Header */}
         <div className="mb-6 text-center animate-fade-slide-down">
           <div className="mb-3 text-6xl animate-bounce-slow">{lessonEmoji}</div>

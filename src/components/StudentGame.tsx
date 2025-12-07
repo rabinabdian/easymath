@@ -355,6 +355,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
       <IntroScreen
         question={current}
         lesson={lessonContent}
+        onExit={onExit}
         onContinue={() => setShowIntro(false)}
       />
     );
