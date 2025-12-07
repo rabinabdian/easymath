@@ -1,5 +1,5 @@
 // src/components/StudentGame.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
@@ -12,6 +12,10 @@ import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
+import { useChildSettings } from '../context/ChildSettingsContext';
+import { speak } from '../utils/speech';
+import { TOPICS } from '../data/topics';
+import { getTopicLesson } from '../data/topicLessons';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -37,6 +41,7 @@ const MAX_ATTEMPTS_PER_QUESTION = 3; // Maximum attempts before auto-solve
 
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
   const { t, locale } = useI18n();
+  const { settings } = useChildSettings();
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -49,6 +54,9 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [attempts, setAttempts] = useState(0); // Track attempts for current question
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
   const [showHint, setShowHint] = useState<1 | 2 | null>(null); // Show progressive hints (1 or 2)
+  
+  // Track if welcome message was already spoken
+  const hasWelcomedRef = useRef(false);
 
   const current = questions[index];
   const totalQuestions = questions.length;
@@ -227,6 +235,56 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const handleOptionClick = (val: string) => {
     checkAnswer(val);
   };
+
+  // Automatic welcome message when entering exercises
+  useEffect(() => {
+    // Only speak once when component first mounts
+    if (hasWelcomedRef.current || questions.length === 0) return;
+    
+    // Check if sounds are enabled
+    if (!settings.soundsEnabled) return;
+    
+    const firstQuestion = questions[0];
+    if (!firstQuestion) return;
+    
+    // Get student name
+    const studentName = settings.childName || 'ילד';
+    
+    // Get topic information
+    const topicId = firstQuestion.topic;
+    const topic = TOPICS.find(t => t.id === topicId);
+    const topicLabel = topic ? topic.label : 'מתמטיקה';
+    
+    // Get topic explanation
+    const topicLesson = getTopicLesson(topicId, firstQuestion.subtopic);
+    const topicExplanation = topicLesson 
+      ? (locale === 'he' ? topicLesson.explanationHe : topicLesson.explanationEn)
+      : '';
+    
+    // Build welcome message
+    const welcomeParts: string[] = [];
+    
+    // Greeting with student name
+    welcomeParts.push(`שלום ${studentName}`);
+    
+    // Explain about exercises and topic
+    const exercisesCount = questions.length;
+    const exercisesText = exercisesCount === 1 
+      ? 'תרגיל אחד' 
+      : `${exercisesCount} תרגילים`;
+    
+    welcomeParts.push(`נעשה עכשיו ${exercisesText} בנושא ${topicLabel}`);
+    
+    // Add topic explanation if available
+    if (topicExplanation) {
+      welcomeParts.push(topicExplanation);
+    }
+    
+    // Combine and speak
+    const welcomeMessage = welcomeParts.join('. ');
+    hasWelcomedRef.current = true;
+    speak(welcomeMessage);
+  }, [questions, settings.childName, settings.soundsEnabled, locale]);
 
   // Initialize timer and reset state for each new question
   useEffect(() => {
