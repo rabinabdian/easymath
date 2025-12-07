@@ -1,5 +1,5 @@
 // src/components/StudentGame.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
@@ -13,6 +13,7 @@ import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
+import { AnimatedLesson } from './AnimatedLesson';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -36,10 +37,313 @@ interface Props {
 const TIME_PER_QUESTION = 30; // seconds
 const MAX_ATTEMPTS_PER_QUESTION = 3; // Maximum attempts before auto-solve
 
+const HEBREW_NUMBER_WORDS: Record<number, string[]> = {
+  0: ['אפס'],
+  1: ['אחד', 'אחת'],
+  2: ['שתיים', 'שניים', 'שתים', 'שתי'],
+  3: ['שלוש', 'שלושה'],
+  4: ['ארבע', 'ארבעה'],
+  5: ['חמש', 'חמישה'],
+  6: ['שש'],
+  7: ['שבע'],
+  8: ['שמונה'],
+  9: ['תשע'],
+  10: ['עשר'],
+  11: ['אחת עשרה', 'אחד עשר'],
+  12: ['שתים עשרה', 'שניים עשר'],
+};
+
+const EN_NUMBER_WORDS: Record<number, string[]> = {
+  0: ['zero'],
+  1: ['one'],
+  2: ['two'],
+  3: ['three'],
+  4: ['four'],
+  5: ['five'],
+  6: ['six'],
+  7: ['seven'],
+  8: ['eight'],
+  9: ['nine'],
+  10: ['ten'],
+  11: ['eleven'],
+  12: ['twelve'],
+  13: ['thirteen'],
+  14: ['fourteen'],
+  15: ['fifteen'],
+  16: ['sixteen'],
+  17: ['seventeen'],
+  18: ['eighteen'],
+  19: ['nineteen'],
+  20: ['twenty'],
+};
+
+function normalizeAnswerValue(value: string): string {
+  return value
+    .trim()
+    .replace(/\s+/g, '')
+    .replace(/[־–—]/g, '-')
+    .replace(/[,،]/g, ',')
+    .toLowerCase();
+}
+
+function deterministicShuffle<T>(values: T[], seed: string): T[] {
+  const result = [...values];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  for (let i = result.length - 1; i > 0; i -= 1) {
+    hash = (hash * 1664525 + 1013904223) >>> 0;
+    const j = hash % (i + 1);
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+function buildNumericChoiceNumbers(answer: number, seed: string): number[] {
+  const set = new Set<number>();
+  set.add(answer);
+  const offsets = [-3, -2, -1, 1, 2, 3, -4, 4, 5, -5, 6, -6];
+  for (const delta of offsets) {
+    if (set.size >= 4) break;
+    const candidate = answer + delta;
+    if (candidate >= 0) {
+      set.add(candidate);
+    }
+  }
+  while (set.size < 4) {
+    set.add(answer + set.size);
+  }
+  return deterministicShuffle(Array.from(set), `${seed}-numeric`);
+}
+
+function formatUsingSegments(template: string, numbers: number[]): string {
+  const segments = template.split(/-?\d+/);
+  let result = segments[0] ?? '';
+  numbers.forEach((num, idx) => {
+    result += String(num);
+    if (segments[idx + 1] !== undefined) {
+      result += segments[idx + 1];
+    }
+  });
+  return result.trim();
+}
+
+function buildSequenceCandidates(answerStr: string, seed: string): string[] {
+  const matches = answerStr.match(/-?\d+/g);
+  if (!matches || matches.length < 2) return [];
+  const numbers = matches.map(Number);
+  const variants: number[][] = [numbers];
+  const deltas = [1, -1, 2, -2];
+  deltas.forEach((delta) => {
+    const candidate = numbers.map((num) => num + delta);
+    if (candidate.some((num) => num < 0)) return;
+    variants.push(candidate);
+  });
+  const tweakLast = numbers.map((num, idx) =>
+    idx === numbers.length - 1 ? num + 2 : num
+  );
+  if (!tweakLast.some((num) => num < 0)) {
+    variants.push(tweakLast);
+  }
+
+  const seen = new Set<string>();
+  const formatted: string[] = [];
+  variants.forEach((variant) => {
+    const value = formatUsingSegments(answerStr, variant);
+    const key = normalizeAnswerValue(value);
+    if (!seen.has(key)) {
+      seen.add(key);
+      formatted.push(value);
+    }
+  });
+
+  return deterministicShuffle(formatted, `${seed}-sequence`);
+}
+
+function buildSingleNumberCandidates(answerStr: string, value: number, seed: string): string[] {
+  const numbers = buildNumericChoiceNumbers(value, `${seed}-single`);
+  const seen = new Set<string>();
+  const formatted = numbers.map((num) => {
+    const candidate = formatUsingSegments(answerStr, [num]);
+    const key = normalizeAnswerValue(candidate);
+    if (seen.has(key)) return null;
+    seen.add(key);
+    return candidate;
+  }).filter(Boolean) as string[];
+
+  if (!formatted.some((opt) => normalizeAnswerValue(opt) === normalizeAnswerValue(answerStr))) {
+    formatted.unshift(answerStr);
+  }
+
+  return deterministicShuffle(formatted, `${seed}-single-options`);
+}
+
+function detectNumberWord(answerStr: string): { value: number; language: 'he' | 'en' } | null {
+  const normalized = answerStr
+    .trim()
+    .toLowerCase()
+    .replace(/[״"׳',.?]/g, '')
+    .replace(/\s+/g, ' ');
+
+  for (const [value, variants] of Object.entries(HEBREW_NUMBER_WORDS)) {
+    if (variants.some((variant) => variant === normalized)) {
+      return { value: Number(value), language: 'he' };
+    }
+  }
+
+  for (const [value, variants] of Object.entries(EN_NUMBER_WORDS)) {
+    if (variants.some((variant) => variant === normalized)) {
+      return { value: Number(value), language: 'en' };
+    }
+  }
+
+  return null;
+}
+
+function numberToWord(value: number, language: 'he' | 'en'): string | null {
+  const map = language === 'he' ? HEBREW_NUMBER_WORDS : EN_NUMBER_WORDS;
+  const variants = map[value];
+  if (!variants || !variants.length) return null;
+  return variants[0];
+}
+
+function buildWordCandidates(answerStr: string, value: number, language: 'he' | 'en', seed: string): string[] {
+  const numbers = buildNumericChoiceNumbers(value, `${seed}-word`);
+  const seen = new Set<string>();
+  const formatted = numbers.map((num) => {
+    const word = numberToWord(num, language) ?? String(num);
+    const key = normalizeAnswerValue(word);
+    if (seen.has(key)) return null;
+    seen.add(key);
+    return word;
+  }).filter(Boolean) as string[];
+
+  const answerKey = normalizeAnswerValue(answerStr);
+  if (!seen.has(answerKey)) {
+    formatted.unshift(answerStr);
+  } else {
+    const idx = formatted.findIndex((opt) => normalizeAnswerValue(opt) === answerKey);
+    if (idx >= 0) formatted[idx] = answerStr;
+  }
+
+  return deterministicShuffle(formatted, `${seed}-word-options`);
+}
+
+function buildFallbackCandidates(answerStr: string, locale: 'he' | 'en'): string[] {
+  const fallbackPool =
+    locale === 'he'
+      ? ['אני צריך רמז', 'אולי תשובה אחרת', 'אני לא בטוח']
+      : ['I need a hint', 'Maybe another answer', "I'm not sure"];
+  return [answerStr, ...fallbackPool];
+}
+
+function finalizeOptions(baseAnswer: string, candidates: string[], locale: 'he' | 'en', seed: string): string[] {
+  const baseKey = normalizeAnswerValue(baseAnswer);
+  const store = new Map<string, string>();
+
+  const addCandidate = (value: string) => {
+    if (!value) return;
+    const key = normalizeAnswerValue(value);
+    if (!store.has(key)) {
+      store.set(key, value.trim());
+    }
+  };
+
+  addCandidate(baseAnswer);
+  candidates.forEach(addCandidate);
+
+  if (!store.has(baseKey)) {
+    store.set(baseKey, baseAnswer.trim());
+  }
+
+  let distractors = Array.from(store.entries())
+    .filter(([key]) => key !== baseKey)
+    .map(([, value]) => value);
+
+  if (distractors.length < 1) {
+    const fallbackPool =
+      locale === 'he'
+        ? ['זה לא נראה נכון', 'תשובה אחרת']
+        : ['This looks wrong', 'Another choice'];
+    fallbackPool.forEach(addCandidate);
+    distractors = Array.from(store.entries())
+      .filter(([key]) => key !== baseKey)
+      .map(([, value]) => value);
+  }
+
+  const shuffledDistractors = deterministicShuffle(distractors, `${seed}-distractors`);
+  const limitedDistractors = shuffledDistractors.slice(0, Math.min(3, shuffledDistractors.length));
+
+  const merged = [store.get(baseKey) ?? baseAnswer.trim(), ...limitedDistractors];
+  if (merged.length < 2) {
+    merged.push(locale === 'he' ? 'לא בטוח' : "I'm not sure");
+  }
+
+  return deterministicShuffle(merged, `${seed}-final`);
+}
+
+function generateChoiceOptions(question: Question, locale: 'he' | 'en'): string[] {
+  const answerStr = String(question.answer).trim();
+  const seed = question.id || answerStr || 'question';
+
+  if (question.options && question.options.length > 0) {
+    return finalizeOptions(answerStr, question.options.map((opt) => String(opt)), locale, seed);
+  }
+
+  if (typeof question.answer === 'number') {
+    return finalizeOptions(
+      answerStr,
+      buildNumericChoiceNumbers(question.answer, seed).map((num) => String(num)),
+      locale,
+      seed
+    );
+  }
+
+  if (/^-?\d+(\.\d+)?$/.test(answerStr)) {
+    return finalizeOptions(
+      answerStr,
+      buildNumericChoiceNumbers(Number(answerStr), seed).map((num) => String(num)),
+      locale,
+      seed
+    );
+  }
+
+  const multiNumbers = answerStr.match(/-?\d+/g);
+  if (multiNumbers && multiNumbers.length >= 2) {
+    return finalizeOptions(answerStr, buildSequenceCandidates(answerStr, seed), locale, seed);
+  }
+
+  const wordMatch = detectNumberWord(answerStr);
+  if (wordMatch) {
+    return finalizeOptions(
+      answerStr,
+      buildWordCandidates(answerStr, wordMatch.value, wordMatch.language, seed),
+      locale,
+      seed
+    );
+  }
+
+  const singleNumberMatch = answerStr.match(/-?\d+/);
+  if (singleNumberMatch) {
+    return finalizeOptions(
+      answerStr,
+      buildSingleNumberCandidates(answerStr, Number(singleNumberMatch[0]), seed),
+      locale,
+      seed
+    );
+  }
+
+  return finalizeOptions(answerStr, buildFallbackCandidates(answerStr, locale), locale, seed);
+}
+
+function answersMatch(userValue: string, correctValue: string): boolean {
+  return normalizeAnswerValue(userValue) === normalizeAnswerValue(correctValue);
+}
+
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
   const { t, locale } = useI18n();
   const [index, setIndex] = useState(0);
-  const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIME_PER_QUESTION);
@@ -53,6 +357,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [attempts, setAttempts] = useState(0); // Track attempts for current question
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
   const [showHint, setShowHint] = useState<1 | 2 | null>(null); // Show progressive hints (1 or 2)
+  const [selectedOption, setSelectedOption] = useState<string | null>(null); // Track selected answer
+  const [showLearningAid, setShowLearningAid] = useState(false);
 
   const current = questions[index];
   const totalQuestions = questions.length;
@@ -66,6 +372,10 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     ? buildUnderstandingNarration(current, locale, { includeAnswer: true })
     : '';
   const lessonContent = current ? getLessonContent(current, locale) : undefined;
+  const derivedOptions = useMemo(
+    () => (current ? generateChoiceOptions(current, locale) : []),
+    [current, locale]
+  );
 
   // Helper function to get hint text based on attempt and locale
   function getHintText(hintNumber: 1 | 2): string | undefined {
@@ -132,6 +442,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
       setTimeout(() => {
         setFeedback(null);
         setShowAutoSolve(true);
+        setSelectedOption(null);
       }, 1500);
       return;
     }
@@ -149,6 +460,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         setTimeout(() => {
           setFeedback(null);
           setShowHint(hintNumber);
+          setSelectedOption(null);
         }, 1000);
         return;
       }
@@ -164,13 +476,13 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
     setTimeout(() => {
       setFeedback(null);
-      setInput('');
+      setSelectedOption(null);
     }, 2000);
   }
 
   function handleHintDismiss() {
     setShowHint(null);
-    setInput('');
+    setSelectedOption(null);
   }
 
   function handleCorrect() {
@@ -191,7 +503,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
     setTimeout(() => {
       setFeedback(null);
-      setInput('');
+      setSelectedOption(null);
       const nextIndex = index + 1;
       if (nextIndex >= totalQuestions) {
         setFinished(true);
@@ -204,7 +516,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   function handleAutoSolveContinue() {
     // After auto-solve, move to next question (no points awarded)
     setShowAutoSolve(false);
-    setInput('');
+    setSelectedOption(null);
+    setShowLearningAid(false);
     const nextIndex = index + 1;
     if (nextIndex >= totalQuestions) {
       setFinished(true);
@@ -213,22 +526,25 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     }
   }
 
-  function checkAnswer(valueFromClick?: string) {
+  function checkAnswer(selectedValue: string) {
     if (!current || finished) return;
 
     const correctStr = String(current.answer).trim();
-    const userStr = (valueFromClick ?? input).trim();
+    const fromQuestionOptions = Array.isArray(current.options)
+      ? current.options.map((opt) => String(opt))
+      : [];
 
     const isCorrect =
-      userStr === correctStr ||
-      (Array.isArray(current.options) &&
-        current.options.some((o) => String(o) === userStr));
+      answersMatch(selectedValue, correctStr) ||
+      fromQuestionOptions.some((opt) => answersMatch(selectedValue, opt));
 
     if (isCorrect) handleCorrect();
     else handleWrong();
   }
 
   const handleOptionClick = (val: string) => {
+    if (finished) return;
+    setSelectedOption(val);
     checkAnswer(val);
   };
 
@@ -240,6 +556,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     setShowIntro(true); // Show intro for new question
     setShowAutoSolve(false); // Reset auto-solve
     setShowHint(null); // Reset hint display
+    setSelectedOption(null);
+    setShowLearningAid(false);
   }, [index, finished, current]);
 
   // Timer countdown (only when not showing intro, auto-solve, or hints)
@@ -536,35 +854,46 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         <div className="rounded-2xl bg-white p-5 shadow-sm">
           <QuestionCard
             question={current}
-            showOptions={!!current.options}
+            showOptions={derivedOptions.length > 0}
+            options={derivedOptions}
+            selectedOption={selectedOption}
             onOptionClick={handleOptionClick}
           />
-
-          {!current.options && (
-            <div className="mb-4 flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') checkAnswer();
-                }}
-                placeholder={t('student.placeholder')}
-                className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
-              />
-              <button
-                type="button"
-                onClick={() => checkAnswer()}
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-              >
-                {t('student.check')}
-              </button>
-            </div>
-          )}
 
           {feedback && (
             <div className="rounded-xl bg-slate-100 px-3 py-2 text-sm font-medium text-slate-800">
               {feedback}
+            </div>
+          )}
+        </div>
+
+        {/* Animated helper panel */}
+        <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2 text-blue-900 font-semibold">
+              <span className="text-xl" aria-hidden="true">🎬</span>
+              <span>
+                {locale === 'he' ? 'צריך לראות איך פותרים עם אנימציה?' : 'Need to see an animated help?'}
+              </span>
+            </div>
+            <button
+              type="button"
+              className="rounded-xl bg-white/70 px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-white"
+              onClick={() => setShowLearningAid((prev) => !prev)}
+            >
+              {showLearningAid
+                ? (locale === 'he' ? 'סגור אנימציה' : 'Hide animation')
+                : (locale === 'he' ? 'הפעל אנימציה' : 'Play animation')}
+            </button>
+          </div>
+
+          {showLearningAid && (
+            <div className="mt-4">
+              <AnimatedLesson
+                question={current}
+                locale={locale}
+                className="border border-blue-100 shadow-none"
+              />
             </div>
           )}
         </div>
