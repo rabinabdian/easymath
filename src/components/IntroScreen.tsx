@@ -1,6 +1,6 @@
 // src/components/IntroScreen.tsx
 import { useEffect, useRef, useMemo } from 'react';
-import type { Question } from '../types/questions';
+import type { Question, TopicId } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
 import { getQuestionPrompt } from '../utils/questionText';
@@ -8,6 +8,31 @@ import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonCo
 import { AnimatedLesson } from './AnimatedLesson';
 import { useChildSettings } from '../context/ChildSettingsContext';
 import { speak, stopSpeaking } from '../utils/speech';
+
+const TOPIC_LABELS_HE: Record<TopicId, string> = {
+  numbers: 'מספרים',
+  addition: 'חיבור',
+  subtraction: 'חיסור',
+  multiplication: 'כפל',
+  evenOdd: 'זוגי ואי-זוגי',
+  geometry: 'גיאומטריה',
+};
+
+const TOPIC_LABELS_EN: Record<TopicId, string> = {
+  numbers: 'number sense',
+  addition: 'addition',
+  subtraction: 'subtraction',
+  multiplication: 'multiplication',
+  evenOdd: 'even and odd numbers',
+  geometry: 'shapes and geometry',
+};
+
+function getTopicDisplayName(topicId: TopicId, locale: 'he' | 'en'): string {
+  const fallback = locale === 'he' ? 'הנושא שלנו היום' : 'our topic today';
+  const label =
+    locale === 'he' ? TOPIC_LABELS_HE[topicId] : TOPIC_LABELS_EN[topicId];
+  return label ?? fallback;
+}
 
 interface IntroScreenProps {
   question: Question;
@@ -56,6 +81,25 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
   const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
   const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
+  const studentName =
+    settings.childName?.trim() || (locale === 'he' ? 'חבר יקר' : 'friend');
+  const topicDisplayName = getTopicDisplayName(question.topic, locale);
+  const exercisesOverview =
+    locale === 'he'
+      ? 'יש לנו סדרת תרגילים קצרה ומודרכת, נתחיל בהסבר ואז נפתור יחד.'
+      : 'We have a short, guided set of exercises—first we will listen and then solve together.';
+  const subtopicFocus =
+    question.subtopic && question.subtopic.trim().length > 0
+      ? locale === 'he'
+        ? `התרגילים האלו מתמקדים ב${question.subtopic}.`
+        : `These exercises focus on ${question.subtopic}.`
+      : undefined;
+  const greetingLine =
+    locale === 'he' ? `שלום ${studentName}!` : `Hello ${studentName}!`;
+  const topicLine =
+    locale === 'he'
+      ? `היום אנחנו מתרגלים ${topicDisplayName}.`
+      : `Today we are practicing ${topicDisplayName}.`;
 
   // Auto-play lesson audio when the setting is enabled
   useEffect(() => {
@@ -66,9 +110,11 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
     if (!settings.autoPlayLessonAudio || !settings.soundsEnabled) return;
     
     // Build comprehensive audio text for the lesson
-    const audioIntro = locale === 'he' 
-      ? 'שיעור קצר לפני התרגיל.'
-      : 'Short lesson before the exercise.';
+    const introParts = [greetingLine, topicLine, exercisesOverview];
+    if (subtopicFocus) {
+      introParts.push(subtopicFocus);
+    }
+    const audioIntro = introParts.join(' ');
     
     const audioParts: string[] = [audioIntro];
     
@@ -118,7 +164,20 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
     return () => {
       stopSpeaking();
     };
-  }, [settings.autoPlayLessonAudio, settings.soundsEnabled, explanation, example, steps, tip, questionText, locale]);
+  }, [
+    settings.autoPlayLessonAudio,
+    settings.soundsEnabled,
+    explanation,
+    example,
+    steps,
+    tip,
+    questionText,
+    locale,
+    greetingLine,
+    topicLine,
+    exercisesOverview,
+    subtopicFocus,
+  ]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
