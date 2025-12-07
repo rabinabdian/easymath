@@ -1,5 +1,5 @@
 // src/components/TeacherDashboard.tsx
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TOPICS } from '../data/topics';
 import { QUESTIONS } from '../data/questions';
@@ -400,39 +400,41 @@ export default function TeacherDashboard() {
     doc.save('year_booklet.pdf');
   };
 
+  // Move handleFinished outside mode check and use useCallback for stable reference
+  const handleFinished = useCallback((result: GameResult) => {
+    const percent = Math.round((result.score / result.total) * 100);
+
+    // Use selectedStudentId directly to avoid stale closure
+    setStudents((prev) => {
+      // Find the current active student from the latest state
+      const currentStudent = prev.find((s) => s.profile.id === selectedStudentId);
+      if (!currentStudent) return prev;
+
+      return updateStudentProgress(prev, currentStudent.profile.id, (prevProg) => {
+        // First, add the exercise attempt
+        let updated = addExerciseAttempt(
+          prevProg,
+          result.score,
+          result.total,
+          result.month,
+          result.weekIndex
+        );
+
+        // Then, award badge if there's a month context and score is 60% or higher
+        if (result.month && percent >= 60) {
+          updated = upsertMonthBadge(updated, result.month, percent);
+        }
+
+        return updated;
+      });
+    });
+  }, [selectedStudentId]);
+
   if (mode === 'student') {
     const week =
       yearPlan && selectedWeekId
         ? yearPlan.weeks[Number(selectedWeekId)]
         : undefined;
-
-    const activeStudent = students.find((s) => s.profile.id === selectedStudentId);
-
-    const handleFinished = (result: GameResult) => {
-      if (!activeStudent) return;
-      const percent = Math.round((result.score / result.total) * 100);
-
-      // Always save the exercise attempt to history
-      setStudents((prev) =>
-        updateStudentProgress(prev, activeStudent.profile.id, (prevProg) => {
-          // First, add the exercise attempt
-          let updated = addExerciseAttempt(
-            prevProg,
-            result.score,
-            result.total,
-            result.month,
-            result.weekIndex
-          );
-
-          // Then, award badge if there's a month context and score is 60% or higher
-          if (result.month && percent >= 60) {
-            updated = upsertMonthBadge(updated, result.month, percent);
-          }
-
-          return updated;
-        })
-      );
-    };
 
     return (
       <StudentGame
@@ -956,7 +958,10 @@ export default function TeacherDashboard() {
             </section>
 
             {/* Progress Badges */}
-            <section className="rounded-2xl bg-white p-4 shadow-sm">
+            <section
+              className="rounded-2xl bg-white p-4 shadow-sm"
+              key={`badges-${activeStudent?.profile.id}-${activeStudent?.progress.monthBadges.length ?? 0}`}
+            >
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
                 {t('teacher.badges.title')}
               </h2>
@@ -999,7 +1004,10 @@ export default function TeacherDashboard() {
             </section>
 
             {/* Recent Scores */}
-            <section className="rounded-2xl bg-white p-4 shadow-sm">
+            <section
+              className="rounded-2xl bg-white p-4 shadow-sm"
+              key={`recent-scores-${activeStudent?.profile.id}-${activeStudent?.progress.exerciseHistory.length ?? 0}`}
+            >
               <h2 className="mb-3 text-lg font-semibold text-slate-900">
                 {locale === 'he' ? 'ציונים אחרונים' : 'Recent Scores'}
               </h2>
