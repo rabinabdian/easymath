@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Question } from '../types/questions';
 import { InlineSpeaker } from './SpeakerButton';
+import { speak } from '../utils/speech';
 
 interface AnimatedLessonProps {
   question: Question;
@@ -65,9 +66,11 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Play audio explanation before starting animation
+    speak(audioText);
     setIsPlaying(true);
     setVisibleCount(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -167,9 +170,11 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Play audio explanation before starting animation
+    speak(audioText);
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -294,10 +299,12 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Play audio explanation before starting animation
+    speak(audioText);
     setIsPlaying(true);
     setStep(0);
     setRemovedCount(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -445,10 +452,12 @@ function MultiplicationAnimation({ question, locale, className }: AnimatedLesson
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Play audio explanation before starting animation
+    speak(audioText);
     setIsPlaying(true);
     setVisibleGroups(0);
     setShowResult(false);
-  }, [isPlaying]);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -566,10 +575,12 @@ function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) 
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Play audio explanation before starting animation
+    speak(audioText);
     setIsPlaying(true);
     setStep(0);
     setPairsFormed(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -709,9 +720,11 @@ function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Play audio explanation before starting animation
+    speak(audioText);
     setIsPlaying(true);
     setCurrentShape(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -812,9 +825,11 @@ function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Play audio explanation before starting animation
+    speak(audioText);
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
