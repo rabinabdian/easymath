@@ -1,10 +1,14 @@
 // src/components/IntroScreen.tsx
+import { useEffect, useRef, useState, useCallback } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonContent';
 import { AnimatedLesson } from './AnimatedLesson';
+import { useChildSettings } from '../context/ChildSettingsContext';
+import { speak, stopSpeaking, isCurrentlySpeaking } from '../utils/speech';
+import { getAnimatedLessonAudioText } from '../utils/animatedLessonAudio';
 
 interface IntroScreenProps {
   question: Question;
@@ -27,6 +31,7 @@ interface IntroScreenProps {
  */
 export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
   const { locale } = useI18n();
+  const { settings } = useChildSettings();
   const derivedLesson = lesson ?? getLessonContent(question, locale);
 
   const questionExplanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
@@ -41,9 +46,98 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   // Get the question text to show a preview
   const questionText = getQuestionPrompt(question, locale);
 
+  // Get animated lesson audio text
+  const animatedLessonAudio = getAnimatedLessonAudioText(question, locale);
+
+  // State for automation audio playback
+  const [isPlayingAutomation, setIsPlayingAutomation] = useState(false);
+  const audioQueueRef = useRef<string[]>([]);
+  const currentAudioIndexRef = useRef(0);
+  const hasStartedRef = useRef(false);
+
+  // Function to play next audio in queue
+  const playNextAudio = useCallback(() => {
+    if (currentAudioIndexRef.current >= audioQueueRef.current.length) {
+      // All audio finished - auto-advance
+      setIsPlayingAutomation(false);
+      setTimeout(() => {
+        onContinue();
+      }, 500); // Small delay before advancing
+      return;
+    }
+
+    const currentText = audioQueueRef.current[currentAudioIndexRef.current];
+    
+    speak(currentText, () => {
+      // When current audio finishes, play next
+      currentAudioIndexRef.current += 1;
+      playNextAudio();
+    });
+  }, [onContinue]);
+
+  // Build audio queue for automation playback
+  useEffect(() => {
+    if (!settings.soundsEnabled || hasStartedRef.current) return;
+    
+    // Build the audio queue in the order they appear
+    const queue: string[] = [];
+    
+    // 1. Animated lesson audio
+    if (animatedLessonAudio) {
+      queue.push(animatedLessonAudio);
+    }
+    
+    // 2. Explanation
+    if (explanation) {
+      queue.push(explanation);
+    }
+    
+    // 3. Steps
+    if (steps.length > 0) {
+      queue.push(steps.join('. '));
+    }
+    
+    // 4. Example
+    if (example) {
+      queue.push(example);
+    }
+    
+    // 5. Tip
+    if (tip) {
+      queue.push(tip);
+    }
+    
+    // 6. Question preview
+    if (questionText) {
+      queue.push(questionText);
+    }
+    
+    audioQueueRef.current = queue;
+    hasStartedRef.current = true;
+    
+    // Start automation playback
+    if (queue.length > 0) {
+      setIsPlayingAutomation(true);
+      currentAudioIndexRef.current = 0;
+      playNextAudio();
+    }
+  }, [settings.soundsEnabled, animatedLessonAudio, explanation, steps, example, tip, questionText, playNextAudio]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (isCurrentlySpeaking()) {
+        stopSpeaking();
+      }
+      hasStartedRef.current = false;
+    };
+  }, []);
+
   // Header text based on locale
   const headerTitle = locale === 'he' ? 'שיעור קצר לפני התרגיל' : 'Short Lesson Before Exercise';
-  const headerSubtitle = locale === 'he' ? 'לחץ על הרמקול כדי לשמוע 🔈' : 'Click the speaker to listen 🔈';
+  const headerSubtitle = isPlayingAutomation 
+    ? (locale === 'he' ? 'משמיע הסבר... 🔊' : 'Playing explanation... 🔊')
+    : (locale === 'he' ? 'לחץ על הרמקול כדי לשמוע 🔈' : 'Click the speaker to listen 🔈');
   const explanationLabel = locale === 'he' ? 'הסבר' : 'Explanation';
   const exampleLabel = locale === 'he' ? 'דוגמא' : 'Example';
   const upcomingQuestionLabel = locale === 'he' ? 'התרגיל שלך' : 'Your Exercise';
@@ -156,7 +250,14 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
         {/* Continue Button - Large and accessible with animation */}
         <button
           type="button"
-          onClick={onContinue}
+          onClick={() => {
+            // Stop any ongoing automation audio
+            if (isCurrentlySpeaking()) {
+              stopSpeaking();
+            }
+            setIsPlayingAutomation(false);
+            onContinue();
+          }}
           className="w-full rounded-3xl bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 animate-pulse-slow"
         >
           <span className="mr-2 inline-block animate-bounce-slow">✅</span>
