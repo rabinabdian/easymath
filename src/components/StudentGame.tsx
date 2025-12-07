@@ -10,10 +10,12 @@ import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
+import { StudentAvatar } from './StudentAvatar';
 import { APP_VERSION } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
 import { AnimatedLesson } from './AnimatedLesson';
+import { useChildSettings } from '../context/ChildSettingsContext';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -343,6 +345,7 @@ function answersMatch(userValue: string, correctValue: string): boolean {
 
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
   const { t, locale } = useI18n();
+  const { settings } = useChildSettings();
   const [index, setIndex] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [score, setScore] = useState(0);
@@ -598,6 +601,17 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     return (
       <div className="min-h-screen bg-slate-50">
         <div className="mx-auto flex max-w-xl flex-col gap-4 px-4 py-10">
+          {/* Student Avatar at top */}
+          <div className="flex justify-center">
+            <StudentAvatar
+              photoUrl={settings.studentPhotoUrl}
+              avatar={settings.studentAvatar}
+              color={settings.studentColor}
+              name={settings.childName}
+              size="large"
+            />
+          </div>
+
           <div className="rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="mb-2 text-xl font-bold text-slate-900">
               {t('student.finished.title')}
@@ -800,15 +814,25 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
       )}
       
       <div className="mx-auto max-w-xl px-4 py-6 md:py-8">
-        {/* Top bar: Exit, Hearts, Timer */}
+        {/* Top bar: Student Avatar, Exit, Hearts, Timer */}
         <div className="mb-4 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={onExit}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-          >
-            {t('student.backToTeacher')}
-          </button>
+          {/* Student Avatar - Small photo/emoji on the left */}
+          <div className="flex items-center gap-2">
+            <StudentAvatar
+              photoUrl={settings.studentPhotoUrl}
+              avatar={settings.studentAvatar}
+              color={settings.studentColor}
+              name={settings.childName}
+              size="small"
+            />
+            <button
+              type="button"
+              onClick={onExit}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            >
+              {t('student.backToTeacher')}
+            </button>
+          </div>
 
           <div className="flex flex-col items-end gap-1 text-xs text-slate-700">
             <div className="flex items-center gap-2">
