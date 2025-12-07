@@ -1,5 +1,5 @@
 // src/components/StudentGame.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
@@ -10,9 +10,11 @@ import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
+import { InteractiveQuestionHelper } from './InteractiveQuestionHelper';
 import { APP_VERSION } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
+import { ensureQuestionHasOptions } from '../utils/generateOptions';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -39,7 +41,6 @@ const MAX_ATTEMPTS_PER_QUESTION = 3; // Maximum attempts before auto-solve
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
   const { t, locale } = useI18n();
   const [index, setIndex] = useState(0);
-  const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIME_PER_QUESTION);
@@ -53,8 +54,13 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [attempts, setAttempts] = useState(0); // Track attempts for current question
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
   const [showHint, setShowHint] = useState<1 | 2 | null>(null); // Show progressive hints (1 or 2)
+  const [showHelper, setShowHelper] = useState(false); // Show animated visual helper
 
-  const current = questions[index];
+  // Get current question with options ensured
+  const rawCurrent = questions[index];
+  const current = useMemo(() => {
+    return rawCurrent ? ensureQuestionHasOptions(rawCurrent) : undefined;
+  }, [rawCurrent]);
   const totalQuestions = questions.length;
   const progress = totalQuestions > 0 ? (index / totalQuestions) * 100 : 0;
   
@@ -164,13 +170,11 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
     setTimeout(() => {
       setFeedback(null);
-      setInput('');
     }, 2000);
   }
 
   function handleHintDismiss() {
     setShowHint(null);
-    setInput('');
   }
 
   function handleCorrect() {
@@ -191,7 +195,6 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
     setTimeout(() => {
       setFeedback(null);
-      setInput('');
       const nextIndex = index + 1;
       if (nextIndex >= totalQuestions) {
         setFinished(true);
@@ -204,7 +207,6 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   function handleAutoSolveContinue() {
     // After auto-solve, move to next question (no points awarded)
     setShowAutoSolve(false);
-    setInput('');
     const nextIndex = index + 1;
     if (nextIndex >= totalQuestions) {
       setFinished(true);
@@ -213,11 +215,11 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     }
   }
 
-  function checkAnswer(valueFromClick?: string) {
+  function checkAnswer(valueFromClick: string) {
     if (!current || finished) return;
 
     const correctStr = String(current.answer).trim();
-    const userStr = (valueFromClick ?? input).trim();
+    const userStr = valueFromClick.trim();
 
     const isCorrect =
       userStr === correctStr ||
@@ -240,6 +242,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     setShowIntro(true); // Show intro for new question
     setShowAutoSolve(false); // Reset auto-solve
     setShowHint(null); // Reset hint display
+    setShowHelper(false); // Reset visual helper
   }, [index, finished, current]);
 
   // Timer countdown (only when not showing intro, auto-solve, or hints)
@@ -532,41 +535,29 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
           </div>
         </div>
 
-        {/* Question card */}
+        {/* Question card - Always show multiple choice options */}
         <div className="rounded-2xl bg-white p-5 shadow-sm">
           <QuestionCard
             question={current}
-            showOptions={!!current.options}
+            showOptions={true}
             onOptionClick={handleOptionClick}
           />
 
-          {!current.options && (
-            <div className="mb-4 flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') checkAnswer();
-                }}
-                placeholder={t('student.placeholder')}
-                className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
-              />
-              <button
-                type="button"
-                onClick={() => checkAnswer()}
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-              >
-                {t('student.check')}
-              </button>
-            </div>
-          )}
-
           {feedback && (
-            <div className="rounded-xl bg-slate-100 px-3 py-2 text-sm font-medium text-slate-800">
+            <div className="mt-4 rounded-xl bg-slate-100 px-3 py-2 text-sm font-medium text-slate-800">
               {feedback}
             </div>
           )}
+        </div>
+
+        {/* Interactive Visual Helper - Animated step-by-step explanation */}
+        <div className="mt-4">
+          <InteractiveQuestionHelper
+            question={current}
+            locale={locale}
+            isExpanded={showHelper}
+            onToggle={() => setShowHelper(!showHelper)}
+          />
         </div>
 
         {/* Understanding hint section */}
