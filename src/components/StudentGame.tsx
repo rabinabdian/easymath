@@ -1,6 +1,6 @@
 // src/components/StudentGame.tsx
-import { useEffect, useState } from 'react';
-import type { Question } from '../types/questions';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { Question, TopicId } from '../types/questions';
 import { useI18n } from '../i18n';
 import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
 import { QuestionCard } from './QuestionCard';
@@ -12,6 +12,8 @@ import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
+import { useChildSettings } from '../context/ChildSettingsContext';
+import { speak, stopSpeaking } from '../utils/speech';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -30,13 +32,72 @@ interface Props {
   onExit: () => void;
   context?: GameContext;
   onFinished?: (result: GameResult) => void;
+  playerName?: string;
 }
 
 const TIME_PER_QUESTION = 30; // seconds
 const MAX_ATTEMPTS_PER_QUESTION = 3; // Maximum attempts before auto-solve
 
-export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
+const TOPIC_LABELS: Record<TopicId, { he: string; en: string }> = {
+  numbers: { he: 'מספרים וספירה', en: 'counting and numbers' },
+  addition: { he: 'חיבור', en: 'addition' },
+  subtraction: { he: 'חיסור', en: 'subtraction' },
+  multiplication: { he: 'כפל', en: 'multiplication' },
+  evenOdd: { he: 'מספרים זוגיים ואי-זוגיים', en: 'even and odd numbers' },
+  geometry: { he: 'צורות וגאומטריה', en: 'shapes and geometry' },
+};
+
+const STRUCTURE_SENTENCE = {
+  he: 'בכל תרגיל תקבלו הסבר קצר, תראו תמונות צבעוניות ואז תענו בקצב שלכם.',
+  en: 'Before each question you will hear a short explanation, see colorful aids and answer calmly.',
+};
+
+const SUPPORT_SENTENCE = {
+  he: 'אם משהו לא ברור יש רמזים עדינים ופתרון אוטומטי שיעזרו לכם להבין צעד אחר צעד.',
+  en: 'If something is unclear, gentle hints and the auto-solve screen will guide you step by step.',
+};
+
+function getTopicLabel(topic: TopicId, locale: 'he' | 'en'): string {
+  const labels = TOPIC_LABELS[topic];
+  if (!labels) return topic;
+  return locale === 'he' ? labels.he : labels.en;
+}
+
+function buildTopicsSentence(topicIds: TopicId[], locale: 'he' | 'en'): string | undefined {
+  if (topicIds.length === 0) return undefined;
+  const labels = topicIds.map((topic) => getTopicLabel(topic, locale));
+
+  if (labels.length === 1) {
+    return locale === 'he'
+      ? `היום נתרגל את נושא ${labels[0]}.`
+      : `Today we will practice ${labels[0]}.`;
+  }
+
+  if (labels.length === 2) {
+    return locale === 'he'
+      ? `היום נעבוד על ${labels[0]} וגם על ${labels[1]}.`
+      : `Today we will work on ${labels[0]} and ${labels[1]}.`;
+  }
+
+  const joined =
+    labels.slice(0, -1).join(locale === 'he' ? ', ' : ', ') +
+    (locale === 'he' ? ' וגם ' : ' and ') +
+    labels[labels.length - 1];
+
+  return locale === 'he'
+    ? `היום נכיר כמה נושאים חשובים: ${joined}.`
+    : `Today we will explore a few topics: ${joined}.`;
+}
+
+function flattenNarrationText(text?: string): string | undefined {
+  if (!text) return undefined;
+  const flattened = text.replace(/\s+/g, ' ').trim();
+  return flattened.length ? flattened : undefined;
+}
+
+export default function StudentGame({ questions, onExit, context, onFinished, playerName }: Props) {
   const { t, locale } = useI18n();
+  const { settings } = useChildSettings();
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -49,6 +110,59 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [attempts, setAttempts] = useState(0); // Track attempts for current question
   const [showAutoSolve, setShowAutoSolve] = useState(false); // Show auto-solve explanation
   const [showHint, setShowHint] = useState<1 | 2 | null>(null); // Show progressive hints (1 or 2)
+  const [isGreetingPlaying, setIsGreetingPlaying] = useState(false);
+
+  const greetingSpokenRef = useRef(false);
+  const firstQuestion = questions[0];
+  const firstLessonForGreeting = useMemo(
+    () => (firstQuestion ? getLessonContent(firstQuestion, locale) : undefined),
+    [firstQuestion, locale]
+  );
+  const topicDetail = useMemo(() => {
+    const derived = flattenNarrationText(firstLessonForGreeting?.explanation);
+    if (derived) return derived;
+    if (!firstQuestion) return undefined;
+    const fallback =
+      locale === 'he' ? firstQuestion.introExplanationHe : firstQuestion.introExplanationEn;
+    return flattenNarrationText(fallback);
+  }, [firstLessonForGreeting, firstQuestion, locale]);
+
+  const uniqueTopics = useMemo(() => {
+    const seen = new Set<TopicId>();
+    const ordered: TopicId[] = [];
+    questions.forEach((q) => {
+      if (!seen.has(q.topic)) {
+        seen.add(q.topic);
+        ordered.push(q.topic);
+      }
+    });
+    return ordered;
+  }, [questions]);
+
+  const topicsSentence = useMemo(
+    () => buildTopicsSentence(uniqueTopics, locale),
+    [uniqueTopics, locale]
+  );
+
+  const totalExercisesSentence = useMemo(() => {
+    if (!questions.length) return undefined;
+    const total = questions.length;
+    if (locale === 'he') {
+      if (total === 1) {
+        return 'יש לנו תרגיל אחד מעניין עם הסבר קולי.';
+      }
+      return `יש לנו ${total} תרגילים קצרים עם הסבר קולי.`;
+    }
+    return `We have ${total} guided exercise${total === 1 ? '' : 's'} today.`;
+  }, [questions.length, locale]);
+
+  const studentDisplayName = useMemo(() => {
+    const fromProps = playerName?.trim();
+    const fromSettings = settings.childName?.trim();
+    if (fromProps && fromProps.length > 0) return fromProps;
+    if (fromSettings && fromSettings.length > 0) return fromSettings;
+    return locale === 'he' ? 'חבר יקר' : 'my friend';
+  }, [playerName, settings.childName, locale]);
 
   const current = questions[index];
   const totalQuestions = questions.length;
@@ -62,6 +176,51 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     ? buildUnderstandingNarration(current, locale, { includeAnswer: true })
     : '';
   const lessonContent = current ? getLessonContent(current, locale) : undefined;
+
+  useEffect(() => {
+    if (greetingSpokenRef.current) return;
+    if (!settings.soundsEnabled) return;
+    if (!questions.length) return;
+
+    const parts: Array<string | undefined> = [
+      locale === 'he'
+        ? `שלום ${studentDisplayName}!`
+        : `Hello ${studentDisplayName}!`,
+      topicsSentence,
+      topicDetail,
+      totalExercisesSentence,
+      STRUCTURE_SENTENCE[locale],
+      SUPPORT_SENTENCE[locale],
+    ];
+
+    const narration = parts
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!narration) return;
+
+    greetingSpokenRef.current = true;
+    setIsGreetingPlaying(true);
+
+    speak(narration, () => {
+      setIsGreetingPlaying(false);
+    });
+
+    return () => {
+      stopSpeaking();
+      setIsGreetingPlaying(false);
+    };
+  }, [
+    locale,
+    questions.length,
+    settings.soundsEnabled,
+    studentDisplayName,
+    topicDetail,
+    topicsSentence,
+    totalExercisesSentence,
+  ]);
 
   // Helper function to get hint text based on attempt and locale
   function getHintText(hintNumber: 1 | 2): string | undefined {
@@ -342,6 +501,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         question={current}
         lesson={lessonContent}
         onContinue={() => setShowIntro(false)}
+        autoPlayAllowed={!isGreetingPlaying}
       />
     );
   }

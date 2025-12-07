@@ -426,6 +426,7 @@ export default function TeacherDashboard() {
       <StudentGame
         questions={generated.length ? generated : QUESTIONS.slice(0, 10)}
         onExit={() => setMode('teacher')}
+        playerName={activeStudent?.profile.name}
         context={
           week
             ? { month: week.month, weekIndex: Number(selectedWeekId) }

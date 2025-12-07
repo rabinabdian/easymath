@@ -13,6 +13,7 @@ interface IntroScreenProps {
   question: Question;
   onContinue: () => void;
   lesson?: LocalizedLessonContent;
+  autoPlayAllowed?: boolean;
 }
 
 /**
@@ -28,7 +29,7 @@ interface IntroScreenProps {
  * - Displays the upcoming question to prepare the student
  * - Interactive audio with speaker icons
  */
-export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
+export function IntroScreen({ question, onContinue, lesson, autoPlayAllowed = true }: IntroScreenProps) {
   const { locale } = useI18n();
   const { settings } = useChildSettings();
   const hasPlayedRef = useRef(false);
@@ -61,6 +62,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   useEffect(() => {
     // Only play once per intro screen mount
     if (hasPlayedRef.current) return;
+    if (!autoPlayAllowed) return;
     
     // Check if auto-play is enabled and sounds are enabled
     if (!settings.autoPlayLessonAudio || !settings.soundsEnabled) return;
@@ -118,7 +120,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
     return () => {
       stopSpeaking();
     };
-  }, [settings.autoPlayLessonAudio, settings.soundsEnabled, explanation, example, steps, tip, questionText, locale]);
+  }, [settings.autoPlayLessonAudio, settings.soundsEnabled, explanation, example, steps, tip, questionText, locale, autoPlayAllowed]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
