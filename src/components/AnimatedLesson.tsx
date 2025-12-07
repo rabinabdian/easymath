@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Question } from '../types/questions';
 import { InlineSpeaker } from './SpeakerButton';
+import { speak, stopSpeaking } from '../utils/speech';
 
 interface AnimatedLessonProps {
   question: Question;
@@ -63,11 +64,17 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
     ? `בואו נספור ביחד עד ${displayCount}. כל פעם מצביעים ואומרים את המספר. אחת, שתיים, שלוש...`
     : `Let's count together to ${displayCount}. Each time we point and say the number. One, two, three...`;
 
+  const playNarration = useCallback(() => {
+    stopSpeaking();
+    speak(audioText);
+  }, [audioText]);
+
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    playNarration();
     setIsPlaying(true);
     setVisibleCount(0);
-  }, [isPlaying]);
+  }, [isPlaying, playNarration]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -165,11 +172,17 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
     ? `חיבור זה לחבר דברים ביחד. יש לנו ${num1} ועוד ${num2}. כשנחבר אותם ביחד נקבל ${sum}.`
     : `Addition is putting things together. We have ${num1} plus ${num2}. When we add them together we get ${sum}.`;
 
+  const playNarration = useCallback(() => {
+    stopSpeaking();
+    speak(audioText);
+  }, [audioText]);
+
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    playNarration();
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+  }, [isPlaying, playNarration]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -292,12 +305,18 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
     ? `חיסור זה להוריד דברים. יש לנו ${num1}. נוריד ${num2}. נשאר לנו ${result}.`
     : `Subtraction is taking things away. We have ${num1}. We take away ${num2}. We are left with ${result}.`;
 
+  const playNarration = useCallback(() => {
+    stopSpeaking();
+    speak(audioText);
+  }, [audioText]);
+
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    playNarration();
     setIsPlaying(true);
     setStep(0);
     setRemovedCount(0);
-  }, [isPlaying]);
+  }, [isPlaying, playNarration]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -443,12 +462,18 @@ function MultiplicationAnimation({ question, locale, className }: AnimatedLesson
     ? `כפל זה קבוצות שוות. יש לנו ${groups} קבוצות ובכל קבוצה ${itemsPerGroup} פריטים. ביחד יש ${product}.`
     : `Multiplication is equal groups. We have ${groups} groups with ${itemsPerGroup} items each. Together there are ${product}.`;
 
+  const playNarration = useCallback(() => {
+    stopSpeaking();
+    speak(audioText);
+  }, [audioText]);
+
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    playNarration();
     setIsPlaying(true);
     setVisibleGroups(0);
     setShowResult(false);
-  }, [isPlaying]);
+  }, [isPlaying, playNarration]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -564,12 +589,18 @@ function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) 
     ? `בואו נבדוק אם ${number} הוא זוגי או אי-זוגי. נסדר בזוגות. ${isEven ? 'כולם בזוגות! זה זוגי.' : 'נשאר אחד לבד! זה אי-זוגי.'}`
     : `Let's check if ${number} is even or odd. We'll pair them up. ${isEven ? 'Everyone has a partner! It is even.' : 'One is left alone! It is odd.'}`;
 
+  const playNarration = useCallback(() => {
+    stopSpeaking();
+    speak(audioText);
+  }, [audioText]);
+
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    playNarration();
     setIsPlaying(true);
     setStep(0);
     setPairsFormed(0);
-  }, [isPlaying]);
+  }, [isPlaying, playNarration]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -707,11 +738,17 @@ function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
     ? 'צורות שונות במספר הצלעות שלהן. משולש יש 3 צלעות, ריבוע 4, מחומש 5, ומשושה 6 צלעות.'
     : 'Shapes differ in the number of sides. Triangle has 3 sides, square has 4, pentagon has 5, and hexagon has 6 sides.';
 
+  const playNarration = useCallback(() => {
+    stopSpeaking();
+    speak(audioText);
+  }, [audioText]);
+
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    playNarration();
     setIsPlaying(true);
     setCurrentShape(0);
-  }, [isPlaying]);
+  }, [isPlaying, playNarration]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -810,11 +847,17 @@ function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
     ? 'סימטריה זה כששני צדדים של צורה נראים אותו דבר. כמו פרפר או לב. אם נקפל על קו האמצע, הצדדים יתאימו.'
     : 'Symmetry is when both sides of a shape look the same. Like a butterfly or heart. If we fold on the middle line, the sides match.';
 
+  const playNarration = useCallback(() => {
+    stopSpeaking();
+    speak(audioText);
+  }, [audioText]);
+
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    playNarration();
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+  }, [isPlaying, playNarration]);
 
   useEffect(() => {
     if (!isPlaying) return;
