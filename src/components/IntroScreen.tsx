@@ -8,11 +8,14 @@ import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonCo
 import { AnimatedLesson } from './AnimatedLesson';
 import { useChildSettings } from '../context/ChildSettingsContext';
 import { speak, stopSpeaking } from '../utils/speech';
+import { TOPICS } from '../data/topics';
 
 interface IntroScreenProps {
   question: Question;
   onContinue: () => void;
   lesson?: LocalizedLessonContent;
+  isFirstQuestion?: boolean;
+  totalQuestions?: number;
 }
 
 /**
@@ -28,11 +31,17 @@ interface IntroScreenProps {
  * - Displays the upcoming question to prepare the student
  * - Interactive audio with speaker icons
  */
-export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
+export function IntroScreen({ question, onContinue, lesson, isFirstQuestion = false, totalQuestions }: IntroScreenProps) {
   const { locale } = useI18n();
   const { settings } = useChildSettings();
   const hasPlayedRef = useRef(false);
   const derivedLesson = lesson ?? getLessonContent(question, locale);
+  
+  // Get topic name from TOPICS array
+  const topicLabel = useMemo(() => {
+    const topicData = TOPICS.find(t => t.id === question.topic);
+    return topicData?.label || question.topic;
+  }, [question.topic]);
 
   const questionExplanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
   const questionExample = locale === 'he' ? question.introExampleHe : question.introExampleEn;
@@ -66,11 +75,35 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
     if (!settings.autoPlayLessonAudio || !settings.soundsEnabled) return;
     
     // Build comprehensive audio text for the lesson
+    const audioParts: string[] = [];
+    
+    // Add student name greeting on first question
+    if (isFirstQuestion) {
+      const greeting = locale === 'he'
+        ? `שלום ${settings.childName}!`
+        : `Hello ${settings.childName}!`;
+      audioParts.push(greeting);
+      
+      // Add session information
+      if (totalQuestions) {
+        const sessionInfo = locale === 'he'
+          ? `היום נעשה ${totalQuestions} תרגילים במתמטיקה.`
+          : `Today we will do ${totalQuestions} math exercises.`;
+        audioParts.push(sessionInfo);
+      }
+      
+      // Add topic information
+      const topicInfo = locale === 'he'
+        ? `הנושא שלנו היום הוא: ${topicLabel}.`
+        : `Our topic today is: ${topicLabel}.`;
+      audioParts.push(topicInfo);
+    }
+    
+    // Add standard lesson intro
     const audioIntro = locale === 'he' 
       ? 'שיעור קצר לפני התרגיל.'
       : 'Short lesson before the exercise.';
-    
-    const audioParts: string[] = [audioIntro];
+    audioParts.push(audioIntro);
     
     // Add explanation if available
     if (explanation) {
@@ -118,13 +151,44 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
     return () => {
       stopSpeaking();
     };
-  }, [settings.autoPlayLessonAudio, settings.soundsEnabled, explanation, example, steps, tip, questionText, locale]);
+  }, [settings.autoPlayLessonAudio, settings.soundsEnabled, settings.childName, explanation, example, steps, tip, questionText, locale, isFirstQuestion, totalQuestions, topicLabel]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="mx-auto max-w-2xl px-4 py-8">
+        {/* Greeting Card - Only on first question */}
+        {isFirstQuestion && (
+          <div className="mb-8 rounded-3xl bg-gradient-to-r from-green-100 to-emerald-100 p-8 shadow-xl border-4 border-green-300 text-center animate-fade-slide-down">
+            <div className="mb-4 text-7xl animate-bounce-slow">👋</div>
+            <h1 className="text-4xl font-bold text-slate-800 mb-3">
+              {locale === 'he' ? `שלום ${settings.childName}!` : `Hello ${settings.childName}!`}
+            </h1>
+            {totalQuestions && (
+              <p className="text-2xl text-slate-700 mb-2">
+                {locale === 'he' 
+                  ? `היום נעשה ${totalQuestions} תרגילים במתמטיקה`
+                  : `Today we will do ${totalQuestions} math exercises`}
+              </p>
+            )}
+            <p className="text-xl text-slate-700 font-medium">
+              {locale === 'he' 
+                ? `נושא: ${topicLabel}`
+                : `Topic: ${topicLabel}`}
+            </p>
+            <div className="mt-4 flex items-center justify-center gap-3">
+              <span className="text-lg">🔊</span>
+              <InlineSpeaker 
+                text={locale === 'he'
+                  ? `שלום ${settings.childName}! היום נעשה ${totalQuestions} תרגילים במתמטיקה. הנושא שלנו היום הוא: ${topicLabel}.`
+                  : `Hello ${settings.childName}! Today we will do ${totalQuestions} math exercises. Our topic today is: ${topicLabel}.`
+                }
+              />
+            </div>
+          </div>
+        )}
+
         {/* Header */}
-        <div className="mb-6 text-center animate-fade-slide-down">
+        <div className="mb-6 text-center animate-fade-slide-down" style={{ animationDelay: isFirstQuestion ? '0.3s' : '0s' }}>
           <div className="mb-3 text-6xl animate-bounce-slow">{lessonEmoji}</div>
           <h2 className="text-3xl font-bold text-slate-800">{headerTitle}</h2>
           <p className="mt-2 text-lg text-slate-600">{headerSubtitle}</p>
@@ -137,7 +201,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
         {/* Explanation Card with Speaker */}
         {explanation && (
-          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg animate-fade-slide-up" style={{ animationDelay: '0.2s' }}>
+          <div className="mb-6 rounded-3xl bg-white p-8 shadow-lg animate-fade-slide-up" style={{ animationDelay: isFirstQuestion ? '0.5s' : '0.2s' }}>
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-4xl">💡</span>
@@ -153,7 +217,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
         {/* Step-by-step guidance */}
         {steps.length > 0 && (
-          <div className="mb-8 rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-8 shadow-lg animate-fade-slide-up" style={{ animationDelay: '0.3s' }}>
+          <div className="mb-8 rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-8 shadow-lg animate-fade-slide-up" style={{ animationDelay: isFirstQuestion ? '0.6s' : '0.3s' }}>
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-4xl animate-bounce-slow">📝</span>
@@ -174,7 +238,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
         {/* Example Card with Speaker */}
         {example && (
-          <div className="mb-6 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300 animate-fade-slide-up" style={{ animationDelay: '0.4s' }}>
+          <div className="mb-6 rounded-3xl bg-gradient-to-br from-yellow-50 to-orange-50 p-8 shadow-lg border-4 border-yellow-300 animate-fade-slide-up" style={{ animationDelay: isFirstQuestion ? '0.7s' : '0.4s' }}>
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-4xl animate-float">✨</span>
@@ -192,7 +256,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
         {/* Quick tip */}
         {tip && (
-          <div className="mb-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 shadow-lg border-4 border-emerald-200 animate-fade-slide-up" style={{ animationDelay: '0.5s' }}>
+          <div className="mb-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 shadow-lg border-4 border-emerald-200 animate-fade-slide-up" style={{ animationDelay: isFirstQuestion ? '0.8s' : '0.5s' }}>
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-4xl animate-scale-pulse">🎯</span>
@@ -207,7 +271,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
         )}
 
         {/* Upcoming Question Preview */}
-        <div className="mb-8 rounded-3xl bg-gradient-to-br from-purple-50 to-pink-50 p-8 shadow-lg border-4 border-purple-300 animate-fade-slide-up animate-glow" style={{ animationDelay: '0.6s' }}>
+        <div className="mb-8 rounded-3xl bg-gradient-to-br from-purple-50 to-pink-50 p-8 shadow-lg border-4 border-purple-300 animate-fade-slide-up animate-glow" style={{ animationDelay: isFirstQuestion ? '0.9s' : '0.6s' }}>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-4xl animate-heartbeat">📝</span>

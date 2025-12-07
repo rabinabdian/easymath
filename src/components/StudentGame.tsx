@@ -342,6 +342,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         question={current}
         lesson={lessonContent}
         onContinue={() => setShowIntro(false)}
+        isFirstQuestion={index === 0}
+        totalQuestions={totalQuestions}
       />
     );
   }
