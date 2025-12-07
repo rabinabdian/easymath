@@ -1,10 +1,12 @@
 // src/components/IntroScreen.tsx
+import { useCallback, useEffect, useMemo } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonContent';
 import { AnimatedLesson } from './AnimatedLesson';
+import { speak, stopSpeaking } from '../utils/speech';
 
 interface IntroScreenProps {
   question: Question;
@@ -27,14 +29,17 @@ interface IntroScreenProps {
  */
 export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
   const { locale } = useI18n();
-  const derivedLesson = lesson ?? getLessonContent(question, locale);
+  const derivedLesson = useMemo(
+    () => lesson ?? getLessonContent(question, locale),
+    [lesson, question, locale]
+  );
 
   const questionExplanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
   const questionExample = locale === 'he' ? question.introExampleHe : question.introExampleEn;
 
   const explanation = derivedLesson?.explanation ?? questionExplanation;
   const example = derivedLesson?.example ?? questionExample;
-  const steps = derivedLesson?.steps ?? [];
+  const steps = useMemo(() => derivedLesson?.steps ?? [], [derivedLesson]);
   const tip = derivedLesson?.tip;
   const lessonEmoji = derivedLesson?.emoji || '📚';
 
@@ -50,6 +55,53 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
   const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
   const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
+
+  const narrationScript = useMemo(() => {
+    const segments: string[] = [];
+    const isHebrew = locale === 'he';
+
+    if (explanation) {
+      segments.push(`${isHebrew ? 'הסבר:' : 'Explanation:'} ${explanation}`);
+    }
+
+    if (steps.length) {
+      const stepsNarration = steps
+        .map((step, idx) =>
+          `${isHebrew ? `שלב ${idx + 1}` : `Step ${idx + 1}`}: ${step}`
+        )
+        .join(' ');
+      segments.push(`${isHebrew ? 'שלבי פתרון:' : 'Steps:'} ${stepsNarration}`);
+    }
+
+    if (example) {
+      segments.push(`${isHebrew ? 'דוגמה:' : 'Example:'} ${example}`);
+    }
+
+    if (tip) {
+      segments.push(`${isHebrew ? 'טיפ:' : 'Tip:'} ${tip}`);
+    }
+
+    if (questionText) {
+      segments.push(
+        `${isHebrew ? 'התרגיל שלך:' : 'Your exercise:'} ${questionText}`
+      );
+    }
+
+    return segments.join(' ');
+  }, [explanation, steps, example, tip, questionText, locale]);
+
+  useEffect(() => {
+    if (!narrationScript) return;
+    speak(narrationScript);
+    return () => {
+      stopSpeaking();
+    };
+  }, [narrationScript]);
+
+  const handleContinue = useCallback(() => {
+    stopSpeaking();
+    onContinue();
+  }, [onContinue]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -156,7 +208,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
         {/* Continue Button - Large and accessible with animation */}
         <button
           type="button"
-          onClick={onContinue}
+          onClick={handleContinue}
           className="w-full rounded-3xl bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 animate-pulse-slow"
         >
           <span className="mr-2 inline-block animate-bounce-slow">✅</span>
