@@ -12,11 +12,12 @@ import YearPlanView from "./components/YearPlanView";
 import { generateYearPlan } from "./utils/yearPlanGenerator";
 import { loadExams, getExamById } from "./utils/examsStorage";
 import type { SavedExam } from "./utils/examsStorage";
-import StudentGame from "./components/StudentGame";
-import { loadStudentRecords } from "./utils/studentStorage";
+import StudentGame, { type GameResult } from "./components/StudentGame";
+import { loadStudentRecords, saveStudentRecords, updateStudentProgress } from "./utils/studentStorage";
 import type { StudentRecord } from "./types/students";
 import { avatarEmoji } from "./utils/avatar";
 import { ensureLTRNumbers } from "./utils/textDirection";
+import { addExerciseAttempt, upsertMonthBadge } from "./utils/progressStorage";
 
 // גרסת האפליקציה
 export const APP_VERSION = "1.0.0";
@@ -340,12 +341,42 @@ function SessionPage() {
     useTeacherExam,
   ]);
 
+  // Save student progress when exercise is completed
+  const handleFinished = (result: GameResult) => {
+    // Only save if there's a linked student
+    if (!settings.studentId) return;
+
+    const percent = Math.round((result.score / result.total) * 100);
+    const records = loadStudentRecords();
+    const updatedRecords = updateStudentProgress(records, settings.studentId, (prevProg) => {
+      // First, add the exercise attempt
+      let updated = addExerciseAttempt(
+        prevProg,
+        result.score,
+        result.total,
+        result.month,
+        result.weekIndex
+      );
+
+      // Then, award badge if there's a month context and score is 60% or higher
+      if (result.month && percent >= 60) {
+        updated = upsertMonthBadge(updated, result.month, percent);
+      }
+
+      return updated;
+    });
+
+    // Save to localStorage
+    saveStudentRecords(updatedRecords);
+  };
+
   // אם נבחר מבחן מהמורה, נשתמש ב-StudentGame
   if (useTeacherExam && examToUse) {
     return (
       <StudentGame
         questions={examToUse.questions.slice(0, settings.sessionLength)}
         onExit={() => navigate("/")}
+        onFinished={handleFinished}
       />
     );
   }
