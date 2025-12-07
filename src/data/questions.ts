@@ -175,6 +175,12 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'How many birds יש בציור?',
     answer: 4,
     options: [3, 4, 5],
+    visualAids: [
+      { type: 'emoji', value: '🐦', size: 'large' },
+      { type: 'emoji', value: '🐦', size: 'large' },
+      { type: 'emoji', value: '🐦', size: 'large' },
+      { type: 'emoji', value: '🐦', size: 'large' },
+    ],
   },
   {
     id: 'numbers_count_005',
@@ -185,6 +191,14 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'How many stars יש?',
     answer: 6,
     options: [5, 6, 7],
+    visualAids: [
+      { type: 'emoji', value: '⭐', size: 'large' },
+      { type: 'emoji', value: '⭐', size: 'large' },
+      { type: 'emoji', value: '⭐', size: 'large' },
+      { type: 'emoji', value: '⭐', size: 'large' },
+      { type: 'emoji', value: '⭐', size: 'large' },
+      { type: 'emoji', value: '⭐', size: 'large' },
+    ],
   },
 
   {
@@ -216,6 +230,11 @@ const MANUAL_QUESTIONS: Question[] = [
     promptEn: 'How many butterflies יש בתמונה?',
     answer: 3,
     options: [2, 3, 4],
+    visualAids: [
+      { type: 'emoji', value: '🦋', size: 'large' },
+      { type: 'emoji', value: '🦋', size: 'large' },
+      { type: 'emoji', value: '🦋', size: 'large' },
+    ],
   },
 
   {
