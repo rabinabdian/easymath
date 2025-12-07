@@ -1,10 +1,13 @@
 // src/components/IntroScreen.tsx
+import { useEffect, useRef } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonContent';
-import { AnimatedLesson } from './AnimatedLesson';
+import { AnimatedLesson, getAnimatedLessonAudioText } from './AnimatedLesson';
+import { speak, stopSpeaking, isCurrentlySpeaking } from '../utils/speech';
+import { useChildSettings } from '../context/ChildSettingsContext';
 
 interface IntroScreenProps {
   question: Question;
@@ -27,7 +30,9 @@ interface IntroScreenProps {
  */
 export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
   const { locale } = useI18n();
+  const { settings } = useChildSettings();
   const derivedLesson = lesson ?? getLessonContent(question, locale);
+  const hasAutoPlayedRef = useRef(false);
 
   const questionExplanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
   const questionExample = locale === 'he' ? question.introExampleHe : question.introExampleEn;
@@ -40,6 +45,91 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
 
   // Get the question text to show a preview
   const questionText = getQuestionPrompt(question, locale);
+
+  // Get audio text from AnimatedLesson
+  const animatedLessonAudioText = getAnimatedLessonAudioText(question, locale);
+
+  // Reset auto-play flag when question changes
+  useEffect(() => {
+    hasAutoPlayedRef.current = false;
+  }, [question.id]);
+
+  // Auto-play audio explanations when component mounts (if sounds enabled)
+  useEffect(() => {
+    // Only auto-play once per question, and only if sounds are enabled
+    if (hasAutoPlayedRef.current || !settings.soundsEnabled) {
+      return;
+    }
+
+    hasAutoPlayedRef.current = true;
+
+    // Build array of audio texts to play in sequence
+    const audioTexts: string[] = [];
+
+    // 1. AnimatedLesson audio text
+    if (animatedLessonAudioText) {
+      audioTexts.push(animatedLessonAudioText);
+    }
+
+    // 2. Explanation
+    if (explanation) {
+      audioTexts.push(explanation);
+    }
+
+    // 3. Steps (join with periods)
+    if (steps.length > 0) {
+      audioTexts.push(steps.join('. '));
+    }
+
+    // 4. Example
+    if (example) {
+      audioTexts.push(example);
+    }
+
+    // 5. Tip
+    if (tip) {
+      audioTexts.push(tip);
+    }
+
+    // 6. Question text
+    if (questionText) {
+      const questionLabel = locale === 'he' ? 'התרגיל שלך: ' : 'Your exercise: ';
+      audioTexts.push(questionLabel + questionText);
+    }
+
+    // Play audio texts sequentially
+    let currentIndex = 0;
+
+    const playNext = () => {
+      if (currentIndex >= audioTexts.length) {
+        return; // Finished playing all audio
+      }
+
+      const textToPlay = audioTexts[currentIndex];
+      currentIndex++;
+
+      speak(textToPlay, () => {
+        // Wait a bit between audio segments (500ms pause)
+        setTimeout(() => {
+          playNext();
+        }, 500);
+      });
+    };
+
+    // Start playing after a short delay to let the component render
+    const timeoutId = setTimeout(() => {
+      playNext();
+    }, 300);
+
+    // Cleanup: stop speaking if component unmounts
+    return () => {
+      clearTimeout(timeoutId);
+      if (isCurrentlySpeaking()) {
+        stopSpeaking();
+      }
+      hasAutoPlayedRef.current = false;
+    };
+  }, [question.id, settings.soundsEnabled, animatedLessonAudioText, explanation, steps, example, tip, questionText, locale]);
 
   // Header text based on locale
   const headerTitle = locale === 'he' ? 'שיעור קצר לפני התרגיל' : 'Short Lesson Before Exercise';
