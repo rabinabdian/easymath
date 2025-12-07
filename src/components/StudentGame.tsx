@@ -14,6 +14,8 @@ import { APP_VERSION } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
 import { AnimatedLesson } from './AnimatedLesson';
+import { speak } from '../utils/speech';
+import { useChildSettings } from '../context/ChildSettingsContext';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -343,6 +345,7 @@ function answersMatch(userValue: string, correctValue: string): boolean {
 
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
   const { t, locale } = useI18n();
+  const { settings } = useChildSettings();
   const [index, setIndex] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [score, setScore] = useState(0);
@@ -500,6 +503,11 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
     setFeedback(randomMessage);
     setScore((s) => s + points);
+
+    // Play success sound if sounds are enabled
+    if (settings.soundsEnabled) {
+      speak('כל הכבוד נעבור לתרגיל הבא');
+    }
 
     setTimeout(() => {
       setFeedback(null);
