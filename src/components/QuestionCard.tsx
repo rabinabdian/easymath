@@ -82,17 +82,22 @@ export function QuestionCard({
 
         {/* Multiple Choice Options */}
         {showOptions && question.options && (
-          <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {question.options.map((opt) => (
-              <button
-                key={opt.toString()}
-                type="button"
-                onClick={() => onOptionClick?.(String(opt))}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center text-base font-medium hover:border-blue-500 hover:bg-blue-50 transition-colors"
-              >
-                {opt}
-              </button>
-            ))}
+          <div className="mt-4">
+            <div className="mb-2 text-sm font-semibold text-slate-700 text-center">
+              {locale === 'he' ? 'בחר תשובה:' : 'Choose an answer:'}
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {question.options.map((opt) => (
+                <button
+                  key={opt.toString()}
+                  type="button"
+                  onClick={() => onOptionClick?.(String(opt))}
+                  className="rounded-xl border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-4 text-center text-xl font-bold text-slate-800 hover:border-blue-500 hover:bg-gradient-to-br hover:from-blue-100 hover:to-indigo-100 hover:scale-105 active:scale-95 transition-all shadow-sm hover:shadow-md ltr-numbers"
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
