@@ -39,7 +39,6 @@ const MAX_ATTEMPTS_PER_QUESTION = 3; // Maximum attempts before auto-solve
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
   const { t, locale } = useI18n();
   const [index, setIndex] = useState(0);
-  const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIME_PER_QUESTION);
@@ -164,13 +163,11 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
     setTimeout(() => {
       setFeedback(null);
-      setInput('');
     }, 2000);
   }
 
   function handleHintDismiss() {
     setShowHint(null);
-    setInput('');
   }
 
   function handleCorrect() {
@@ -191,7 +188,6 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
     setTimeout(() => {
       setFeedback(null);
-      setInput('');
       const nextIndex = index + 1;
       if (nextIndex >= totalQuestions) {
         setFinished(true);
@@ -204,7 +200,6 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   function handleAutoSolveContinue() {
     // After auto-solve, move to next question (no points awarded)
     setShowAutoSolve(false);
-    setInput('');
     const nextIndex = index + 1;
     if (nextIndex >= totalQuestions) {
       setFinished(true);
@@ -213,16 +208,14 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     }
   }
 
-  function checkAnswer(valueFromClick?: string) {
+  function checkAnswer(valueFromClick: string) {
     if (!current || finished) return;
 
     const correctStr = String(current.answer).trim();
-    const userStr = (valueFromClick ?? input).trim();
+    const userStr = String(valueFromClick).trim();
 
-    const isCorrect =
-      userStr === correctStr ||
-      (Array.isArray(current.options) &&
-        current.options.some((o) => String(o) === userStr));
+    // Check if answer matches (direct comparison or in options)
+    const isCorrect = userStr === correctStr;
 
     if (isCorrect) handleCorrect();
     else handleWrong();
@@ -536,34 +529,12 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         <div className="rounded-2xl bg-white p-5 shadow-sm">
           <QuestionCard
             question={current}
-            showOptions={!!current.options}
+            showOptions={true}
             onOptionClick={handleOptionClick}
           />
 
-          {!current.options && (
-            <div className="mb-4 flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') checkAnswer();
-                }}
-                placeholder={t('student.placeholder')}
-                className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
-              />
-              <button
-                type="button"
-                onClick={() => checkAnswer()}
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-              >
-                {t('student.check')}
-              </button>
-            </div>
-          )}
-
           {feedback && (
-            <div className="rounded-xl bg-slate-100 px-3 py-2 text-sm font-medium text-slate-800">
+            <div className="mt-4 rounded-xl bg-slate-100 px-3 py-2 text-sm font-medium text-slate-800">
               {feedback}
             </div>
           )}

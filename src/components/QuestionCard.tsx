@@ -5,6 +5,8 @@ import { getQuestionPrompt } from '../utils/questionText';
 import { getAssetUrl } from '../utils/assets';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { InlineSpeaker, SpeakerButton } from './SpeakerButton';
+import { generateOptionsForQuestion } from '../utils/generateOptions';
+import { AnimatedLesson } from './AnimatedLesson';
 
 interface QuestionCardProps {
   question: Question;
@@ -33,6 +35,13 @@ export function QuestionCard({
   const assetUrl = getAssetUrl(question.assetId);
   const questionText = getQuestionPrompt(question, locale);
   const speakerLabel = locale === 'he' ? 'הקרא את השאלה' : 'Read the question';
+  
+  // Generate options if not present and showOptions is true
+  const options = showOptions 
+    ? (question.options && question.options.length > 0 
+        ? question.options 
+        : generateOptionsForQuestion(question))
+    : undefined;
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
@@ -49,6 +58,11 @@ export function QuestionCard({
           />
         </div>
       )}
+
+      {/* Animated Lesson - Interactive animation to help solve (collapsible) */}
+      <div className="mb-4">
+        <AnimatedLesson question={question} locale={locale} />
+      </div>
 
       {/* Visual Aids - for children with learning disabilities */}
       {question.visualAids && question.visualAids.length > 0 && (
@@ -81,18 +95,23 @@ export function QuestionCard({
         )}
 
         {/* Multiple Choice Options */}
-        {showOptions && question.options && (
-          <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {question.options.map((opt) => (
-              <button
-                key={opt.toString()}
-                type="button"
-                onClick={() => onOptionClick?.(String(opt))}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center text-base font-medium hover:border-blue-500 hover:bg-blue-50 transition-colors"
-              >
-                {opt}
-              </button>
-            ))}
+        {showOptions && options && options.length > 0 && (
+          <div className="mt-4">
+            <div className="mb-2 text-sm font-semibold text-slate-700 text-center">
+              {locale === 'he' ? 'בחר תשובה:' : 'Choose an answer:'}
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {options.map((opt) => (
+                <button
+                  key={opt.toString()}
+                  type="button"
+                  onClick={() => onOptionClick?.(String(opt))}
+                  className="rounded-xl border-2 border-slate-300 bg-gradient-to-br from-slate-50 to-slate-100 px-4 py-3 text-center text-lg font-bold hover:border-blue-500 hover:from-blue-50 hover:to-blue-100 hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm hover:shadow-md ltr-numbers"
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
