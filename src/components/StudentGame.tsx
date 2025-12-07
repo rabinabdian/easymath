@@ -1,5 +1,5 @@
 // src/components/StudentGame.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
@@ -13,6 +13,7 @@ import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
+import { AnimatedLesson } from './AnimatedLesson';
 
 interface GameContext {
   month?: string;      // "ספטמבר"
@@ -35,11 +36,111 @@ interface Props {
 
 const TIME_PER_QUESTION = 30; // seconds
 const MAX_ATTEMPTS_PER_QUESTION = 3; // Maximum attempts before auto-solve
+const TEXT_DISTRACTORS = [
+  'לא בטוח עדיין',
+  'אני צריך עזרה',
+  'דלג על שאלה זו',
+  'Not sure yet',
+  'I need help',
+  'Skip this question',
+];
+const YES_STRINGS = new Set(['כן', 'כן!', 'yes', 'y']);
+const NO_STRINGS = new Set(['לא', 'לא!', 'no', 'n']);
+
+function shuffleArray<T>(items: T[]): T[] {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function generateNumericOptions(answer: number): number[] {
+  const deltas = [1, -1, 2, -2, 3, -3, 5, -5];
+  const options = new Set<number>([answer]);
+  let idx = 0;
+
+  while (options.size < 4 && idx < deltas.length) {
+    const candidate = answer + deltas[idx];
+    idx += 1;
+    if (candidate >= 0) {
+      options.add(candidate);
+    }
+  }
+
+  let filler = 1;
+  while (options.size < 4) {
+    options.add(Math.max(0, answer + filler));
+    filler += 1;
+  }
+
+  return shuffleArray(Array.from(options));
+}
+
+function generateStringOptions(answer: string): string[] {
+  const normalized = answer.trim();
+  if (!normalized) return [];
+
+  const lower = normalized.toLowerCase();
+  const options = new Set<string>([normalized]);
+
+  const includes = (value: string) => lower.includes(value);
+
+  if (YES_STRINGS.has(lower) || includes('כן')) {
+    options.add('לא');
+    options.add('לא בטוח');
+  } else if (NO_STRINGS.has(lower) || includes('לא')) {
+    options.add('כן');
+    options.add('לא בטוח');
+  } else if (includes('זוגי')) {
+    options.add('אי-זוגי');
+    options.add('לא בטוח');
+  } else if (includes('אי-זוגי')) {
+    options.add('זוגי');
+    options.add('לא בטוח');
+  } else {
+    const numbers = normalized.match(/\d+/g);
+    if (numbers && numbers.length > 0) {
+      const firstNumber = Number(numbers[0]);
+      if (!Number.isNaN(firstNumber)) {
+        const upVariant = normalized.replace(numbers[0], String(firstNumber + 1));
+        const downVariant = normalized.replace(
+          numbers[0],
+          String(Math.max(firstNumber - 1, 0))
+        );
+        options.add(upVariant);
+        options.add(downVariant);
+      }
+    }
+  }
+
+  TEXT_DISTRACTORS.forEach((fallback) => {
+    if (options.size < 4) {
+      options.add(fallback);
+    }
+  });
+
+  return shuffleArray(Array.from(options));
+}
+
+function buildAnswerOptions(question: Question | undefined): (number | string)[] {
+  if (!question) return [];
+  if (question.options && question.options.length > 0) {
+    return question.options;
+  }
+  if (typeof question.answer === 'number') {
+    return generateNumericOptions(question.answer);
+  }
+  if (typeof question.answer === 'string') {
+    return generateStringOptions(question.answer);
+  }
+  return [];
+}
 
 export default function StudentGame({ questions, onExit, context, onFinished }: Props) {
   const { t, locale } = useI18n();
   const [index, setIndex] = useState(0);
-  const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIME_PER_QUESTION);
@@ -55,6 +156,10 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [showHint, setShowHint] = useState<1 | 2 | null>(null); // Show progressive hints (1 or 2)
 
   const current = questions[index];
+  const derivedOptions = useMemo(
+    () => buildAnswerOptions(current),
+    [current?.id]
+  );
   const totalQuestions = questions.length;
   const progress = totalQuestions > 0 ? (index / totalQuestions) * 100 : 0;
   
@@ -164,13 +269,11 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
     setTimeout(() => {
       setFeedback(null);
-      setInput('');
     }, 2000);
   }
 
   function handleHintDismiss() {
     setShowHint(null);
-    setInput('');
   }
 
   function handleCorrect() {
@@ -191,7 +294,6 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
     setTimeout(() => {
       setFeedback(null);
-      setInput('');
       const nextIndex = index + 1;
       if (nextIndex >= totalQuestions) {
         setFinished(true);
@@ -204,7 +306,6 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   function handleAutoSolveContinue() {
     // After auto-solve, move to next question (no points awarded)
     setShowAutoSolve(false);
-    setInput('');
     const nextIndex = index + 1;
     if (nextIndex >= totalQuestions) {
       setFinished(true);
@@ -213,11 +314,11 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     }
   }
 
-  function checkAnswer(valueFromClick?: string) {
+function checkAnswer(valueFromClick?: string) {
     if (!current || finished) return;
 
     const correctStr = String(current.answer).trim();
-    const userStr = (valueFromClick ?? input).trim();
+  const userStr = (valueFromClick ?? '').trim();
 
     const isCorrect =
       userStr === correctStr ||
@@ -469,6 +570,9 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     );
   }
 
+  const questionForDisplay =
+    derivedOptions.length > 0 ? { ...current, options: derivedOptions } : current;
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Progressive Hint Display Overlay */}
@@ -535,32 +639,10 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         {/* Question card */}
         <div className="rounded-2xl bg-white p-5 shadow-sm">
           <QuestionCard
-            question={current}
-            showOptions={!!current.options}
+            question={questionForDisplay}
+            showOptions={derivedOptions.length > 0}
             onOptionClick={handleOptionClick}
           />
-
-          {!current.options && (
-            <div className="mb-4 flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') checkAnswer();
-                }}
-                placeholder={t('student.placeholder')}
-                className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
-              />
-              <button
-                type="button"
-                onClick={() => checkAnswer()}
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-              >
-                {t('student.check')}
-              </button>
-            </div>
-          )}
 
           {feedback && (
             <div className="rounded-xl bg-slate-100 px-3 py-2 text-sm font-medium text-slate-800">
@@ -568,6 +650,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             </div>
           )}
         </div>
+
+        <QuestionSupportPanel question={current} />
 
         {/* Understanding hint section */}
         <div className="mt-4">
@@ -598,6 +682,55 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
       >
         {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
       </div>
+    </div>
+  );
+}
+
+function QuestionSupportPanel({ question }: { question: Question }) {
+  const { locale } = useI18n();
+  const [expanded, setExpanded] = useState(true);
+
+  useEffect(() => {
+    setExpanded(true);
+  }, [question.id]);
+
+  const title = locale === 'he' ? 'צריך עזרה? צפה באנימציה' : 'Need help? Watch an animation';
+  const subtitle =
+    locale === 'he'
+      ? 'האנימציה מדגימה שלב־שלב איך לפתור תרגילים מסוג זה.'
+      : 'The animation walks through the steps to solve this type of question.';
+  const buttonLabel = expanded
+    ? (locale === 'he' ? 'הסתר אנימציה' : 'Hide animation')
+    : (locale === 'he' ? 'הפעל אנימציה' : 'Play animation');
+
+  return (
+    <div className="mt-4 rounded-3xl border-2 border-blue-200 bg-gradient-to-br from-sky-50 to-indigo-50 p-4 shadow-inner">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl animate-bounce-slow">🎬</span>
+          <div className="text-right">
+            <p className="text-base font-bold text-slate-800">{title}</p>
+            <p className="text-sm text-slate-600">{subtitle}</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => setExpanded((prev) => !prev)}
+          className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+        >
+          {buttonLabel}
+        </button>
+      </div>
+
+      {expanded && (
+        <div className="mt-4 animate-fade-slide-up">
+          <AnimatedLesson
+            question={question}
+            locale={locale}
+            className="border border-blue-200 bg-white shadow-none"
+          />
+        </div>
+      )}
     </div>
   );
 }
