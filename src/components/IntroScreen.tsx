@@ -12,6 +12,7 @@ import { speak, stopSpeaking } from '../utils/speech';
 interface IntroScreenProps {
   question: Question;
   onContinue: () => void;
+  onBack?: () => void;
   lesson?: LocalizedLessonContent;
 }
 
@@ -28,7 +29,7 @@ interface IntroScreenProps {
  * - Displays the upcoming question to prepare the student
  * - Interactive audio with speaker icons
  */
-export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
+export function IntroScreen({ question, onContinue, onBack, lesson }: IntroScreenProps) {
   const { locale } = useI18n();
   const { settings } = useChildSettings();
   const hasPlayedRef = useRef(false);
@@ -56,6 +57,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
   const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
   const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
+  const backButton = locale === 'he' ? 'חזרה לדף הראשי' : 'Back to Main';
 
   // Auto-play lesson audio when the setting is enabled
   useEffect(() => {
@@ -123,6 +125,20 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="mx-auto max-w-2xl px-4 py-8">
+        {/* Back Button */}
+        {onBack && (
+          <div className="mb-4">
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition-all"
+            >
+              <span>🏠</span>
+              {backButton}
+            </button>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-6 text-center animate-fade-slide-down">
           <div className="mb-3 text-6xl animate-bounce-slow">{lessonEmoji}</div>
