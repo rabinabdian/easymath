@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Question } from '../types/questions';
 import { InlineSpeaker } from './SpeakerButton';
+import { speak } from '../utils/speech';
 
 interface AnimatedLessonProps {
   question: Question;
@@ -67,7 +68,8 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
     if (isPlaying) return;
     setIsPlaying(true);
     setVisibleCount(0);
-  }, [isPlaying]);
+    speak(audioText);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -169,7 +171,8 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
     if (isPlaying) return;
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+    speak(audioText);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -297,7 +300,8 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
     setIsPlaying(true);
     setStep(0);
     setRemovedCount(0);
-  }, [isPlaying]);
+    speak(audioText);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -448,7 +452,8 @@ function MultiplicationAnimation({ question, locale, className }: AnimatedLesson
     setIsPlaying(true);
     setVisibleGroups(0);
     setShowResult(false);
-  }, [isPlaying]);
+    speak(audioText);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -569,7 +574,8 @@ function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) 
     setIsPlaying(true);
     setStep(0);
     setPairsFormed(0);
-  }, [isPlaying]);
+    speak(audioText);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -711,7 +717,8 @@ function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
     if (isPlaying) return;
     setIsPlaying(true);
     setCurrentShape(0);
-  }, [isPlaying]);
+    speak(audioText);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -814,7 +821,8 @@ function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
     if (isPlaying) return;
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+    speak(audioText);
+  }, [isPlaying, audioText]);
 
   useEffect(() => {
     if (!isPlaying) return;
