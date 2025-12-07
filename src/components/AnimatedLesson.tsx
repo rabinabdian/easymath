@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Question } from '../types/questions';
 import { InlineSpeaker } from './SpeakerButton';
+import { speak } from '../utils/speech';
+import { useChildSettings } from '../context/ChildSettingsContext';
 
 interface AnimatedLessonProps {
   question: Question;
@@ -43,6 +45,7 @@ export function AnimatedLesson({ question, locale, className = '' }: AnimatedLes
 // NUMBERS ANIMATION - Counting with visual items
 // ========================================
 function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) {
+  const { settings } = useChildSettings();
   const [visibleCount, setVisibleCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const targetNumber = typeof question.answer === 'number' ? question.answer : 5;
@@ -65,9 +68,13 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Start with voice reading explaining what's happening
+    if (settings.soundsEnabled) {
+      speak(audioText);
+    }
     setIsPlaying(true);
     setVisibleCount(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText, settings.soundsEnabled]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -149,6 +156,7 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
 // ADDITION ANIMATION - Two groups combining
 // ========================================
 function AdditionAnimation({ question, locale, className }: AnimatedLessonProps) {
+  const { settings } = useChildSettings();
   const [step, setStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -167,9 +175,13 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Start with voice reading explaining what's happening
+    if (settings.soundsEnabled) {
+      speak(audioText);
+    }
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText, settings.soundsEnabled]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -275,6 +287,7 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
 // SUBTRACTION ANIMATION - Items being removed
 // ========================================
 function SubtractionAnimation({ question, locale, className }: AnimatedLessonProps) {
+  const { settings } = useChildSettings();
   const [step, setStep] = useState(0);
   const [removedCount, setRemovedCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -294,10 +307,14 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Start with voice reading explaining what's happening
+    if (settings.soundsEnabled) {
+      speak(audioText);
+    }
     setIsPlaying(true);
     setStep(0);
     setRemovedCount(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText, settings.soundsEnabled]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -419,6 +436,7 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
 // MULTIPLICATION ANIMATION - Groups of items
 // ========================================
 function MultiplicationAnimation({ question, locale, className }: AnimatedLessonProps) {
+  const { settings } = useChildSettings();
   const [visibleGroups, setVisibleGroups] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -445,10 +463,14 @@ function MultiplicationAnimation({ question, locale, className }: AnimatedLesson
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Start with voice reading explaining what's happening
+    if (settings.soundsEnabled) {
+      speak(audioText);
+    }
     setIsPlaying(true);
     setVisibleGroups(0);
     setShowResult(false);
-  }, [isPlaying]);
+  }, [isPlaying, audioText, settings.soundsEnabled]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -546,6 +568,7 @@ function MultiplicationAnimation({ question, locale, className }: AnimatedLesson
 // EVEN/ODD ANIMATION - Pairing items
 // ========================================
 function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) {
+  const { settings } = useChildSettings();
   const [step, setStep] = useState(0);
   const [pairsFormed, setPairsFormed] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -566,10 +589,14 @@ function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) 
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Start with voice reading explaining what's happening
+    if (settings.soundsEnabled) {
+      speak(audioText);
+    }
     setIsPlaying(true);
     setStep(0);
     setPairsFormed(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText, settings.soundsEnabled]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -690,6 +717,7 @@ function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) 
 // GEOMETRY ANIMATION - Shapes intro
 // ========================================
 function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'question'>) {
+  const { settings } = useChildSettings();
   const [currentShape, setCurrentShape] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -709,9 +737,13 @@ function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Start with voice reading explaining what's happening
+    if (settings.soundsEnabled) {
+      speak(audioText);
+    }
     setIsPlaying(true);
     setCurrentShape(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText, settings.soundsEnabled]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -798,6 +830,7 @@ function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
 // SYMMETRY ANIMATION - Mirror effect
 // ========================================
 function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'question'>) {
+  const { settings } = useChildSettings();
   const [step, setStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -812,9 +845,13 @@ function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
 
   const startAnimation = useCallback(() => {
     if (isPlaying) return;
+    // Start with voice reading explaining what's happening
+    if (settings.soundsEnabled) {
+      speak(audioText);
+    }
     setIsPlaying(true);
     setStep(0);
-  }, [isPlaying]);
+  }, [isPlaying, audioText, settings.soundsEnabled]);
 
   useEffect(() => {
     if (!isPlaying) return;
