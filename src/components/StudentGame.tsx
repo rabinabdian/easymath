@@ -356,6 +356,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
         question={current}
         lesson={lessonContent}
         onContinue={() => setShowIntro(false)}
+        onExit={onExit}
       />
     );
   }

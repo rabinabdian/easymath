@@ -13,6 +13,7 @@ interface IntroScreenProps {
   question: Question;
   onContinue: () => void;
   lesson?: LocalizedLessonContent;
+  onExit?: () => void;
 }
 
 /**
@@ -28,7 +29,7 @@ interface IntroScreenProps {
  * - Displays the upcoming question to prepare the student
  * - Interactive audio with speaker icons
  */
-export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
+export function IntroScreen({ question, onContinue, lesson, onExit }: IntroScreenProps) {
   const { locale } = useI18n();
   const { settings } = useChildSettings();
   const hasPlayedRef = useRef(false);
@@ -56,6 +57,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
   const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
   const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
+  const backButtonLabel = locale === 'he' ? 'חזרה למסך הראשי' : 'Back to home';
 
   // Auto-play lesson audio when the setting is enabled
   useEffect(() => {
@@ -123,6 +125,19 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="mx-auto max-w-2xl px-4 py-8">
+        {onExit && (
+          <div className="mb-4 flex justify-start">
+            <button
+              type="button"
+              onClick={onExit}
+              className="flex items-center gap-2 rounded-2xl bg-white/80 px-4 py-2 text-base font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-white transition-colors"
+              style={{ direction: 'ltr' }}
+            >
+              <span className="text-xl">←</span>
+              <span>{backButtonLabel}</span>
+            </button>
+          </div>
+        )}
         {/* Header */}
         <div className="mb-6 text-center animate-fade-slide-down">
           <div className="mb-3 text-6xl animate-bounce-slow">{lessonEmoji}</div>
