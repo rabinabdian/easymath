@@ -1,10 +1,13 @@
 // src/components/IntroScreen.tsx
+import { useEffect } from 'react';
 import type { Question } from '../types/questions';
 import { useI18n } from '../i18n';
 import { InlineSpeaker } from './SpeakerButton';
 import { getQuestionPrompt } from '../utils/questionText';
 import { getLessonContent, type LocalizedLessonContent } from '../utils/lessonContent';
 import { AnimatedLesson } from './AnimatedLesson';
+import { useChildSettings } from '../context/ChildSettingsContext';
+import { speak, stopSpeaking } from '../utils/speech';
 
 interface IntroScreenProps {
   question: Question;
@@ -27,6 +30,7 @@ interface IntroScreenProps {
  */
 export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) {
   const { locale } = useI18n();
+  const { settings } = useChildSettings();
   const derivedLesson = lesson ?? getLessonContent(question, locale);
 
   const questionExplanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
@@ -50,6 +54,44 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
   const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
   const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
   const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
+
+  // Build narration that mirrors the presented sections so automation can play it
+  const audioSegments: string[] = [];
+  audioSegments.push(locale === 'he' ? 'שיעור קצר לפני התרגיל.' : 'Short lesson before the exercise.');
+  if (explanation) {
+    audioSegments.push(`${explanationLabel}: ${explanation}`);
+  }
+  if (steps.length > 0) {
+    const stepsNarration = steps
+      .map((step, idx) =>
+        locale === 'he' ? `שלב ${idx + 1}: ${step}` : `Step ${idx + 1}: ${step}`
+      )
+      .join(' ');
+    audioSegments.push(`${stepsTitle}: ${stepsNarration}`);
+  }
+  if (example) {
+    audioSegments.push(`${exampleLabel}: ${example}`);
+  }
+  if (tip) {
+    audioSegments.push(`${tipTitle}: ${tip}`);
+  }
+  if (questionText) {
+    audioSegments.push(`${upcomingQuestionLabel}: ${questionText}`);
+  }
+  const autoAudioText = audioSegments.join(' ');
+
+  useEffect(() => {
+    if (!settings.soundsEnabled || !autoAudioText) return;
+    speak(autoAudioText);
+    return () => {
+      stopSpeaking();
+    };
+  }, [settings.soundsEnabled, autoAudioText]);
+
+  const handleContinue = () => {
+    stopSpeaking();
+    onContinue();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -156,7 +198,7 @@ export function IntroScreen({ question, onContinue, lesson }: IntroScreenProps) 
         {/* Continue Button - Large and accessible with animation */}
         <button
           type="button"
-          onClick={onContinue}
+          onClick={handleContinue}
           className="w-full rounded-3xl bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6 text-2xl font-bold text-white shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 animate-pulse-slow"
         >
           <span className="mr-2 inline-block animate-bounce-slow">✅</span>
