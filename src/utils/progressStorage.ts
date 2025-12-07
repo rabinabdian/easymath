@@ -1,5 +1,5 @@
 // src/utils/progressStorage.ts
-import type { StudentProgress } from '../types/gamification';
+import type { StudentProgress, ExerciseAttempt } from '../types/gamification';
 
 const KEY = 'easymath_progress_v1';
 
@@ -66,4 +66,35 @@ export function upsertMonthBadge(
 
   // No change needed - return original progress
   return progress;
+}
+
+/**
+ * Add an exercise attempt to history
+ * Returns a new immutable progress object (does not mutate the original)
+ */
+export function addExerciseAttempt(
+  progress: StudentProgress,
+  score: number,
+  total: number,
+  month?: string,
+  weekIndex?: number
+): StudentProgress {
+  const percent = Math.round((score / total) * 100);
+  const attempt: ExerciseAttempt = {
+    id: `attempt_${Date.now()}_${Math.floor(Math.random() * 9999)}`,
+    timestamp: new Date().toISOString(),
+    score,
+    total,
+    percent,
+    month,
+    weekIndex,
+  };
+
+  // Keep only last 50 attempts to prevent unbounded growth
+  const updatedHistory = [attempt, ...progress.exerciseHistory].slice(0, 50);
+
+  return {
+    ...progress,
+    exerciseHistory: updatedHistory,
+  };
 }
