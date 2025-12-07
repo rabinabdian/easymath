@@ -5,6 +5,7 @@ import { useI18n } from '../i18n';
 import { buildUnderstandingNarration, getQuestionPrompt } from '../utils/questionText';
 import { QuestionCard } from './QuestionCard';
 import { IntroScreen } from './IntroScreen';
+import { WelcomeScreen } from './WelcomeScreen';
 import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
@@ -43,6 +44,9 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIME_PER_QUESTION);
   const [finished, setFinished] = useState(false);
+
+  // Welcome screen - shows greeting and topic explanation before starting
+  const [showWelcome, setShowWelcome] = useState(true);
 
   // New state for interactive exercise system
   const [showIntro, setShowIntro] = useState(true); // Show intro before each question
@@ -333,6 +337,16 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
   if (!current) {
     return null;
+  }
+
+  // Show welcome screen with greeting and topic explanation first
+  if (showWelcome) {
+    return (
+      <WelcomeScreen
+        questions={questions}
+        onContinue={() => setShowWelcome(false)}
+      />
+    );
   }
 
   // Always show intro screen with a short lesson/context before each question
