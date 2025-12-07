@@ -13,7 +13,7 @@ import { generateYearPlan } from '../utils/yearPlanGenerator';
 import { createYearBookletPdf } from '../utils/createYearBookletPdf';
 import type { YearPlan, WeekPlan } from '../types/yearPlan';
 import { useI18n } from '../i18n';
-import { upsertMonthBadge } from '../utils/progressStorage';
+import { upsertMonthBadge, addExerciseAttempt } from '../utils/progressStorage';
 import {
   loadStudentRecords,
   saveStudentRecords,
@@ -409,17 +409,29 @@ export default function TeacherDashboard() {
     const activeStudent = students.find((s) => s.profile.id === selectedStudentId);
 
     const handleFinished = (result: GameResult) => {
-      if (!activeStudent || !result.month) return;
+      if (!activeStudent) return;
       const percent = Math.round((result.score / result.total) * 100);
 
-      // Award badge if score is 60% or higher
-      if (percent >= 60) {
-        setStudents((prev) =>
-          updateStudentProgress(prev, activeStudent.profile.id, (prevProg) =>
-            upsertMonthBadge(prevProg, result.month!, percent)
-          )
-        );
-      }
+      // Always save the exercise attempt to history
+      setStudents((prev) =>
+        updateStudentProgress(prev, activeStudent.profile.id, (prevProg) => {
+          // First, add the exercise attempt
+          let updated = addExerciseAttempt(
+            prevProg,
+            result.score,
+            result.total,
+            result.month,
+            result.weekIndex
+          );
+
+          // Then, award badge if there's a month context and score is 60% or higher
+          if (result.month && percent >= 60) {
+            updated = upsertMonthBadge(updated, result.month, percent);
+          }
+
+          return updated;
+        })
+      );
     };
 
     return (
@@ -983,6 +995,67 @@ export default function TeacherDashboard() {
                     </li>
                   ))}
                 </ul>
+              )}
+            </section>
+
+            {/* Recent Scores */}
+            <section className="rounded-2xl bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-lg font-semibold text-slate-900">
+                {locale === 'he' ? 'ציונים אחרונים' : 'Recent Scores'}
+              </h2>
+
+              {!activeStudent || activeStudent.progress.exerciseHistory.length === 0 ? (
+                <p className="text-sm text-slate-500">
+                  {locale === 'he'
+                    ? 'עדיין אין תרגילים שהושלמו'
+                    : 'No exercises completed yet'}
+                </p>
+              ) : (
+                <div className="max-h-64 overflow-y-auto">
+                  <ul className="space-y-2 text-sm">
+                    {activeStudent.progress.exerciseHistory.slice(0, 10).map((attempt) => {
+                      const date = new Date(attempt.timestamp);
+                      const formattedDate = date.toLocaleString(locale === 'he' ? 'he-IL' : 'en-US', {
+                        month: 'numeric',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      });
+
+                      // Color based on percentage
+                      const scoreColor =
+                        attempt.percent >= 80 ? 'text-green-600 bg-green-50 border-green-200' :
+                        attempt.percent >= 60 ? 'text-blue-600 bg-blue-50 border-blue-200' :
+                        attempt.percent >= 40 ? 'text-amber-600 bg-amber-50 border-amber-200' :
+                        'text-rose-600 bg-rose-50 border-rose-200';
+
+                      return (
+                        <li
+                          key={attempt.id}
+                          className={`flex items-center justify-between rounded-lg border px-3 py-2 ${scoreColor}`}
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold ltr-numbers">{attempt.percent}%</span>
+                              <span className="text-xs text-slate-600">
+                                ({ensureLTRNumbers(`${attempt.score}/${attempt.total}`)})
+                              </span>
+                            </div>
+                            {attempt.month && (
+                              <div className="text-xs text-slate-600 mt-0.5">
+                                {attempt.month}
+                                {attempt.weekIndex !== undefined && ` - שבוע ${attempt.weekIndex + 1}`}
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-xs text-slate-500 ltr-numbers">
+                            {formattedDate}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               )}
             </section>
           </div>

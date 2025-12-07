@@ -9,13 +9,23 @@ const AVATARS: AvatarType[] = ['boy', 'girl', 'robot', 'star'];
 
 /**
  * Load all student records from localStorage
+ * Ensures backward compatibility by adding missing fields
  */
 export function loadStudentRecords(): StudentRecord[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return [];
-    return JSON.parse(raw) as StudentRecord[];
+    const records = JSON.parse(raw) as StudentRecord[];
+
+    // Ensure all records have exerciseHistory (for backward compatibility)
+    return records.map((record) => ({
+      ...record,
+      progress: {
+        monthBadges: record.progress.monthBadges || [],
+        exerciseHistory: record.progress.exerciseHistory || [],
+      },
+    }));
   } catch {
     return [];
   }
@@ -50,6 +60,7 @@ export function createStudent(
   };
   const progress: StudentProgress = {
     monthBadges: [],
+    exerciseHistory: [],
   };
   return { profile, progress };
 }
