@@ -11,6 +11,7 @@ import { loadExams, saveExams } from '../utils/examsStorage';
 import type { SavedExam } from '../utils/examsStorage';
 import { generateYearPlan } from '../utils/yearPlanGenerator';
 import { createYearBookletPdf } from '../utils/createYearBookletPdf';
+import { createMultiplicationBookletPdf } from '../utils/createMultiplicationBookletPdf';
 import type { YearPlan, WeekPlan } from '../types/yearPlan';
 import { useI18n } from '../i18n';
 import { upsertMonthBadge, addExerciseAttempt } from '../utils/progressStorage';
@@ -398,6 +399,15 @@ export default function TeacherDashboard() {
     });
 
     doc.save('year_booklet.pdf');
+  };
+
+  const handleDownloadMultiplicationBooklet = () => {
+    const doc = createMultiplicationBookletPdf({
+      schoolName: 'בית ספר לדוגמה',
+      teacherName: 'המורה',
+      grade: 'א׳–ג׳',
+    });
+    doc.save('multiplication_booklet.pdf');
   };
 
   // Move handleFinished outside mode check and use useCallback for stable reference
@@ -1143,6 +1153,13 @@ export default function TeacherDashboard() {
                   }`}
                 >
                   {t('teacher.buttons.yearBooklet')}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadMultiplicationBooklet}
+                  className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+                >
+                  ✖️ חוברת הבנת לוח הכפל
                 </button>
               </div>
               {jsonImportError && (
