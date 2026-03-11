@@ -19,8 +19,12 @@ import { avatarEmoji } from "./utils/avatar";
 import { ensureLTRNumbers } from "./utils/textDirection";
 import { addExerciseAttempt, upsertMonthBadge } from "./utils/progressStorage";
 
-// גרסת האפליקציה
-export const APP_VERSION = "1.0.0";
+// גרסת האפליקציה – מנוהל ב-src/version.ts
+import { versionLabel } from './version';
+export { CURRENT as APP_VERSION_INFO, versionLabel } from './version';
+
+/** @deprecated use versionLabel() from version.ts instead */
+export const APP_VERSION = "1.1.0";
 
 /**
  * StudentAvatar - מציג תמונה או אווטר של התלמיד
@@ -104,15 +108,19 @@ function VersionBadge() {
         position: "fixed",
         bottom: "16px",
         left: "16px",
-        fontSize: "0.75rem",
+        fontSize: "0.72rem",
         color: "#94a3b8",
-        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        backgroundColor: "rgba(255, 255, 255, 0.88)",
         padding: "4px 10px",
         borderRadius: "12px",
         backdropFilter: "blur(4px)",
+        lineHeight: "1.5",
+        textAlign: "right",
+        direction: "ltr",
+        boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
       }}
     >
-      {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
+      {ensureLTRNumbers(versionLabel())}
     </div>
   );
 }

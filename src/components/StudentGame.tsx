@@ -11,6 +11,7 @@ import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
 import { APP_VERSION } from '../App';
+import { versionLabel } from '../version';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
 import { AnimatedLesson } from './AnimatedLesson';
@@ -646,7 +647,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             backdropFilter: "blur(4px)",
           }}
         >
-          {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
+          {ensureLTRNumbers(versionLabel())}
         </div>
       </div>
     );
@@ -925,7 +926,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
           backdropFilter: "blur(4px)",
         }}
       >
-        {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
+        {ensureLTRNumbers(versionLabel())}
       </div>
     </div>
   );

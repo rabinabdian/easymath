@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import type { YearPlan } from '../types/yearPlan';
 import { APP_VERSION } from '../App';
+import { versionLabel } from '../version';
 import { ensureLTRNumbers } from '../utils/textDirection';
 
 interface YearPlanViewProps {
@@ -128,7 +129,7 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
           backdropFilter: "blur(4px)",
         }}
       >
-        {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
+        {ensureLTRNumbers(versionLabel())}
       </div>
     </div>
   );
