@@ -9,6 +9,7 @@ import type { ChildSettings } from "./context/ChildSettingsContext";
 import { speak } from "./utils/speech";
 import TeacherDashboard from "./components/TeacherDashboard";
 import YearPlanView from "./components/YearPlanView";
+import MultiplicationPage from "./components/MultiplicationPage";
 import { generateYearPlan } from "./utils/yearPlanGenerator";
 import { loadExams, getExamById } from "./utils/examsStorage";
 import type { SavedExam } from "./utils/examsStorage";
@@ -172,6 +173,17 @@ function HomePage() {
           <button onClick={() => navigate("/session")}>התחל תרגול</button>
           <span className="badge">מבחן נוכחי: {examIndicator}</span>
         </div>
+        <button
+          onClick={() => navigate("/multiplication")}
+          style={{
+            background: "linear-gradient(135deg, #f97316, #ea580c)",
+            border: "none",
+            color: "#fff",
+            fontWeight: "bold",
+          }}
+        >
+          ✖️ הבנת לוח הכפל
+        </button>
         <button onClick={() => navigate("/parent")}>כניסת הורה</button>
         <button onClick={() => navigate("/teacher")}>כניסת מורה</button>
       </div>
@@ -812,6 +824,7 @@ export default function App() {
       <Route path="/parent" element={<ParentPage />} />
       <Route path="/teacher" element={<TeacherDashboard />} />
       <Route path="/year-plan" element={<YearPlanPage />} />
+      <Route path="/multiplication" element={<MultiplicationPage />} />
     </Routes>
   );
 }
