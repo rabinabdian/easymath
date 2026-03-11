@@ -10,7 +10,6 @@ import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
-import { APP_VERSION } from '../App';
 import { versionLabel } from '../version';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';

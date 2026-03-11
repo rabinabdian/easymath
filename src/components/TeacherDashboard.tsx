@@ -24,7 +24,6 @@ import {
 import type { StudentRecord, AvatarType } from '../types/students';
 import { QuestionCard } from './QuestionCard';
 import { avatarEmoji } from '../utils/avatar';
-import { APP_VERSION } from '../App';
 import { versionLabel } from '../version';
 import { useChildSettings } from '../context/ChildSettingsContext';
 import { ensureLTRNumbers } from '../utils/textDirection';

@@ -1,7 +1,6 @@
 // src/components/YearPlanView.tsx
 import { useNavigate } from 'react-router-dom';
 import type { YearPlan } from '../types/yearPlan';
-import { APP_VERSION } from '../App';
 import { versionLabel } from '../version';
 import { ensureLTRNumbers } from '../utils/textDirection';
 

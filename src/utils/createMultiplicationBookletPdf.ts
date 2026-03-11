@@ -64,20 +64,6 @@ export function createMultiplicationBookletPdf(opts: BookletOptions = {}) {
     doc.setTextColor(0, 0, 0);
   };
 
-  // Write text that is right-aligned (simulates RTL feel)
-  const textRight = (
-    text: string,
-    y: number,
-    fontSize = 12,
-    fontStyle: 'normal' | 'bold' = 'normal',
-  ) => {
-    doc.setFont('helvetica', fontStyle);
-    doc.setFontSize(fontSize);
-    const x = pageWidth - marginRight;
-    doc.text(text, x, y, { align: 'right' });
-    return doc.getTextWidth(text);
-  };
-
   // Write a wrapped paragraph right-aligned; returns new y after text
   const paragraphRight = (
     text: string,
