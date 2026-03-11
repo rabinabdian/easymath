@@ -7,7 +7,6 @@ import type { Difficulty, TopicId, Question } from '../types/questions';
 import StudentGame, { type GameResult } from './StudentGame';
 import { buildPrintableExam } from '../utils/printableMapper';
 import { createExamPdf } from '../utils/createExamPdf';
-import { loadExams, saveExams } from '../utils/examsStorage';
 import type { SavedExam } from '../utils/examsStorage';
 import { generateYearPlan } from '../utils/yearPlanGenerator';
 import { createYearBookletPdf } from '../utils/createYearBookletPdf';
@@ -15,13 +14,10 @@ import { createMultiplicationBookletPdf } from '../utils/createMultiplicationBoo
 import type { YearPlan, WeekPlan } from '../types/yearPlan';
 import { useI18n } from '../i18n';
 import { upsertMonthBadge, addExerciseAttempt } from '../utils/progressStorage';
-import {
-  loadStudentRecords,
-  saveStudentRecords,
-  createStudent,
-  updateStudentProgress,
-} from '../utils/studentStorage';
+import { createStudent } from '../utils/studentStorage';
 import type { StudentRecord, AvatarType } from '../types/students';
+import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import { QuestionCard } from './QuestionCard';
 import { avatarEmoji } from '../utils/avatar';
 import { versionLabel } from '../version';
@@ -85,6 +81,17 @@ export default function TeacherDashboard() {
   const navigate = useNavigate();
   const { t, locale, setLocale } = useI18n();
   const { settings, setSettings } = useChildSettings();
+  const { user, signOut } = useAuth();
+  const {
+    students: contextStudents,
+    exams: contextExams,
+    loading: dataLoading,
+    addStudent: dbAddStudent,
+    saveStudents: dbSaveStudents,
+    addExam: dbAddExam,
+    deleteExam: dbDeleteExam,
+    saveProgress: dbSaveProgress,
+  } = useData();
   const [mode, setMode] = useState<'teacher' | 'student'>('teacher');
   const [selectedTopic, setSelectedTopic] = useState<TopicId>('numbers');
   const [selectedSubtopic, setSelectedSubtopic] = useState('');
@@ -116,39 +123,30 @@ export default function TeacherDashboard() {
   const [photoUploadMode, setPhotoUploadMode] = useState(false);
 
   useEffect(() => {
-    setSavedExams(loadExams());
-
-    // תכנית שנה ברירת מחדל – כיתה א׳
-    const plan = generateYearPlan({
-      grade: 'א׳',
-      yearLabel: 'תשפ״ו',
-    });
+    const plan = generateYearPlan({ grade: 'א׳', yearLabel: 'תשפ״ו' });
     setYearPlan(plan);
-
-    // Load or initialize students
-    const loadedStudents = loadStudentRecords();
-    if (loadedStudents.length === 0) {
-      // Create default student
-      const defaultStudent = createStudent('תלמיד/ה 1', 'א׳', plan.yearLabel);
-      setStudents([defaultStudent]);
-      setSelectedStudentId(defaultStudent.profile.id);
-      saveStudentRecords([defaultStudent]);
-    } else {
-      setStudents(loadedStudents);
-      setSelectedStudentId(loadedStudents[0].profile.id);
-    }
   }, []);
 
+  // Sync from DataContext when data is loaded
   useEffect(() => {
-    saveExams(savedExams);
-  }, [savedExams]);
-
-  // Save students whenever they change
-  useEffect(() => {
-    if (students.length) {
-      saveStudentRecords(students);
+    if (dataLoading) return;
+    setSavedExams(contextExams);
+    if (contextStudents.length > 0) {
+      setStudents(contextStudents);
+      setSelectedStudentId(prev => prev || contextStudents[0].profile.id);
+    } else {
+      // Create default student when there are none
+      const plan = generateYearPlan({ grade: 'א׳', yearLabel: 'תשפ״ו' });
+      const defaultStudent = createStudent('תלמיד/ה 1', 'א׳', plan.yearLabel);
+      dbAddStudent(defaultStudent.profile.name, defaultStudent.profile.grade, defaultStudent.profile.yearLabel)
+        .then(s => {
+          setStudents([s]);
+          setSelectedStudentId(s.profile.id);
+        });
     }
-  }, [students]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataLoading, contextStudents.length, contextExams.length]);
+
 
   // Keep child-facing settings in sync when the stored student profile changes
   useEffect(() => {
@@ -197,13 +195,15 @@ export default function TeacherDashboard() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const photoUrl = e.target?.result as string;
-      setStudents((prev) =>
-        prev.map((s) =>
+      setStudents((prev) => {
+        const updated = prev.map((s) =>
           s.profile.id === studentId
             ? { ...s, profile: { ...s.profile, photoUrl } }
             : s
-        )
-      );
+        );
+        dbSaveStudents(updated);
+        return updated;
+      });
     };
     reader.readAsDataURL(file);
   };
@@ -225,13 +225,15 @@ export default function TeacherDashboard() {
   };
 
   const handlePhotoDelete = (studentId: string) => {
-    setStudents((prev) =>
-      prev.map((s) =>
+    setStudents((prev) => {
+      const updated = prev.map((s) =>
         s.profile.id === studentId
           ? { ...s, profile: { ...s.profile, photoUrl: undefined } }
           : s
-      )
-    );
+      );
+      dbSaveStudents(updated);
+      return updated;
+    });
   };
 
   const toggleTopicSelection = (topicId: TopicId) => {
@@ -315,6 +317,7 @@ export default function TeacherDashboard() {
       questions: generated,
     };
     setSavedExams((prev) => [newExam, ...prev]);
+    dbAddExam(newExam);
     setExamName('');
   };
 
@@ -326,6 +329,7 @@ export default function TeacherDashboard() {
 
   const handleDeleteExam = (id: string) => {
     setSavedExams((prev) => prev.filter((e) => e.id !== id));
+    dbDeleteExam(id);
   };
 
   const handlePracticeExam = (id: string) => {
@@ -377,6 +381,7 @@ export default function TeacherDashboard() {
           questions: cleaned,
         };
         setSavedExams((prev) => [newExam, ...prev]);
+        dbAddExam(newExam);
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : 'שגיאה בקריאת הקובץ';
         setJsonImportError(errorMessage);
@@ -410,35 +415,28 @@ export default function TeacherDashboard() {
     doc.save('multiplication_booklet.pdf');
   };
 
-  // Move handleFinished outside mode check and use useCallback for stable reference
   const handleFinished = useCallback((result: GameResult) => {
     const percent = Math.round((result.score / result.total) * 100);
+    const currentStudent = students.find((s) => s.profile.id === selectedStudentId);
+    if (!currentStudent) return;
 
-    // Use selectedStudentId directly to avoid stale closure
-    setStudents((prev) => {
-      // Find the current active student from the latest state
-      const currentStudent = prev.find((s) => s.profile.id === selectedStudentId);
-      if (!currentStudent) return prev;
-
-      return updateStudentProgress(prev, currentStudent.profile.id, (prevProg) => {
-        // First, add the exercise attempt
-        let updated = addExerciseAttempt(
-          prevProg,
-          result.score,
-          result.total,
-          result.month,
-          result.weekIndex
-        );
-
-        // Then, award badge if there's a month context and score is 60% or higher
-        if (result.month && percent >= 60) {
-          updated = upsertMonthBadge(updated, result.month, percent);
-        }
-
-        return updated;
-      });
-    });
-  }, [selectedStudentId]);
+    let updated = addExerciseAttempt(
+      currentStudent.progress,
+      result.score,
+      result.total,
+      result.month,
+      result.weekIndex,
+    );
+    if (result.month && percent >= 60) {
+      updated = upsertMonthBadge(updated, result.month, percent);
+    }
+    // Update local UI state
+    setStudents(prev => prev.map(s =>
+      s.profile.id === selectedStudentId ? { ...s, progress: updated } : s
+    ));
+    // Persist to Supabase
+    dbSaveProgress(selectedStudentId, updated);
+  }, [selectedStudentId, students, dbSaveProgress]);
 
   if (mode === 'student') {
     const week =
@@ -488,8 +486,18 @@ export default function TeacherDashboard() {
             </div>
           </div>
 
-          {/* Language Switcher */}
+          {/* Sign Out + Language Switcher */}
           <div className="flex items-center gap-2 text-sm">
+            {user && (
+              <button
+                type="button"
+                onClick={() => signOut().then(() => navigate('/login'))}
+                className="rounded-full bg-slate-200 px-3 py-1 text-slate-700 hover:bg-slate-300 transition-colors"
+                title={user.email}
+              >
+                {locale === 'he' ? 'התנתק' : 'Sign Out'}
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setLocale('he')}
@@ -514,6 +522,7 @@ export default function TeacherDashboard() {
             </button>
           </div>
         </header>
+
 
         {/* Student Profile Selection */}
         <section className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
@@ -602,15 +611,16 @@ export default function TeacherDashboard() {
                   type="button"
                   onClick={() => {
                     if (!yearPlan || !newStudentName.trim()) return;
-                    const rec = createStudent(
+                    dbAddStudent(
                       newStudentName.trim(),
                       'א׳',
                       yearPlan.yearLabel,
                       newStudentAvatar,
-                      newStudentColor
-                    );
-                    setStudents((prev) => [...prev, rec]);
-                    setSelectedStudentId(rec.profile.id);
+                      newStudentColor,
+                    ).then(rec => {
+                      setStudents(prev => [...prev, rec]);
+                      setSelectedStudentId(rec.profile.id);
+                    });
                     setNewStudentName('');
                   }}
                   className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700"

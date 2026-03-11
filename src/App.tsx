@@ -1,4 +1,5 @@
 // src/App.tsx
+import React from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
 import type { FormEvent } from "react";
@@ -11,14 +12,16 @@ import TeacherDashboard from "./components/TeacherDashboard";
 import YearPlanView from "./components/YearPlanView";
 import MultiplicationPage from "./components/MultiplicationPage";
 import { generateYearPlan } from "./utils/yearPlanGenerator";
-import { loadExams, getExamById } from "./utils/examsStorage";
 import type { SavedExam } from "./utils/examsStorage";
 import StudentGame, { type GameResult } from "./components/StudentGame";
-import { loadStudentRecords, saveStudentRecords, updateStudentProgress } from "./utils/studentStorage";
 import type { StudentRecord } from "./types/students";
 import { avatarEmoji } from "./utils/avatar";
 import { ensureLTRNumbers } from "./utils/textDirection";
 import { addExerciseAttempt, upsertMonthBadge } from "./utils/progressStorage";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { DataProvider, useData } from "./context/DataContext";
+import LoginPage from "./pages/LoginPage";
+import { Navigate } from "react-router-dom";
 
 // גרסת האפליקציה – מנוהל ב-src/version.ts
 import { versionLabel } from './version';
@@ -31,12 +34,11 @@ export const APP_VERSION = "1.1.0";
  * StudentAvatar - מציג תמונה או אווטר של התלמיד
  */
 function StudentAvatar({ settings }: { settings: ChildSettings }) {
-  // אם התלמיד מגיע מרשימת המורה – נעדיף את פרטי הפרופיל העדכניים מהאחסון
+  const { students } = useData();
   const linkedStudent = useMemo(() => {
     if (!settings.studentId) return undefined;
-    const records = loadStudentRecords();
-    return records.find((rec) => rec.profile.id === settings.studentId);
-  }, [settings.studentId]);
+    return students.find((rec) => rec.profile.id === settings.studentId);
+  }, [settings.studentId, students]);
 
   const avatarDisplay = linkedStudent
     ? avatarEmoji(linkedStudent.profile.avatar)
@@ -129,12 +131,10 @@ function VersionBadge() {
 function HomePage() {
   const navigate = useNavigate();
   const { settings } = useChildSettings();
+  const { students, getExamById } = useData();
 
-  // Get the latest student data from storage if a student is selected
-  // This ensures that if the teacher updated the student's photo, it shows on the home screen
   const effectiveSettings = useMemo(() => {
     if (settings.studentId) {
-      const students = loadStudentRecords();
       const currentStudent = students.find(s => s.profile.id === settings.studentId);
       
       if (currentStudent) {
@@ -148,7 +148,7 @@ function HomePage() {
       }
     }
     return settings;
-  }, [settings]);
+  }, [settings, students]);
 
   // Get the currently loaded exam name
   const currentExam = settings.selectedExamId
@@ -307,6 +307,7 @@ function TutorialExercise({ onDone, onExit }: { onDone: () => void; onExit: () =
 function SessionPage() {
   const { settings } = useChildSettings();
   const navigate = useNavigate();
+  const { students, getExamById, saveProgress } = useData();
 
   // ברירת מחדל: תרגילי ספירה
   const allExercises: CountExercise[] = countTo5Exercises;
@@ -323,7 +324,6 @@ function SessionPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>("idle");
 
-  // Check if using teacher's exam
   const examToUse = settings.selectedExamId ? getExamById(settings.selectedExamId) : null;
   const useTeacherExam = !!(examToUse && examToUse.questions.length > 0);
 
@@ -363,31 +363,22 @@ function SessionPage() {
 
   // Save student progress when exercise is completed
   const handleFinished = (result: GameResult) => {
-    // Only save if there's a linked student
     if (!settings.studentId) return;
+    const student = students.find(s => s.profile.id === settings.studentId);
+    if (!student) return;
 
     const percent = Math.round((result.score / result.total) * 100);
-    const records = loadStudentRecords();
-    const updatedRecords = updateStudentProgress(records, settings.studentId, (prevProg) => {
-      // First, add the exercise attempt
-      let updated = addExerciseAttempt(
-        prevProg,
-        result.score,
-        result.total,
-        result.month,
-        result.weekIndex
-      );
-
-      // Then, award badge if there's a month context and score is 60% or higher
-      if (result.month && percent >= 60) {
-        updated = upsertMonthBadge(updated, result.month, percent);
-      }
-
-      return updated;
-    });
-
-    // Save to localStorage
-    saveStudentRecords(updatedRecords);
+    let updated = addExerciseAttempt(
+      student.progress,
+      result.score,
+      result.total,
+      result.month,
+      result.weekIndex,
+    );
+    if (result.month && percent >= 60) {
+      updated = upsertMonthBadge(updated, result.month, percent);
+    }
+    saveProgress(settings.studentId, updated);
   };
 
   // אם נבחר מבחן מהמורה, נשתמש ב-StudentGame
@@ -600,23 +591,18 @@ function YearPlanPage() {
 function ParentPage() {
   const { settings, setSettings } = useChildSettings();
   const navigate = useNavigate();
+  const { students: contextStudents, exams: contextExams } = useData();
   const [savedExams, setSavedExams] = useState<SavedExam[]>([]);
   const [students, setStudents] = useState<StudentRecord[]>([]);
   const [selectedChildId, setSelectedChildId] = useState<string>("custom");
   const [customChildName, setCustomChildName] = useState<string>("");
 
   useEffect(() => {
-    // טעינת מבחנים שמורים
-    const exams = loadExams();
-    setSavedExams(exams);
+    setSavedExams(contextExams);
+    setStudents(contextStudents);
 
-    // טעינת תלמידים מהמורה
-    const loadedStudents = loadStudentRecords();
-    setStudents(loadedStudents);
-
-    // אם יש שם ילד נוכחי בהגדרות, נסה למצוא אותו ברשימת התלמידים
     if (settings.childName && settings.childName !== "ילד") {
-      const existingStudent = loadedStudents.find(
+      const existingStudent = contextStudents.find(
         (s) => s.profile.name === settings.childName
       );
       if (existingStudent) {
@@ -629,7 +615,7 @@ function ParentPage() {
       setCustomChildName(settings.childName);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [contextStudents, contextExams]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -816,15 +802,27 @@ function ParentPage() {
   );
 }
 
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+}
+
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/session" element={<SessionPage />} />
-      <Route path="/parent" element={<ParentPage />} />
-      <Route path="/teacher" element={<TeacherDashboard />} />
-      <Route path="/year-plan" element={<YearPlanPage />} />
-      <Route path="/multiplication" element={<MultiplicationPage />} />
-    </Routes>
+    <AuthProvider>
+      <DataProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/session" element={<SessionPage />} />
+          <Route path="/parent" element={<ParentPage />} />
+          <Route path="/teacher" element={<ProtectedRoute><TeacherDashboard /></ProtectedRoute>} />
+          <Route path="/year-plan" element={<YearPlanPage />} />
+          <Route path="/multiplication" element={<MultiplicationPage />} />
+        </Routes>
+      </DataProvider>
+    </AuthProvider>
   );
 }

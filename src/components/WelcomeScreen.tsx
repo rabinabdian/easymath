@@ -6,7 +6,7 @@ import { useI18n } from '../i18n';
 import { speak, stopSpeaking } from '../utils/speech';
 import { TOPICS } from '../data/topics';
 import { avatarEmoji } from '../utils/avatar';
-import { loadStudentRecords } from '../utils/studentStorage';
+import { useData } from '../context/DataContext';
 
 interface WelcomeScreenProps {
   questions: Question[];
@@ -50,14 +50,13 @@ function buildWelcomeAudio(
 export function WelcomeScreen({ questions, onContinue }: WelcomeScreenProps) {
   const { settings } = useChildSettings();
   const { locale } = useI18n();
+  const { students } = useData();
   const hasPlayedRef = useRef(false);
 
-  // Get the linked student data if available
   const linkedStudent = useMemo(() => {
     if (!settings.studentId) return undefined;
-    const records = loadStudentRecords();
-    return records.find((rec) => rec.profile.id === settings.studentId);
-  }, [settings.studentId]);
+    return students.find((rec) => rec.profile.id === settings.studentId);
+  }, [settings.studentId, students]);
 
   // Determine student display info
   const studentName = linkedStudent?.profile.name || settings.childName || 'תלמיד';
