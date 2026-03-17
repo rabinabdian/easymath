@@ -11,26 +11,23 @@ export interface LocalizedLessonContent {
 
 export function getLessonContent(
   question: Question,
-  locale: 'he' | 'en'
+  _locale: 'he' | 'en'
 ): LocalizedLessonContent | undefined {
   const topicLesson = getTopicLesson(question.topic, question.subtopic);
 
-  const explanationFromQuestion = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
-  const exampleFromQuestion = locale === 'he' ? question.introExampleHe : question.introExampleEn;
+  // הסברים וקריאות תמיד בעברית בלבד
+  const explanationFromQuestion = question.introExplanationHe;
+  const exampleFromQuestion = question.introExampleHe;
 
   const explanation = explanationFromQuestion
-    ?? (topicLesson ? (locale === 'he' ? topicLesson.explanationHe : topicLesson.explanationEn) : undefined);
+    ?? (topicLesson ? topicLesson.explanationHe : undefined);
 
   const example = exampleFromQuestion
-    ?? (topicLesson ? (locale === 'he' ? topicLesson.exampleHe : topicLesson.exampleEn) : undefined);
+    ?? (topicLesson ? topicLesson.exampleHe : undefined);
 
-  const steps = topicLesson
-    ? (locale === 'he' ? topicLesson.stepsHe : topicLesson.stepsEn)
-    : undefined;
+  const steps = topicLesson ? topicLesson.stepsHe : undefined;
 
-  const tip = topicLesson
-    ? (locale === 'he' ? topicLesson.tipHe : topicLesson.tipEn)
-    : undefined;
+  const tip = topicLesson ? topicLesson.tipHe : undefined;
 
   const normalizedSteps = steps?.filter((step) => Boolean(step?.trim())) ?? [];
   const normalizedTip = tip?.trim();

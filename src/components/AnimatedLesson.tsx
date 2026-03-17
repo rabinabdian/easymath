@@ -60,7 +60,7 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
     return items[hash % items.length] || '⭐';
   }, [question.id]);
   
-  const isHebrew = locale === 'he';
+  const isHebrew = true; // קריאות והסברים תמיד בעברית
   const title = isHebrew ? 'בואו נלמד לספור!' : "Let's learn to count!";
   const instruction = isHebrew ? 'לחץ להתחלה' : 'Click to start';
   const countingText = isHebrew ? `ספרנו: ${visibleCount}` : `Counted: ${visibleCount}`;
@@ -157,7 +157,7 @@ function TenFrameAnimation({ question, locale, className }: AnimatedLessonProps)
   const [revealStep, setRevealStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const isHebrew = locale === 'he';
+  const isHebrew = true; // קריאות והסברים תמיד בעברית
 
   // Extract filled count from prompt: "צבועים X עיגולים"
   const filledMatch = question.promptHe?.match(/צבועים\s+(\d+)/);
@@ -275,7 +275,7 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
   const num2 = mathMatch ? Math.min(parseInt(mathMatch[2]), 8) : 2;
   const sum = num1 + num2;
   
-  const isHebrew = locale === 'he';
+  const isHebrew = true; // קריאות והסברים תמיד בעברית
   const title = isHebrew ? 'בואו נלמד חיבור!' : "Let's learn addition!";
   const instruction = isHebrew ? 'לחץ לראות איך מחברים' : 'Click to see how to add';
   const audioText = isHebrew
@@ -402,7 +402,7 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
   const num2 = mathMatch ? Math.min(parseInt(mathMatch[2]), num1) : 2;
   const result = num1 - num2;
   
-  const isHebrew = locale === 'he';
+  const isHebrew = true; // קריאות והסברים תמיד בעברית
   const title = isHebrew ? 'בואו נלמד חיסור!' : "Let's learn subtraction!";
   const instruction = isHebrew ? 'לחץ לראות איך מחסרים' : 'Click to see how to subtract';
   const audioText = isHebrew
@@ -553,7 +553,7 @@ function MultiplicationAnimation({ question, locale, className }: AnimatedLesson
     return groupEmojis[hash % groupEmojis.length] || '⭐';
   }, [question.id]);
   
-  const isHebrew = locale === 'he';
+  const isHebrew = true; // קריאות והסברים תמיד בעברית
   const title = isHebrew ? 'בואו נלמד כפל!' : "Let's learn multiplication!";
   const instruction = isHebrew ? 'לחץ לראות קבוצות' : 'Click to see groups';
   const audioText = isHebrew
@@ -674,7 +674,7 @@ function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) 
   const pairs = Math.floor(number / 2);
   const hasLeftover = !isEven;
   
-  const isHebrew = locale === 'he';
+  const isHebrew = true; // קריאות והסברים תמיד בעברית
   const title = isHebrew ? 'זוגי או אי-זוגי?' : 'Even or Odd?';
   const instruction = isHebrew ? 'לחץ לראות את הבדיקה' : 'Click to check';
   const audioText = isHebrew
@@ -811,13 +811,13 @@ function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
   const [isPlaying, setIsPlaying] = useState(false);
   
   const shapes = [
-    { name: locale === 'he' ? 'משולש' : 'Triangle', sides: 3, emoji: '🔺', color: 'from-red-100 to-red-200' },
-    { name: locale === 'he' ? 'ריבוע' : 'Square', sides: 4, emoji: '🟦', color: 'from-blue-100 to-blue-200' },
-    { name: locale === 'he' ? 'מחומש' : 'Pentagon', sides: 5, emoji: '⬠', color: 'from-purple-100 to-purple-200' },
-    { name: locale === 'he' ? 'משושה' : 'Hexagon', sides: 6, emoji: '⬡', color: 'from-yellow-100 to-yellow-200' },
+    { name: 'משולש', sides: 3, emoji: '🔺', color: 'from-red-100 to-red-200' },
+    { name: 'ריבוע', sides: 4, emoji: '🟦', color: 'from-blue-100 to-blue-200' },
+    { name: 'מחומש', sides: 5, emoji: '⬠', color: 'from-purple-100 to-purple-200' },
+    { name: 'משושה', sides: 6, emoji: '⬡', color: 'from-yellow-100 to-yellow-200' },
   ];
   
-  const isHebrew = locale === 'he';
+  const isHebrew = true; // קריאות והסברים תמיד בעברית
   const title = isHebrew ? 'צורות גיאומטריות!' : 'Geometric Shapes!';
   const instruction = isHebrew ? 'לחץ לראות צורות' : 'Click to see shapes';
   const audioText = isHebrew
@@ -920,7 +920,7 @@ function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
   
   const symmetricItems = ['🦋', '❤️', '⭐', '🌸'];
   
-  const isHebrew = locale === 'he';
+  const isHebrew = true; // קריאות והסברים תמיד בעברית
   const title = isHebrew ? 'מה זה סימטריה?' : 'What is Symmetry?';
   const instruction = isHebrew ? 'לחץ לראות סימטריה' : 'Click to see symmetry';
   const audioText = isHebrew
@@ -1021,7 +1021,7 @@ function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
 // GENERIC ANIMATION - Default fallback
 // ========================================
 function GenericAnimation({ locale, className }: Omit<AnimatedLessonProps, 'question'>) {
-  const isHebrew = locale === 'he';
+  const isHebrew = true; // קריאות והסברים תמיד בעברית
   const title = isHebrew ? 'בואו ללמוד!' : "Let's learn!";
   const audioText = isHebrew
     ? 'קראו את השאלה בעיון ונסו להבין מה מבקשים. אתם יכולים!'

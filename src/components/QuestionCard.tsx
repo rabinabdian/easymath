@@ -39,7 +39,7 @@ export function QuestionCard({
   const { locale } = useI18n();
   const assetUrl = getAssetUrl(question.assetId);
   const questionText = getQuestionPrompt(question, locale);
-  const speakerLabel = locale === 'he' ? 'הקרא את השאלה' : 'Read the question';
+  const speakerLabel = 'הקרא את השאלה'; // תמיד בעברית
   const displayOptions = options ?? question.options;
 
   return (

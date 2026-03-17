@@ -2,7 +2,6 @@
 import { useEffect, useRef, useMemo } from 'react';
 import type { Question, TopicId } from '../types/questions';
 import { useChildSettings } from '../context/ChildSettingsContext';
-import { useI18n } from '../i18n';
 import { speak, stopSpeaking } from '../utils/speech';
 import { TOPICS } from '../data/topics';
 import { avatarEmoji } from '../utils/avatar';
@@ -25,17 +24,13 @@ function getTopicIcon(topicId: TopicId): string {
   return topic?.icon ?? '📚';
 }
 
-// Build the welcome audio text
+// קריאת ברכה תמיד בעברית בלבד
 function buildWelcomeAudio(
   childName: string,
   topicLabel: string,
   questionsCount: number,
-  locale: 'he' | 'en'
 ): string {
-  if (locale === 'he') {
-    return `שלום ${childName}! היום נתרגל יחד ${topicLabel}. יש לנו ${questionsCount} תרגילים מעניינים. בכל תרגיל תראה הסבר קצר לפני השאלה, ואם תצטרך עזרה, אני כאן! בואו נתחיל!`;
-  }
-  return `Hello ${childName}! Today we will practice ${topicLabel} together. We have ${questionsCount} interesting exercises. Before each question you will see a short explanation, and if you need help, I'm here! Let's start!`;
+  return `שלום ${childName}! היום נתרגל יחד ${topicLabel}. יש לנו ${questionsCount} תרגילים מעניינים. בכל תרגיל תראה הסבר קצר לפני השאלה, ואם תצטרך עזרה, אני כאן! בואו נתחיל!`;
 }
 
 /**
@@ -49,7 +44,6 @@ function buildWelcomeAudio(
  */
 export function WelcomeScreen({ questions, onContinue }: WelcomeScreenProps) {
   const { settings } = useChildSettings();
-  const { locale } = useI18n();
   const hasPlayedRef = useRef(false);
 
   // Get the linked student data if available
@@ -101,7 +95,7 @@ export function WelcomeScreen({ questions, onContinue }: WelcomeScreenProps) {
     if (hasPlayedRef.current) return;
     if (!settings.soundsEnabled) return;
 
-    const welcomeText = buildWelcomeAudio(studentName, topicLabel, questionsCount, locale);
+    const welcomeText = buildWelcomeAudio(studentName, topicLabel, questionsCount);
     
     hasPlayedRef.current = true;
     speak(welcomeText);
@@ -109,28 +103,14 @@ export function WelcomeScreen({ questions, onContinue }: WelcomeScreenProps) {
     return () => {
       stopSpeaking();
     };
-  }, [settings.soundsEnabled, studentName, topicLabel, questionsCount, locale]);
+  }, [settings.soundsEnabled, studentName, topicLabel, questionsCount]);
 
-  // Hebrew text
-  const greetingText = locale === 'he' 
-    ? `שלום ${studentName}!` 
-    : `Hello ${studentName}!`;
-  
-  const topicIntroText = locale === 'he'
-    ? `היום נתרגל יחד:`
-    : `Today we will practice:`;
-
-  const exerciseCountText = locale === 'he'
-    ? `${questionsCount} תרגילים מחכים לך`
-    : `${questionsCount} exercises waiting for you`;
-
-  const encouragementText = locale === 'he'
-    ? 'בכל תרגיל תראה הסבר קצר לפני השאלה.\nאם תצטרך עזרה - אני כאן!'
-    : 'Each exercise has a short explanation.\nIf you need help - I\'m here!';
-
-  const startButtonText = locale === 'he'
-    ? 'בואו נתחיל! 🚀'
-    : "Let's start! 🚀";
+  // טקסט תמיד בעברית בלבד
+  const greetingText = `שלום ${studentName}!`;
+  const topicIntroText = 'היום נתרגל יחד:';
+  const exerciseCountText = `${questionsCount} תרגילים מחכים לך`;
+  const encouragementText = 'בכל תרגיל תראה הסבר קצר לפני השאלה.\nאם תצטרך עזרה - אני כאן!';
+  const startButtonText = 'בואו נתחיל! 🚀';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 flex items-center justify-center p-4">

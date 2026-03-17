@@ -35,8 +35,9 @@ export function IntroScreen({ question, onContinue, onBack, lesson }: IntroScree
   const hasPlayedRef = useRef(false);
   const derivedLesson = lesson ?? getLessonContent(question, locale);
 
-  const questionExplanation = locale === 'he' ? question.introExplanationHe : question.introExplanationEn;
-  const questionExample = locale === 'he' ? question.introExampleHe : question.introExampleEn;
+  // הסברים תמיד בעברית בלבד
+  const questionExplanation = question.introExplanationHe;
+  const questionExample = question.introExampleHe;
 
   const explanation = derivedLesson?.explanation ?? questionExplanation;
   const example = derivedLesson?.example ?? questionExample;
@@ -48,16 +49,16 @@ export function IntroScreen({ question, onContinue, onBack, lesson }: IntroScree
   // Get the question text to show a preview
   const questionText = getQuestionPrompt(question, locale);
 
-  // Header text based on locale
-  const headerTitle = locale === 'he' ? 'שיעור קצר לפני התרגיל' : 'Short Lesson Before Exercise';
-  const headerSubtitle = locale === 'he' ? 'לחץ על הרמקול כדי לשמוע 🔈' : 'Click the speaker to listen 🔈';
-  const explanationLabel = locale === 'he' ? 'הסבר' : 'Explanation';
-  const exampleLabel = locale === 'he' ? 'דוגמא' : 'Example';
-  const upcomingQuestionLabel = locale === 'he' ? 'התרגיל שלך' : 'Your Exercise';
-  const continueButton = locale === 'he' ? 'הבנתי! בואו נתחיל' : "Got it! Let's start";
-  const stepsTitle = locale === 'he' ? 'שלבי פתרון' : 'Steps to solve';
-  const tipTitle = locale === 'he' ? 'טיפ קצר' : 'Quick tip';
-  const backButton = locale === 'he' ? 'חזרה לדף הראשי' : 'Back to Main';
+  // כותרות תמיד בעברית בלבד
+  const headerTitle = 'שיעור קצר לפני התרגיל';
+  const headerSubtitle = 'לחץ על הרמקול כדי לשמוע 🔈';
+  const explanationLabel = 'הסבר';
+  const exampleLabel = 'דוגמא';
+  const upcomingQuestionLabel = 'התרגיל שלך';
+  const continueButton = 'הבנתי! בואו נתחיל';
+  const stepsTitle = 'שלבי פתרון';
+  const tipTitle = 'טיפ קצר';
+  const backButton = 'חזרה לדף הראשי';
 
   // Auto-play lesson audio when the setting is enabled
   useEffect(() => {
@@ -67,10 +68,8 @@ export function IntroScreen({ question, onContinue, onBack, lesson }: IntroScree
     // Check if auto-play is enabled and sounds are enabled
     if (!settings.autoPlayLessonAudio || !settings.soundsEnabled) return;
     
-    // Build comprehensive audio text for the lesson
-    const audioIntro = locale === 'he' 
-      ? 'שיעור קצר לפני התרגיל.'
-      : 'Short lesson before the exercise.';
+    // קריאה קולית תמיד בעברית בלבד
+    const audioIntro = 'שיעור קצר לפני התרגיל.';
     
     const audioParts: string[] = [audioIntro];
     
@@ -81,7 +80,7 @@ export function IntroScreen({ question, onContinue, onBack, lesson }: IntroScree
     
     // Add steps if available
     if (steps.length > 0) {
-      const stepsIntro = locale === 'he' ? 'שלבי פתרון:' : 'Steps to solve:';
+      const stepsIntro = 'שלבי פתרון:';
       audioParts.push(stepsIntro);
       steps.forEach((step, idx) => {
         audioParts.push(`${idx + 1}. ${step}`);
@@ -90,22 +89,20 @@ export function IntroScreen({ question, onContinue, onBack, lesson }: IntroScree
     
     // Add example if available
     if (example) {
-      const exampleIntro = locale === 'he' ? 'דוגמא:' : 'Example:';
+      const exampleIntro = 'דוגמא:';
       audioParts.push(exampleIntro);
       audioParts.push(example);
     }
     
     // Add tip if available
     if (tip) {
-      const tipIntro = locale === 'he' ? 'טיפ:' : 'Tip:';
+      const tipIntro = 'טיפ:';
       audioParts.push(tipIntro);
       audioParts.push(tip);
     }
     
     // Add the upcoming question
-    const questionIntro = locale === 'he'
-      ? 'והנה התרגיל שלך:'
-      : 'And here is your exercise:';
+    const questionIntro = 'והנה התרגיל שלך:';
     audioParts.push(questionIntro);
     audioParts.push(questionText);
     

@@ -230,15 +230,13 @@ function buildWordCandidates(answerStr: string, value: number, language: 'he' | 
   return deterministicShuffle(formatted, `${seed}-word-options`);
 }
 
-function buildFallbackCandidates(answerStr: string, locale: 'he' | 'en'): string[] {
-  const fallbackPool =
-    locale === 'he'
-      ? ['אני צריך רמז', 'אולי תשובה אחרת', 'אני לא בטוח']
-      : ['I need a hint', 'Maybe another answer', "I'm not sure"];
+function buildFallbackCandidates(answerStr: string, _locale: 'he' | 'en'): string[] {
+  // אפשרויות תמיד בעברית בלבד
+  const fallbackPool = ['אני צריך רמז', 'אולי תשובה אחרת', 'אני לא בטוח'];
   return [answerStr, ...fallbackPool];
 }
 
-function finalizeOptions(baseAnswer: string, candidates: string[], locale: 'he' | 'en', seed: string): string[] {
+function finalizeOptions(baseAnswer: string, candidates: string[], _locale: 'he' | 'en', seed: string): string[] {
   const baseKey = normalizeAnswerValue(baseAnswer);
   const store = new Map<string, string>();
 
@@ -262,10 +260,8 @@ function finalizeOptions(baseAnswer: string, candidates: string[], locale: 'he' 
     .map(([, value]) => value);
 
   if (distractors.length < 1) {
-    const fallbackPool =
-      locale === 'he'
-        ? ['זה לא נראה נכון', 'תשובה אחרת']
-        : ['This looks wrong', 'Another choice'];
+    // אפשרויות גיבוי תמיד בעברית בלבד
+    const fallbackPool = ['זה לא נראה נכון', 'תשובה אחרת'];
     fallbackPool.forEach(addCandidate);
     distractors = Array.from(store.entries())
       .filter(([key]) => key !== baseKey)
@@ -277,7 +273,7 @@ function finalizeOptions(baseAnswer: string, candidates: string[], locale: 'he' 
 
   const merged = [store.get(baseKey) ?? baseAnswer.trim(), ...limitedDistractors];
   if (merged.length < 2) {
-    merged.push(locale === 'he' ? 'לא בטוח' : "I'm not sure");
+    merged.push('לא בטוח'); // תמיד בעברית
   }
 
   return deterministicShuffle(merged, `${seed}-final`);
@@ -874,7 +870,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             <div className="flex items-center gap-2 text-blue-900 font-semibold">
               <span className="text-xl" aria-hidden="true">🎬</span>
               <span>
-                {locale === 'he' ? 'צריך לראות איך פותרים עם אנימציה?' : 'Need to see an animated help?'}
+                {'צריך לראות איך פותרים עם אנימציה?'}
               </span>
             </div>
             <button
@@ -882,9 +878,7 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
               className="rounded-xl bg-white/70 px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-white"
               onClick={() => setShowLearningAid((prev) => !prev)}
             >
-              {showLearningAid
-                ? (locale === 'he' ? 'סגור אנימציה' : 'Hide animation')
-                : (locale === 'he' ? 'הפעל אנימציה' : 'Play animation')}
+              {showLearningAid ? 'סגור אנימציה' : 'הפעל אנימציה'}
             </button>
           </div>
 

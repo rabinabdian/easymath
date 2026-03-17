@@ -6,28 +6,26 @@ import { ensureLTRNumbers } from './textDirection';
 export { wrapLTR } from './textDirection';
 
 /**
- * Get question prompt text based on current locale
- * Falls back to the other language if the requested locale is not available
+ * Get question prompt text - always in Hebrew
  */
-export function getQuestionPrompt(q: Question, locale: Locale): string {
-  const base =
-    locale === 'he' ? q.promptHe || q.promptEn : q.promptEn || q.promptHe;
+export function getQuestionPrompt(q: Question, _locale: Locale): string {
+  // קריאות ושאלות תמיד בעברית בלבד
+  const base = q.promptHe || q.promptEn;
   if (!base) return '';
-  return locale === 'he' ? ensureLTRNumbers(base) : base;
+  return ensureLTRNumbers(base);
 }
 
 /**
- * Get question explanation text based on current locale
- * Falls back to the other language if the requested locale is not available
+ * Get question explanation text - always in Hebrew
  */
 export function getQuestionExplanation(
   q: Question,
-  locale: Locale
+  _locale: Locale
 ): string | undefined {
-  const base =
-    locale === 'he' ? q.explanationHe || q.explanationEn : q.explanationEn || q.explanationHe;
+  // הסברים תמיד בעברית בלבד
+  const base = q.explanationHe || q.explanationEn;
   if (!base) return base;
-  return locale === 'he' ? ensureLTRNumbers(base) : base;
+  return ensureLTRNumbers(base);
 }
 
 interface UnderstandingOptions {
@@ -40,39 +38,26 @@ interface UnderstandingOptions {
  */
 export function buildUnderstandingNarration(
   q: Question,
-  locale: Locale,
+  _locale: Locale,
   options: UnderstandingOptions = {}
 ): string {
+  // קריאה קולית תמיד בעברית בלבד
   const { includeAnswer = false } = options;
-  const isHebrew = locale === 'he';
-  const format = (text: string): string =>
-    isHebrew ? ensureLTRNumbers(text) : text;
 
-  // Get the auto-solve explanation if available
-  const autoSolveExplanation = isHebrew
-    ? q.autoSolveExplanationHe
-    : q.autoSolveExplanationEn;
+  const autoSolveExplanation = q.autoSolveExplanationHe;
 
   if (autoSolveExplanation) {
     if (includeAnswer) {
-      const answerPrefix = isHebrew ? 'התשובה היא' : 'The answer is';
-      return format(`${autoSolveExplanation} ${answerPrefix} ${q.answer}`);
+      return ensureLTRNumbers(`${autoSolveExplanation} התשובה היא ${q.answer}`);
     }
-    return format(autoSolveExplanation);
+    return ensureLTRNumbers(autoSolveExplanation);
   }
 
-  // Fallback: Generate a simple explanation based on question type
   const answer = String(q.answer);
 
   if (includeAnswer) {
-    if (isHebrew) {
-      return format(`בוא נחשוב על זה ביחד. התשובה הנכונה היא ${answer}`);
-    }
-    return `Let's think about this together. The correct answer is ${answer}`;
+    return ensureLTRNumbers(`בוא נחשוב על זה ביחד. התשובה הנכונה היא ${answer}`);
   }
 
-  if (isHebrew) {
-    return 'קרא את השאלה בעיון ונסה להבין מה מבקשים ממך';
-  }
-  return 'Read the question carefully and try to understand what is being asked';
+  return 'קרא את השאלה בעיון ונסה להבין מה מבקשים ממך';
 }
