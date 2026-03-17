@@ -16,7 +16,12 @@ interface AnimatedLessonProps {
  */
 export function AnimatedLesson({ question, locale, className = '' }: AnimatedLessonProps) {
   const { topic, subtopic } = question;
-  
+
+  // Ten-frame subtopics get a dedicated visualization regardless of topic
+  if (subtopic?.includes('לוח 10') || subtopic?.includes('השלמה ל-10')) {
+    return <TenFrameAnimation question={question} locale={locale} className={className} />;
+  }
+
   // Render appropriate animation based on topic
   switch (topic) {
     case 'numbers':
@@ -140,6 +145,118 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
       >
         <span className="mr-2">{isPlaying ? '⏳' : '▶️'}</span>
         {isPlaying ? (isHebrew ? 'סופרים...' : 'Counting...') : instruction}
+      </button>
+    </div>
+  );
+}
+
+// ========================================
+// TEN-FRAME ANIMATION - לוח 10 visualization
+// ========================================
+function TenFrameAnimation({ question, locale, className }: AnimatedLessonProps) {
+  const [revealStep, setRevealStep] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const isHebrew = locale === 'he';
+
+  // Extract filled count from prompt: "צבועים X עיגולים"
+  const filledMatch = question.promptHe?.match(/צבועים\s+(\d+)/);
+  const filled = filledMatch ? Math.min(parseInt(filledMatch[1]), 10) : 5;
+  const empty = 10 - filled;
+
+  const title = isHebrew ? 'לוח 10 - עשרה תאים!' : '10-Frame - Ten Squares!';
+  const filledLabel = isHebrew ? 'מלאים' : 'filled';
+  const emptyLabel = isHebrew ? 'ריקים' : 'empty';
+  const instruction = isHebrew ? 'לחץ לראות את לוח ה-10' : 'Click to see the 10-frame';
+  const audioText = isHebrew
+    ? `בלוח 10 יש 10 תאים. ${filled} מהם מלאים ו-${empty} ריקים. ${filled} ועוד ${empty} שווה 10.`
+    : `The 10-frame has 10 squares. ${filled} are filled and ${empty} are empty. ${filled} plus ${empty} equals 10.`;
+
+  const startAnimation = useCallback(() => {
+    if (isPlaying) return;
+    setRevealStep(0);
+    setIsPlaying(true);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    if (revealStep >= filled) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsPlaying(false);
+      return;
+    }
+    const timer = setTimeout(() => {
+      setRevealStep(prev => prev + 1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [isPlaying, revealStep, filled]);
+
+  return (
+    <div className={`animated-lesson rounded-3xl bg-gradient-to-br from-teal-100 to-cyan-100 p-6 shadow-xl border-4 border-teal-300 ${className}`}>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-4xl animate-bounce-slow">🔟</span>
+          <h3 className="text-2xl font-bold text-teal-900">{title}</h3>
+        </div>
+        <InlineSpeaker text={audioText} />
+      </div>
+
+      {/* Ten-Frame Grid */}
+      <div className="rounded-2xl bg-white p-4 shadow-inner mb-4">
+        <div className="grid grid-cols-5 gap-2 mb-2">
+          {Array.from({ length: 10 }).map((_, i) => {
+            const isFilled = i < filled;
+            const isRevealed = i < revealStep || !isPlaying;
+            return (
+              <div
+                key={i}
+                className={`w-full aspect-square rounded-lg border-3 flex items-center justify-center text-2xl transition-all duration-300 ${
+                  isFilled
+                    ? isRevealed
+                      ? 'bg-blue-500 border-blue-700 scale-100 animate-pop-in'
+                      : 'bg-gray-100 border-gray-300 scale-90 opacity-50'
+                    : 'bg-white border-gray-300'
+                }`}
+                style={{ borderWidth: '3px' }}
+              >
+                {isFilled && isRevealed ? '⭕' : ''}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Count display */}
+        <div className="flex justify-center gap-6 mt-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">⭕</span>
+            <span className="font-bold text-blue-700 text-lg ltr-numbers">{filled} {filledLabel}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded border-2 border-gray-300 bg-white inline-block" />
+            <span className="font-bold text-gray-500 text-lg ltr-numbers">{empty} {emptyLabel}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Formula */}
+      <div className="text-center mb-4">
+        <div className="inline-block rounded-full bg-gradient-to-r from-teal-500 to-cyan-600 px-8 py-3">
+          <span className="text-2xl font-bold text-white ltr-math">{filled} + {empty} = 10 ✅</span>
+        </div>
+      </div>
+
+      {/* Start Button */}
+      <button
+        onClick={startAnimation}
+        disabled={isPlaying}
+        className={`w-full rounded-2xl py-4 text-xl font-bold transition-all ${
+          isPlaying
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-gradient-to-r from-teal-500 to-cyan-600 text-white hover:scale-105 animate-pulse-slow'
+        }`}
+      >
+        <span className="mr-2">{isPlaying ? '⏳' : '▶️'}</span>
+        {isPlaying ? (isHebrew ? 'מציג...' : 'Showing...') : instruction}
       </button>
     </div>
   );

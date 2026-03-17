@@ -86,6 +86,20 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
     exampleHe: 'דוגמא: אם 7 משבצות מלאות ⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜\nאז 3 ריקות! (10 - 7 = 3)',
     exampleEn: 'Example: If 7 squares are full ⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜\nThen 3 are empty! (10 - 7 = 3)',
     emoji: '🔟',
+    stepsHe: [
+      'הסתכל על לוח ה-10 - יש בו בדיוק 10 תאים.',
+      'ספור כמה תאים צבועים (מלאים).',
+      'ספור כמה תאים ריקים.',
+      'זכור: צבועים + ריקים = 10 תמיד!',
+    ],
+    stepsEn: [
+      'Look at the 10-frame - it has exactly 10 squares.',
+      'Count how many squares are colored (filled).',
+      'Count how many squares are empty.',
+      'Remember: filled + empty = 10 always!',
+    ],
+    tipHe: 'בלוח 10 יש תמיד 10 תאים! אם יש 7 צבועים, אז 10 פחות 7 = 3 ריקים.',
+    tipEn: 'The 10-frame always has 10 squares! If 7 are colored, then 10 minus 7 = 3 are empty.',
   },
 
   'numbers:דילוגים': {
@@ -244,6 +258,20 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
     exampleHe: 'דוגמא: 8 צבועים, מחקנו 3\n⬛⬛⬛⬛⬛⬛⬛⬛ → ⬛⬛⬛⬛⬛⬜⬜⬜\nנשארו 5!',
     exampleEn: 'Example: 8 colored, erased 3\n⬛⬛⬛⬛⬛⬛⬛⬛ → ⬛⬛⬛⬛⬛⬜⬜⬜\n5 left!',
     emoji: '🔟',
+    stepsHe: [
+      'ספור כמה תאים צבועים בלוח ה-10.',
+      'מחק (או דמיין שמוחק) את הכמות שמבקשים.',
+      'ספור כמה תאים צבועים נשארו.',
+      'זה התשובה!',
+    ],
+    stepsEn: [
+      'Count how many squares are colored in the 10-frame.',
+      'Remove (or imagine removing) the requested amount.',
+      'Count how many colored squares remain.',
+      'That is the answer!',
+    ],
+    tipHe: 'תזכרו: מתחילים עם הכמות הצבועה ומורידים את מה שמחקו. השאר הוא התשובה!',
+    tipEn: 'Remember: start with the colored amount and subtract what was erased. The remainder is the answer!',
   },
 
   // ========================================
