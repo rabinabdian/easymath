@@ -21,6 +21,7 @@ import { addExerciseAttempt, upsertMonthBadge } from "./utils/progressStorage";
 
 // גרסת האפליקציה
 export const APP_VERSION = "1.0.0";
+export const LAST_UPDATED = "17.03.2026 17:38";
 
 /**
  * StudentAvatar - מציג תמונה או אווטר של התלמיד
@@ -112,7 +113,8 @@ function VersionBadge() {
         backdropFilter: "blur(4px)",
       }}
     >
-      {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
+      <div>{ensureLTRNumbers(`גרסה ${APP_VERSION}`)}</div>
+      <div>{ensureLTRNumbers(`עודכן: ${LAST_UPDATED}`)}</div>
     </div>
   );
 }

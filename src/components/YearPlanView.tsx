@@ -1,7 +1,7 @@
 // src/components/YearPlanView.tsx
 import { useNavigate } from 'react-router-dom';
 import type { YearPlan } from '../types/yearPlan';
-import { APP_VERSION } from '../App';
+import { APP_VERSION, LAST_UPDATED } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 
 interface YearPlanViewProps {
@@ -128,7 +128,8 @@ export default function YearPlanView({ plan }: YearPlanViewProps) {
           backdropFilter: "blur(4px)",
         }}
       >
-        {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
+        <div>{ensureLTRNumbers(`גרסה ${APP_VERSION}`)}</div>
+        <div>{ensureLTRNumbers(`עודכן: ${LAST_UPDATED}`)}</div>
       </div>
     </div>
   );
