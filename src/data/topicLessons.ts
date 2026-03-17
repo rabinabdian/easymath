@@ -82,9 +82,9 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
 
   'numbers:לוח 10': {
     explanationHe: 'לוח 10 עוזר לנו להבין את המספר 10! 🔟\nיש בו 10 משבצות - אפשר לראות כמה מלאות וכמה ריקות.',
-    explanationEn: 'The 10-frame helps us understand the number 10! 🔟\nIt has 10 squares - we can see how many are full and how many are empty.',
+    explanationEn: 'לוח 10 עוזר לנו להבין את המספר 10! 🔟\nיש בו 10 משבצות - אפשר לראות כמה מלאות וכמה ריקות.',
     exampleHe: 'דוגמא: אם 7 משבצות מלאות ⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜\nאז 3 ריקות! (10 - 7 = 3)',
-    exampleEn: 'Example: If 7 squares are full ⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜\nThen 3 are empty! (10 - 7 = 3)',
+    exampleEn: 'דוגמא: אם 7 משבצות מלאות ⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜\nאז 3 ריקות! (10 - 7 = 3)',
     emoji: '🔟',
   },
 
@@ -240,9 +240,9 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
 
   'subtraction:לוח 10': {
     explanationHe: 'לוח 10 עוזר גם בחיסור! 🔟\nרואים כמה צבוע, מוחקים, וסופרים כמה נשאר.',
-    explanationEn: 'The 10-frame helps with subtraction too! 🔟\nSee how many are colored, erase some, count what\'s left.',
+    explanationEn: 'לוח 10 עוזר גם בחיסור! 🔟\nרואים כמה צבוע, מוחקים, וסופרים כמה נשאר.',
     exampleHe: 'דוגמא: 8 צבועים, מחקנו 3\n⬛⬛⬛⬛⬛⬛⬛⬛ → ⬛⬛⬛⬛⬛⬜⬜⬜\nנשארו 5!',
-    exampleEn: 'Example: 8 colored, erased 3\n⬛⬛⬛⬛⬛⬛⬛⬛ → ⬛⬛⬛⬛⬛⬜⬜⬜\n5 left!',
+    exampleEn: 'דוגמא: 8 צבועים, מחקנו 3\n⬛⬛⬛⬛⬛⬛⬛⬛ → ⬛⬛⬛⬛⬛⬜⬜⬜\nנשארו 5!',
     emoji: '🔟',
   },
 
