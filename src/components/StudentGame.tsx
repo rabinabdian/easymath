@@ -364,17 +364,17 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
   const totalQuestions = questions.length;
   const progress = totalQuestions > 0 ? (index / totalQuestions) * 100 : 0;
   
-  const questionPrompt = current ? getQuestionPrompt(current, locale) : '';
+  const questionPrompt = current ? getQuestionPrompt(current, 'he') : '';
   const understandingHint = current
-    ? buildUnderstandingNarration(current, locale, { includeAnswer: false })
+    ? buildUnderstandingNarration(current, 'he', { includeAnswer: false })
     : '';
   const understandingSolution = current
-    ? buildUnderstandingNarration(current, locale, { includeAnswer: true })
+    ? buildUnderstandingNarration(current, 'he', { includeAnswer: true })
     : '';
-  const lessonContent = current ? getLessonContent(current, locale) : undefined;
+  const lessonContent = current ? getLessonContent(current, 'he') : undefined;
   const derivedOptions = useMemo(
-    () => (current ? generateChoiceOptions(current, locale) : []),
-    [current, locale]
+    () => (current ? generateChoiceOptions(current, 'he') : []),
+    [current]
   );
 
   // Helper function to get hint text based on attempt and locale
@@ -382,9 +382,9 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
     if (!current) return undefined;
     
     if (hintNumber === 1) {
-      return locale === 'he' ? current.hint1He : current.hint1En;
+      return current.hint1He;
     } else {
-      return locale === 'he' ? current.hint2He : current.hint2En;
+      return current.hint2He;
     }
   }
 
@@ -690,8 +690,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
 
   // Show auto-solve explanation after 3 failed attempts
   if (showAutoSolve) {
-    const autoSolveExplanation = locale === 'he' ? current.autoSolveExplanationHe : current.autoSolveExplanationEn;
-    const questionText = getQuestionPrompt(current, locale);
+    const autoSolveExplanation = current.autoSolveExplanationHe;
+    const questionText = getQuestionPrompt(current, 'he');
     const answerText = String(current.answer);
     const fullExplanation = autoSolveExplanation || `בוא נבין למה התשובה היא ${answerText}`;
 
