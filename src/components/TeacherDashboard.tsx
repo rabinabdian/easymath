@@ -24,7 +24,7 @@ import {
 import type { StudentRecord, AvatarType } from '../types/students';
 import { QuestionCard } from './QuestionCard';
 import { avatarEmoji } from '../utils/avatar';
-import { APP_VERSION } from '../App';
+import { APP_VERSION, LAST_UPDATED } from '../App';
 import { useChildSettings } from '../context/ChildSettingsContext';
 import { ensureLTRNumbers } from '../utils/textDirection';
 
@@ -1276,7 +1276,8 @@ export default function TeacherDashboard() {
           backdropFilter: "blur(4px)",
         }}
       >
-        {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
+        <div>{ensureLTRNumbers(`גרסה ${APP_VERSION}`)}</div>
+        <div>{ensureLTRNumbers(`עודכן: ${LAST_UPDATED}`)}</div>
       </div>
     </div>
   );

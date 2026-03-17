@@ -10,7 +10,7 @@ import { VisualAidsDisplay } from './VisualAidsDisplay';
 import { UnderstandingSection } from './UnderstandingSection';
 import { InlineSpeaker } from './SpeakerButton';
 import { HintDisplay } from './HintDisplay';
-import { APP_VERSION } from '../App';
+import { APP_VERSION, LAST_UPDATED } from '../App';
 import { ensureLTRNumbers } from '../utils/textDirection';
 import { getLessonContent } from '../utils/lessonContent';
 import { AnimatedLesson } from './AnimatedLesson';
@@ -646,7 +646,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
             backdropFilter: "blur(4px)",
           }}
         >
-          {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
+          <div>{ensureLTRNumbers(`גרסה ${APP_VERSION}`)}</div>
+          <div>{ensureLTRNumbers(`עודכן: ${LAST_UPDATED}`)}</div>
         </div>
       </div>
     );
@@ -925,7 +926,8 @@ export default function StudentGame({ questions, onExit, context, onFinished }: 
           backdropFilter: "blur(4px)",
         }}
       >
-        {ensureLTRNumbers(`גרסה ${APP_VERSION}`)}
+        <div>{ensureLTRNumbers(`גרסה ${APP_VERSION}`)}</div>
+        <div>{ensureLTRNumbers(`עודכן: ${LAST_UPDATED}`)}</div>
       </div>
     </div>
   );
