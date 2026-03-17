@@ -21,7 +21,7 @@ import { addExerciseAttempt, upsertMonthBadge } from "./utils/progressStorage";
 
 // גרסת האפליקציה
 export const APP_VERSION = "1.0.0";
-export const LAST_UPDATED = "17.03.2026 17:38";
+export const LAST_UPDATED = "17.03.2026 17:45";
 
 /**
  * StudentAvatar - מציג תמונה או אווטר של התלמיד
