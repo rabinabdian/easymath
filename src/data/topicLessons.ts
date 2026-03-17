@@ -135,6 +135,149 @@ export const TOPIC_LESSONS: Record<string, TopicLesson> = {
   },
 
   // ========================================
+  // NUMBERS UP TO 100 - הכרת המספרים עד 100
+  // ========================================
+  'numbers100': {
+    explanationHe: 'מספרים עד 100 בנויים מעשרות ויחידות! 💯\nלמשל: 43 = 4 עשרות ו-3 יחידות.',
+    explanationEn: 'Numbers up to 100 are made of tens and ones! 💯\nFor example: 43 = 4 tens and 3 ones.',
+    exampleHe: 'דוגמא:\n10, 20, 30, ... 100 - עשרות שלמות\n25 = שתי עשרות וחמש יחידות',
+    exampleEn: 'Example:\n10, 20, 30, ... 100 - full tens\n25 = two tens and five ones',
+    emoji: '💯',
+    stepsHe: [
+      'מצא את ספרת העשרות (הספרה השמאלית) - זה אומר כמה עשרות שלמות יש.',
+      'מצא את ספרת היחידות (הספרה הימנית) - זה אומר כמה אחדות נוספות יש.',
+      'ספור קדימה: מהעשרות ומוסיפים את היחידות.',
+    ],
+    stepsEn: [
+      'Find the tens digit (left digit) - it tells how many full tens there are.',
+      'Find the ones digit (right digit) - it tells how many extra ones there are.',
+      'Count forward: start from the tens and add the ones.',
+    ],
+    tipHe: 'כדי לזכור: הספרה השמאלית = עשרות, הספרה הימנית = יחידות. 35 → 3 עשרות ו-5 יחידות.',
+    tipEn: 'To remember: left digit = tens, right digit = ones. 35 → 3 tens and 5 ones.',
+  },
+
+  'numbers100:ספירה עד 100': {
+    explanationHe: 'ספירה עד 100 הולכת בצעדים קטנים! 🔢\nמתחילים מ-1 ומגיעים עד 100.',
+    explanationEn: 'Counting to 100 goes in small steps! 🔢\nWe start from 1 and reach 100.',
+    exampleHe: 'דוגמא: 96, 97, 98, 99, 100 🎉\nאחרי 99 מגיעים ל-100!',
+    exampleEn: 'Example: 96, 97, 98, 99, 100 🎉\nAfter 99 comes 100!',
+    emoji: '🔢',
+    stepsHe: [
+      'ספור בסדר: 1, 2, 3... עד שמגיעים לעשרה הבאה.',
+      'כשמגיעים ל-10, 20, 30... זה עשרה חדשה!',
+      'המשך לספור עד 100.',
+    ],
+    stepsEn: [
+      'Count in order: 1, 2, 3... until you reach the next ten.',
+      'When you get to 10, 20, 30... that is a new ten!',
+      'Keep counting until 100.',
+    ],
+    tipHe: 'טיפ: אחרי כל עשרה (20, 30...) ממשיכים: עשרים ואחת, עשרים ושתיים...',
+    tipEn: 'Tip: After each ten (20, 30...) continue: twenty-one, twenty-two...',
+  },
+
+  'numbers100:עשרות': {
+    explanationHe: 'עשרות הן: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100! 🔟\nכל עשרה זה קבוצה של 10.',
+    explanationEn: 'The tens are: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100! 🔟\nEvery ten is a group of 10.',
+    exampleHe: 'דוגמא:\n1 עשרה = 10\n5 עשרות = 50\n10 עשרות = 100',
+    exampleEn: 'Example:\n1 ten = 10\n5 tens = 50\n10 tens = 100',
+    emoji: '🔟',
+    stepsHe: [
+      'ספור כמה קבוצות של 10 יש.',
+      'כפל את מספר הקבוצות ב-10.',
+      'זה המספר שמתקבל!',
+    ],
+    stepsEn: [
+      'Count how many groups of 10 there are.',
+      'Multiply the number of groups by 10.',
+      "That's the number!",
+    ],
+    tipHe: 'הספרות של עשרות שלמות מסתיימות ב-0: 10, 20, 30...',
+    tipEn: 'Tens always end in 0: 10, 20, 30...',
+  },
+
+  'numbers100:מיקום המספר': {
+    explanationHe: 'כל ספרה יש לה מקום! 🏠\nעשרות בצד שמאל, יחידות בצד ימין.',
+    explanationEn: 'Every digit has a place! 🏠\nTens on the left side, ones on the right side.',
+    exampleHe: 'דוגמא: המספר 47\n4 = ספרת העשרות → 4 × 10 = 40\n7 = ספרת היחידות → 7\n47 = 40 + 7',
+    exampleEn: 'Example: The number 47\n4 = tens digit → 4 × 10 = 40\n7 = ones digit → 7\n47 = 40 + 7',
+    emoji: '🏠',
+    stepsHe: [
+      'הסתכל על הספרה השמאלית - זה מספר העשרות.',
+      'הסתכל על הספרה הימנית - זה מספר היחידות.',
+      'חשב: (עשרות × 10) + יחידות = המספר השלם.',
+    ],
+    stepsEn: [
+      'Look at the left digit - that is the number of tens.',
+      'Look at the right digit - that is the number of ones.',
+      'Calculate: (tens × 10) + ones = the full number.',
+    ],
+    tipHe: 'זכור: ב-63, הספרה 6 שווה 60 (לא 6) כי היא במקום העשרות!',
+    tipEn: 'Remember: in 63, the digit 6 equals 60 (not 6) because it is in the tens place!',
+  },
+
+  'numbers100:השוואה': {
+    explanationHe: 'להשוות מספרים עד 100 - קודם בודקים עשרות! ⚖️\nאם העשרות שוות, בודקים יחידות.',
+    explanationEn: 'To compare numbers up to 100 - first check the tens! ⚖️\nIf tens are equal, check the ones.',
+    exampleHe: 'דוגמא:\n73 > 58 (כי 7 עשרות > 5 עשרות)\n64 < 67 (עשרות שוות, אבל 4 < 7)',
+    exampleEn: 'Example:\n73 > 58 (because 7 tens > 5 tens)\n64 < 67 (equal tens, but 4 < 7)',
+    emoji: '⚖️',
+    stepsHe: [
+      'השווה את ספרות העשרות קודם.',
+      'אם ספרות העשרות שוות, השווה את ספרות היחידות.',
+      'כתוב < או > בין המספרים.',
+    ],
+    stepsEn: [
+      'Compare the tens digits first.',
+      'If tens digits are equal, compare the ones digits.',
+      'Write < or > between the numbers.',
+    ],
+    tipHe: 'הסימן > נפתח לצד הגדול: 80 > 30 (80 גדול מ-30).',
+    tipEn: 'The > sign opens toward the larger number: 80 > 30 (80 is greater than 30).',
+  },
+
+  'numbers100:שכנים': {
+    explanationHe: 'לכל מספר יש שכנים גם בין 1 ל-100! 🏘️\nהשכן לפני = פחות 1, השכן אחרי = יותר 1.',
+    explanationEn: 'Every number has neighbors between 1 and 100 too! 🏘️\nNeighbor before = minus 1, neighbor after = plus 1.',
+    exampleHe: 'דוגמא: שכני 50 הם:\n49 ← 50 → 51',
+    exampleEn: 'Example: Neighbors of 50 are:\n49 ← 50 → 51',
+    emoji: '🏘️',
+    stepsHe: [
+      'קח את המספר הנתון.',
+      'הורד 1 - זה השכן שלפניו.',
+      'הוסף 1 - זה השכן שאחריו.',
+    ],
+    stepsEn: [
+      'Take the given number.',
+      'Subtract 1 - that is the neighbor before.',
+      'Add 1 - that is the neighbor after.',
+    ],
+    tipHe: 'שכן לפני תמיד קטן יותר, שכן אחרי תמיד גדול יותר!',
+    tipEn: 'The neighbor before is always smaller, the neighbor after is always larger!',
+  },
+
+  'numbers100:דילוגים': {
+    explanationHe: 'דילוגים עד 100 - קופצים ב-5 או ב-10! 🦘\nזה עוזר לספור מהר יותר.',
+    explanationEn: 'Skip counting to 100 - jump by 5 or by 10! 🦘\nThis helps us count faster.',
+    exampleHe: 'דוגמא - דילוגים של 10:\n10, 20, 30, 40, 50, 60, 70, 80, 90, 100\nדילוגים של 5:\n5, 10, 15, 20, 25... 100',
+    exampleEn: 'Example - skip by 10:\n10, 20, 30, 40, 50, 60, 70, 80, 90, 100\nSkip by 5:\n5, 10, 15, 20, 25... 100',
+    emoji: '🦘',
+    stepsHe: [
+      'החלט כמה אתה דולג בכל פעם (5 או 10).',
+      'התחל מהמספר הנתון.',
+      'הוסף את גודל הדילוג שוב ושוב.',
+    ],
+    stepsEn: [
+      'Decide how many you skip each time (5 or 10).',
+      'Start from the given number.',
+      'Add the skip amount again and again.',
+    ],
+    tipHe: 'דילוגים של 10 קלים - פשוט מוסיפים 1 לספרת העשרות: 34, 44, 54, 64...',
+    tipEn: 'Skipping by 10 is easy - just add 1 to the tens digit: 34, 44, 54, 64...',
+  },
+
+  // ========================================
   // ADDITION - חיבור
   // ========================================
   'addition': {
