@@ -2,6 +2,7 @@
 
 export type TopicId =
   | 'numbers'
+  | 'numbers100'
   | 'addition'
   | 'subtraction'
   | 'multiplication'
