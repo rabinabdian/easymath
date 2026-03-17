@@ -47,7 +47,7 @@ export function AnimatedLesson({ question, locale, className = '' }: AnimatedLes
 // ========================================
 // NUMBERS ANIMATION - Counting with visual items
 // ========================================
-function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) {
+function NumbersAnimation({ question, locale: _locale, className }: AnimatedLessonProps) {
   const [visibleCount, setVisibleCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const targetNumber = typeof question.answer === 'number' ? question.answer : 5;
@@ -153,7 +153,7 @@ function NumbersAnimation({ question, locale, className }: AnimatedLessonProps) 
 // ========================================
 // TEN-FRAME ANIMATION - לוח 10 visualization
 // ========================================
-function TenFrameAnimation({ question, locale, className }: AnimatedLessonProps) {
+function TenFrameAnimation({ question, locale: _locale, className }: AnimatedLessonProps) {
   const [revealStep, setRevealStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -265,7 +265,7 @@ function TenFrameAnimation({ question, locale, className }: AnimatedLessonProps)
 // ========================================
 // ADDITION ANIMATION - Two groups combining
 // ========================================
-function AdditionAnimation({ question, locale, className }: AnimatedLessonProps) {
+function AdditionAnimation({ question, locale: _locale, className }: AnimatedLessonProps) {
   const [step, setStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -391,7 +391,7 @@ function AdditionAnimation({ question, locale, className }: AnimatedLessonProps)
 // ========================================
 // SUBTRACTION ANIMATION - Items being removed
 // ========================================
-function SubtractionAnimation({ question, locale, className }: AnimatedLessonProps) {
+function SubtractionAnimation({ question, locale: _locale, className }: AnimatedLessonProps) {
   const [step, setStep] = useState(0);
   const [removedCount, setRemovedCount] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -535,7 +535,7 @@ function SubtractionAnimation({ question, locale, className }: AnimatedLessonPro
 // ========================================
 // MULTIPLICATION ANIMATION - Groups of items
 // ========================================
-function MultiplicationAnimation({ question, locale, className }: AnimatedLessonProps) {
+function MultiplicationAnimation({ question, locale: _locale, className }: AnimatedLessonProps) {
   const [visibleGroups, setVisibleGroups] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -662,7 +662,7 @@ function MultiplicationAnimation({ question, locale, className }: AnimatedLesson
 // ========================================
 // EVEN/ODD ANIMATION - Pairing items
 // ========================================
-function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) {
+function EvenOddAnimation({ question, locale: _locale, className }: AnimatedLessonProps) {
   const [step, setStep] = useState(0);
   const [pairsFormed, setPairsFormed] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -806,7 +806,7 @@ function EvenOddAnimation({ question, locale, className }: AnimatedLessonProps) 
 // ========================================
 // GEOMETRY ANIMATION - Shapes intro
 // ========================================
-function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'question'>) {
+function GeometryAnimation({ locale: _locale, className }: Omit<AnimatedLessonProps, 'question'>) {
   const [currentShape, setCurrentShape] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -914,7 +914,7 @@ function GeometryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
 // ========================================
 // SYMMETRY ANIMATION - Mirror effect
 // ========================================
-function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'question'>) {
+function SymmetryAnimation({ locale: _locale, className }: Omit<AnimatedLessonProps, 'question'>) {
   const [step, setStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -1020,7 +1020,7 @@ function SymmetryAnimation({ locale, className }: Omit<AnimatedLessonProps, 'que
 // ========================================
 // GENERIC ANIMATION - Default fallback
 // ========================================
-function GenericAnimation({ locale, className }: Omit<AnimatedLessonProps, 'question'>) {
+function GenericAnimation({ locale: _locale, className }: Omit<AnimatedLessonProps, 'question'>) {
   const isHebrew = true; // קריאות והסברים תמיד בעברית
   const title = isHebrew ? 'בואו ללמוד!' : "Let's learn!";
   const audioText = isHebrew
